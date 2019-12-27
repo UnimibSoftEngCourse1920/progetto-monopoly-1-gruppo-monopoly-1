@@ -26,16 +26,27 @@
 		button:active {
 			background-color: grey;
 		}
-		#menuDiv #menu{
+		#menuDiv{
 			text-align:center;
 		}
-		#menuDiv #titolo{
+		#titolo{
 			font-size:70px;
 			text-align:center;
 			font-family:verdana;
 		}
 		.spazio{
 			height:60px;
+		}
+		#gameMenuDiv{
+			display:none;
+			text-align:center;
+		}
+		#newMonopolyOptionsDiv{
+			display:none;
+			text-align:center;
+		}
+		#gameDiv{
+			display:none;
 		}
 	</style>
 	
@@ -47,67 +58,69 @@
 	<!--Menu-->
 	<div id="menuDiv">
 		<h1 id="titolo">New Monopoly</h1>
-		<div id="menu">
-			<button onclick="loadGameMenuDiv()">play online</button>
-			<div class="spazio"></div>
-			<button>impostazioni</button>
-			<div class="spazio" /></div>
-			<button>terzo tasto</button>
-		</div>	
+		<button onclick="loadGameMenuDiv()">play online</button>
+		<div class="spazio"></div>
+		<button>impostazioni</button>
+		<div class="spazio" /></div>
+		<button>terzo tasto</button>
 	</div>
 
 	<!--Game options-->
-	<div id="gameMenuDiv" style="display:none;">
+	<div id="gameMenuDiv">
+		<div class="spazio"></div>
 		<button onclick="startClassicMonopoly()">Classic Monopoly</button>
+		<div class="spazio"></div>
 		<button onclick="loadNewMonopolyOptionsDiv()">New Monopoly</button>
 	</div>
 
-	<div id="newMonopolyOptionsDiv" style="display:none">
+	<div id="newMonopolyOptionsDiv" >
+		<div class="spazio"></div>
 		<button onclick="startEasyNewMonopoly()">easy</button>
+		<div class="spazio"></div>
 		<button onclick="startMediumNewMonopoly()">medium</button>
+		<div class="spazio"></div>
 		<button onclick="startHardNewMonopoly()">hard</button>
 	</div>
 
-
 	<!--In game-->
-	<div id="gameDiv" style="display:none;">
+	<div id="gameDiv" >
 		in game
 	</div>
 
 	<script>
         let loadGameMenuDiv = function() {
 			menuDiv.style.display = 'none';
-			gameMenuDiv.style.display = 'inline-block'; //loads the gameMenuDiv
+			gameMenuDiv.style.display = 'block'; //loads the gameMenuDiv
         }
-
+		
         let loadNewMonopolyOptionsDiv = function () {
             gameMenuDiv.style.display = 'none';
-            newMonopolyOptionsDiv.style.display = 'inline-block';
+            newMonopolyOptionsDiv.style.display = 'block';
         }
 
 		let socket, id;
         let startClassicMonopoly = function() {
             socket = io();
             gameMenuDiv.style.display = 'none';
-            gameDiv.style.display = 'inline-block'; //loads the gameDiv
+            gameDiv.style.display = 'block'; //loads the gameDiv
         }
 
         let startEasyNewMonopoly = function () {
             socket = io();
             newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'inline-block'; //loads the gameDiv
+			gameDiv.style.display = 'block'; //loads the gameDiv
         }
 
 		let startMediumNewMonopoly = function () {
             socket = io();
             newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'inline-block'; //loads the gameDiv
+			gameDiv.style.display = 'block'; //loads the gameDiv
         }
 
 		let startHardNewMonopoly = function () {
             socket = io();
             newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'inline-block'; //loads the gameDiv
+			gameDiv.style.display = 'block'; //loads the gameDiv
         }
 
         socket.on('id', function(data) {
