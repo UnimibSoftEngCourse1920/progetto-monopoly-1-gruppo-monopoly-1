@@ -17,7 +17,7 @@ let io = require('socket.io')(serv, {});
 let contTot = 0, contLocale = 0, contLobbies = 0;
 let lobbies = [];
 let lobby = [];
-
+let persone = 0;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -29,12 +29,16 @@ io.sockets.on('connection', function (socket) {
     socket.on('getId', function (data) {
         console.log("sending id to client");
         socket.emit('id', { id: socket.id });
-        socket.game = data.game;
+        //socket.game = data.game;
     });
     
     socket.on('getLobby', function () {
-        lobby[contLocale] = socket;
-        console.log('id in lobby ' + lobby[contLocale].id);
+        socket.emit('setLobby', { lobbyID: 0 });
+        persone++;
+        if (persone == 6)
+            io.emit('startGame');
+        //lobby[contLocale] = socket;
+        /*console.log('id in lobby ' + lobby[contLocale].id);
         socket.emit('setLobby', { lobbyID: contLobbies });
         if (lobby.length == 6) {
             contLocale = 0;
@@ -47,6 +51,6 @@ io.sockets.on('connection', function (socket) {
             contLobbies++;
         }
         else
-            contLocale++;
+            contLocale++;*/
     });
 });

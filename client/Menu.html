@@ -47,6 +47,7 @@
 		}
 		#gameDiv{
 			display:none;
+			text-align:center;
 		}
 	</style>
 	
@@ -82,9 +83,12 @@
 		<button onclick="startHardNewMonopoly()">hard</button>
 	</div>
 
+	<!--waiting for other clients to connect-->
+	<div id="waitingDiv" style="display:none">waiting...</div>
+
 	<!--In game-->
 	<div id="gameDiv" >
-		in game
+		<canvas id="board" style="width:70%;" height="500"></canvas>
 	</div>
 
 	<script>
@@ -103,8 +107,9 @@
 		socket.emit('getId');
         let startClassicMonopoly = function() {
             gameMenuDiv.style.display = 'none';
-            gameDiv.style.display = 'block'; //loads the gameDiv
-            socket.emit('getLobby', { id: id, game: "classic" });
+            //gameDiv.style.display = 'block'; //loads the gameDiv
+            socket.emit('getLobby');
+            waitingDiv.style.display = 'block';
         }
 
         let startEasyNewMonopoly = function () {
@@ -134,7 +139,35 @@
             lobbyID = data.lobbyID;
         })
 
+        let inGame = false;
+        socket.on('startGame', function () {
+            waitingDiv.style.display = 'none';
+            gameDiv.style.display = 'block';
+            //alert("in game");
+			let canvas = document.getElementById("board");
+			let ctx = canvas.getContext("2d");
+			let dpi = window.devicePixelRatio;
+
+			function fix_dpi() {
+				let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+				let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+				canvas.setAttribute('height', style_height * dpi);
+				canvas.setAttribute('width', style_width * dpi);
+			}
+	
+			let img = new Image();
+			img.src = "http://localhost:1337/client/img/monopoly.png";
+	  
+			img.onload = function(){
+				fix_dpi();
+                //alert("loaded");
+				let H = canvas.width * img.height / img.width;
+				ctx.drawImage(img, 0, 0,canvas.width, H );
+			}
+        })
 		//in game
+
+
 
 
 
