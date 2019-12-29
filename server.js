@@ -12,41 +12,41 @@ app.use('/client', express.static(__dirname + '/client'));
 serv.listen(1337);
 
 console.log('starting server');
-//console.log(__dirname);
 let socketList = [];
 let io = require('socket.io')(serv, {});
 let contTot = 0, contLocale = 0, contLobbies = 0;
 let lobbies = [];
-let lobby = [], host;
+let lobby = [];
+
+
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
-    //debug
-    console.log('socket connection');
-    socket.emit('id', { id:socket.id });
-    //debug
-    console.log('socket id ' + socket.id);
-    lobby[contLocale] = socket;
-    //debug
-    console.log('id in lobby ' + lobby[contLocale].id);
-    if (lobby.length == 6) {
-        contLocale = 0;
-        lobbies[contLobbies] = lobby;
-        lobby = [];
-        //debug
-        console.log('lobby number ' + contLobbies);
-        var x;
-        for (x of lobbies[contLobbies])
-            console.log(x.id);
-        contLobbies++;
-    }
-    else
-        contLocale++;
     contTot++;
+    console.log('socket connection');
+    console.log('socket id ' + socket.id);
     socketList[socket.id] = socket;
-    // debug
-    
 
-    socket.on('happy', function(data) {
-        console.log('happy' + data.reason);
-    })
+    socket.on('getId', function (data) {
+        console.log("sending id to client");
+        socket.emit('id', { id: socket.id });
+        socket.game = data.game;
+    });
+    
+    socket.on('getLobby', function () {
+        lobby[contLocale] = socket;
+        console.log('id in lobby ' + lobby[contLocale].id);
+        socket.emit('setLobby', { lobbyID: contLobbies });
+        if (lobby.length == 6) {
+            contLocale = 0;
+            lobbies[contLobbies] = lobby;
+            lobby = [];
+            console.log('lobby number ' + contLobbies);
+            let x;
+            for (x of lobbies[contLobbies])
+                console.log(x.id);
+            contLobbies++;
+        }
+        else
+            contLocale++;
+    });
 });

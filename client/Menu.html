@@ -98,36 +98,40 @@
             newMonopolyOptionsDiv.style.display = 'block';
         }
 
-		let socket, id;
+        let socket, id;
+        socket = io();
+		socket.emit('getId');
         let startClassicMonopoly = function() {
-            socket = io();
             gameMenuDiv.style.display = 'none';
             gameDiv.style.display = 'block'; //loads the gameDiv
+            socket.emit('getLobby', { id: id, game: "classic" });
         }
 
         let startEasyNewMonopoly = function () {
-            socket = io();
             newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'block'; //loads the gameDiv
+            gameDiv.style.display = 'block'; //loads the gameDiv
+            socket.emit('getLobby', { id: id, game: "newEasy" });
         }
 
 		let startMediumNewMonopoly = function () {
-            socket = io();
             newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'block'; //loads the gameDiv
+            gameDiv.style.display = 'block'; //loads the gameDiv
+            socket.emit('getLobby', { id: id, game: "newMedium" });
         }
 
-		let startHardNewMonopoly = function () {
-            socket = io();
+        let startHardNewMonopoly = function () {
             newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'block'; //loads the gameDiv
+            gameDiv.style.display = 'block'; //loads the gameDiv
+            socket.emit('getLobby', { id: id, game: "newHard" } );
         }
+        
+        socket.on('id', function (data) {
+			id = data.id;
+        })
 
-        socket.on('id', function(data) {
-            id = data.id;
-            //debug
-            alert(id);
-            //alert(id);
+        let lobbyID;
+        socket.on('setLobby', function (data) {
+            lobbyID = data.lobbyID;
         })
 
 		//in game
