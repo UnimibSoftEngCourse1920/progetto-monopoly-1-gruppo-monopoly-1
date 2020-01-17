@@ -1,0 +1,100 @@
+<html>
+<head>
+    <style>
+
+        .column, #centro {
+            float: left;
+            margin-top: -6;
+        }
+
+        #div1 {
+            margin-left: -6;
+            background-color: #aaa;
+        }
+
+        #div2 {
+            margin-right: -100;
+            background-color: #aaa;
+        }
+
+        #row {
+            display:none;
+            margin-top: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        #board {
+            border-style: solid;
+        }
+    </style>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+</head>
+<body>
+	<div id="waitingDiv">
+		waiting...
+	</div>
+	<div id="row">
+		<div class="column" id="div1">
+			div1<br>ciao<br>
+		</div>
+		<div id="centro">
+			<canvas  id="board" ></canvas>
+		</div>
+		<div class="column" id="div2">
+			div2
+		</div>
+	</div>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+	let socket, id;
+	socket = io();
+    socket.emit('getId');
+	socket.on('id', function (data) {
+			id = data.id;
+    })
+
+    socket.emit('getLobby');
+
+	let lobbyID;
+		socket.on('setLobby', function (data) {
+			lobbyID = data.lobbyID;
+		})
+
+    socket.on('startGame', function () {
+        waitingDiv.style.display = 'none';
+        row.style.display = 'block';
+        createCanvas();
+    })
+
+    let dpi = window.devicePixelRatio;
+    let img = new Image();
+    img.src = "http://localhost:1337/client/img/monopoly.png";
+    let canvas = document.getElementById("board");
+    let ctx = canvas.getContext("2d");
+
+    let createCanvas = function () {
+        
+        
+        
+        let H = $(window).height();
+        let W = $(window).width();
+        let a = (W - H) / 2;
+        canvas.style.height = H - 10;
+        canvas.style.width = H - 10;
+        $(".column").width(a);
+        fix_dpi();
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+        //img.onload = function () { 
+        //}
+    }
+    function fix_dpi() {
+            let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+            let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+            canvas.setAttribute('height', style_height * dpi);
+            canvas.setAttribute('width', style_width * dpi);
+        }
+</script>
+
+</body>
+</html>

@@ -32,6 +32,9 @@
     <Content Include="client\index.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="client\js\Page1.html">
+      <SubType>Code</SubType>
+    </Content>
     <Content Include="client\Menu.html">
       <SubType>Code</SubType>
     </Content>

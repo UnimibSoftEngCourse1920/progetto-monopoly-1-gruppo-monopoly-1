@@ -45,24 +45,42 @@
 			display:none;
 			text-align:center;
 		}
-		#gameDiv{
+		#gameDiv {
 			display:none;
+		}
+		.game {
+			margin-top: 0;
+			padding: 0;
 			text-align:center;
 		}
-	</style>
-	
-    
-    
-</head>
-<body>
+		.centroid {
+			float: none;
+			display:inline;
+		}
+        .column1 {
+            float: left;
+            display: inline;
+        }
 
+        .column2 {
+            float: right;
+            display: inline;
+        }
+		#board {
+			margin-top:0;
+			border-style: solid;
+		}
+	</style>
+	<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+</head>
+<body style="background-color:#06C3B6;">
 	<!--Menu-->
 	<div id="menuDiv">
 		<h1 id="titolo">New Monopoly</h1>
 		<button onclick="loadGameMenuDiv()">play online</button>
 		<div class="spazio"></div>
 		<button>impostazioni</button>
-		<div class="spazio" /></div>
+		<div class="spazio"></div>
 		<button>terzo tasto</button>
 	</div>
 
@@ -74,7 +92,7 @@
 		<button onclick="loadNewMonopolyOptionsDiv()">New Monopoly</button>
 	</div>
 
-	<div id="newMonopolyOptionsDiv" >
+	<div id="newMonopolyOptionsDiv">
 		<div class="spazio"></div>
 		<button onclick="startEasyNewMonopoly()">easy</button>
 		<div class="spazio"></div>
@@ -87,86 +105,104 @@
 	<div id="waitingDiv" style="display:none">waiting...</div>
 
 	<!--In game-->
-	<div id="gameDiv" >
-		<canvas id="board" style="width:70%;" height="500"></canvas>
+	<div id="gameDiv">
+		<div class="game">
+			<div class="column1" style="background-color: #aaa;">
+				ciao
+			</div>
+
+			<div class="centroid">
+				<canvas id="board"></canvas>
+			</div>
+
+			<div class="column2" style="background-color:#aaa;">
+				ciao
+			</div>
+		</div>
 	</div>
 
 	<script>
-        let loadGameMenuDiv = function() {
+		let loadGameMenuDiv = function () {
 			menuDiv.style.display = 'none';
 			gameMenuDiv.style.display = 'block'; //loads the gameMenuDiv
-        }
+		}
+
+		let loadNewMonopolyOptionsDiv = function () {
+			gameMenuDiv.style.display = 'none';
+			newMonopolyOptionsDiv.style.display = 'block';
+		}
+
 		
-        let loadNewMonopolyOptionsDiv = function () {
-            gameMenuDiv.style.display = 'none';
-            newMonopolyOptionsDiv.style.display = 'block';
-        }
+		
+		let startClassicMonopoly = function () {
+			gameMenuDiv.style.display = 'none';
+			//gameDiv.style.display = 'block'; //loads the gameDiv
+			//socket.emit('getLobby');
+            //waitingDiv.style.display = 'block';
+            window.open("http://localhost:1337/client/Game.html", "_self");
+		}
 
-        let socket, id;
-        socket = io();
-		socket.emit('getId');
-        let startClassicMonopoly = function() {
-            gameMenuDiv.style.display = 'none';
-            //gameDiv.style.display = 'block'; //loads the gameDiv
-            socket.emit('getLobby');
-            waitingDiv.style.display = 'block';
-        }
-
-        let startEasyNewMonopoly = function () {
-            newMonopolyOptionsDiv.style.display = 'none';
-            gameDiv.style.display = 'block'; //loads the gameDiv
-            socket.emit('getLobby', { id: id, game: "newEasy" });
-        }
+		let startEasyNewMonopoly = function () {
+			newMonopolyOptionsDiv.style.display = 'none';
+			gameDiv.style.display = 'block'; //loads the gameDiv
+			socket.emit('getLobby', { id: id, game: "newEasy" });
+		}
 
 		let startMediumNewMonopoly = function () {
-            newMonopolyOptionsDiv.style.display = 'none';
-            gameDiv.style.display = 'block'; //loads the gameDiv
-            socket.emit('getLobby', { id: id, game: "newMedium" });
-        }
+			newMonopolyOptionsDiv.style.display = 'none';
+			gameDiv.style.display = 'block'; //loads the gameDiv
+			socket.emit('getLobby', { id: id, game: "newMedium" });
+		}
 
-        let startHardNewMonopoly = function () {
-            newMonopolyOptionsDiv.style.display = 'none';
-            gameDiv.style.display = 'block'; //loads the gameDiv
-            socket.emit('getLobby', { id: id, game: "newHard" } );
-        }
-        
-        socket.on('id', function (data) {
-			id = data.id;
-        })
+		let startHardNewMonopoly = function () {
+			newMonopolyOptionsDiv.style.display = 'none';
+			gameDiv.style.display = 'block'; //loads the gameDiv
+			socket.emit('getLobby', { id: id, game: "newHard" });
+		}
 
-        let lobbyID;
-        socket.on('setLobby', function (data) {
-            lobbyID = data.lobbyID;
-        })
+		
 
-        let inGame = false;
+		let lobbyID;
+		socket.on('setLobby', function (data) {
+			lobbyID = data.lobbyID;
+		})
+
+		let inGame = false;
         socket.on('startGame', function () {
             waitingDiv.style.display = 'none';
-            gameDiv.style.display = 'block';
-            //alert("in game");
-			let canvas = document.getElementById("board");
-			let ctx = canvas.getContext("2d");
-			let dpi = window.devicePixelRatio;
+                gameDiv.style.display = 'block';
 
-			function fix_dpi() {
+                let canvas = document.getElementById("board");
+                let ctx = canvas.getContext("2d");
+                let dpi = window.devicePixelRatio;
+                let H = $(window).height();
+                let W = $(window).width();
+                let a = (W - H) / 2;
+                canvas.style.height = H - 10;
+                canvas.style.width = H - 10;
+                $(".column1").width(a - 8);
+                $(".column2").width(a - 8);
+
+
+
+                let img = new Image();
+                img.src = "http://localhost:1337/client/img/monopoly.png";
+                img.onload = function () {
+                    fix_dpi(dpi);
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+				 }
+
+				function fix_dpi(dpi) {
 				let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
 				let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
 				canvas.setAttribute('height', style_height * dpi);
 				canvas.setAttribute('width', style_width * dpi);
-			}
-	
-			let img = new Image();
-			img.src = "http://localhost:1337/client/img/monopoly.png";
-	  
-			img.onload = function(){
-				fix_dpi();
-                //alert("loaded");
-				let H = canvas.width * img.height / img.width;
-				ctx.drawImage(img, 0, 0,canvas.width, H );
-			}
-        })
-		//in game
+				 }
+			});
 
+		
+			//in game
+		
 
 
 
