@@ -3,6 +3,7 @@
 let express = require('express');
 let app = express();
 let serv = require('http').Server(app);
+let Player = require('http://localhost:1337/server/Classes');
 
 app.get('/', function (req, res) {
     console.log('client connected');
@@ -37,6 +38,7 @@ io.sockets.on('connection', function (socket) {
         persone++;
         if (persone == 6)
             io.emit('startGame');
+        startGame();
         //lobby[contLocale] = socket;
         /*console.log('id in lobby ' + lobby[contLocale].id);
         socket.emit('setLobby', { lobbyID: contLobbies });
@@ -54,3 +56,7 @@ io.sockets.on('connection', function (socket) {
             contLocale++;*/
     });
 });
+
+let startGame = function () {
+
+}
