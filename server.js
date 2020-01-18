@@ -46,7 +46,8 @@ io.sockets.on('connection', function (socket) {
     });
     
     socket.on('getLobby', function (data) {
-        player = new Player(socket.id, socket, data.name);
+		let name = data.name + " " + socket.id;
+        player = new Player(socket.id, socket, name);
         console.log("player attributes: " + player.socket.id + " " + player.socket + " " + player.name);
         playerList[socket.id] = player;
         socket.emit('setLobby', { lobbyID: 0 });

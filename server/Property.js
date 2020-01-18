@@ -16,11 +16,11 @@ class Property extends Square {
         this.state = 'mortgaged';
     }
 
-    get rent() {
+    getRent() {
         return this.rent;
     }
 
-    set rent(rent) {
+    setRent(rent) {
         this.rent = rent;
     }
 
