@@ -1,6 +1,8 @@
 class Player {
-    constructor(id) {
+    constructor(id, socket, name) {
         this.id = id;
+        this.socket = socket;
+        this.name = name;
         this.money = 1500;
         this.pos = 0;
         this.props = [];
@@ -39,9 +41,9 @@ class Player {
         return this.pos;
     }
 
-    set pos(pos) {
+    /*set pos(pos) {
         this.pos = pos;
-    }
+    }*/
 
     dicePos(diceNumber) {
         sum = this.pos + diceNumber;
@@ -52,4 +54,4 @@ class Player {
     }
 }
 
-modules.exports = Player;
+module.exports = Player;

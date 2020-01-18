@@ -1,4 +1,4 @@
-import Square from 'http://localhost:1337/server/Square';
+let Square = require('./Square');
 
 class IncomeTax extends Square {
     constructor(id, tax) {
@@ -7,4 +7,4 @@ class IncomeTax extends Square {
     }
 }
 
-modules.exports = IncomeTax;
+module.exports = IncomeTax;

@@ -54,7 +54,7 @@
 			id = data.id;
     })
 
-    socket.emit('getLobby');
+    socket.emit('getLobby', { name: "Player " + id });
 
 	let lobbyID;
 		socket.on('setLobby', function (data) {

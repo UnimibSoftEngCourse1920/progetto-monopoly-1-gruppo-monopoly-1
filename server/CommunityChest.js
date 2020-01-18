@@ -1,4 +1,4 @@
-import Square from 'http://localhost:1337/server/Square';
+let Square = require('./Square');
 
 class CommunityChest extends Square {
     constructor(id) {
@@ -6,4 +6,4 @@ class CommunityChest extends Square {
     }
 }
 
-modules.exports = CommunityChest;
+module.exports = CommunityChest;

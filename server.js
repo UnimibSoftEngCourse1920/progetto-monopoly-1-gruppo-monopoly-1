@@ -3,15 +3,15 @@
 let express = require('express');
 let app = express();
 let serv = require('http').Server(app);
-import Property from 'http://localhost:1337/server/Property';
-import Services from 'http://localhost:1337/server/Services';
-import Station from 'http://localhost:1337/server/Station';
-import HouseProperty from 'http://localhost:1337/server/HouseProperty';
-import Player from 'http://localhost:1337/server/Player';
-import Square from 'http://localhost:1337/server/Square';
-import Chance from 'http://localhost:1337/server/Chance';
-import CommunityChest from 'http://localhost:1337/server/CommunityChest';
-import IncomeTax from 'http://localhost:1337/server/IncomeTax';
+let Property = require('./server/Property');
+let Services = require('./server/Services');
+let Station = require('./server/Station');
+let HouseProperty = require('./server/HouseProperty');
+let Player = require('./server/Player');
+let Square = require('./server/Square');
+let Chance = require('./server/Chance');
+let CommunityChest = require('./server/CommunityChest');
+let IncomeTax = require('./server/IncomeTax');
 
 
 app.get('/', function (req, res) {
@@ -23,6 +23,7 @@ serv.listen(1337);
 
 console.log('starting server');
 let socketList = [];
+let playerList = [];
 let io = require('socket.io')(serv, {});
 let contTot = 0, contLocale = 0, contLobbies = 0;
 let lobbies = [];
@@ -35,18 +36,24 @@ io.sockets.on('connection', function (socket) {
     console.log('socket connection');
     console.log('socket id ' + socket.id);
     socketList[socket.id] = socket;
-
+    
+    
     socket.on('getId', function (data) {
         console.log("sending id to client");
         socket.emit('id', { id: socket.id });
         //socket.game = data.game;
     });
     
-    socket.on('getLobby', function () {
+    socket.on('getLobby', function (data) {
+        player = new Player(socket.id, socket, data.name);
+        console.log("player attributes: " + player.socket.id + " " + player.socket + " " + player.name);
+        playerList[socket.id] = player;
         socket.emit('setLobby', { lobbyID: 0 });
         persone++;
-        if (persone == 6)
+        if (persone == 6) {
             io.emit('startGame');
+            
+        }
         startGame();
         //lobby[contLocale] = socket;
         /*console.log('id in lobby ' + lobby[contLocale].id);
@@ -109,6 +116,10 @@ let startGame = function () {
     squares[38] = new IncomeTax(38);
     squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue"); 
 
+    createPlayers();
 
+}
+
+let createPlayers = function () {
 
 }

@@ -1,4 +1,4 @@
-import Property from 'http://localhost:1337/server/Property';
+let Property = require('./Property');
 
 class HouseProperty extends Property {
     constructor(id, name, cost, housePrices, houseBuildPrice, colour) {
@@ -31,4 +31,4 @@ class HouseProperty extends Property {
 
 }
 
-modules.exports = HouseProperty;
+module.exports = HouseProperty;

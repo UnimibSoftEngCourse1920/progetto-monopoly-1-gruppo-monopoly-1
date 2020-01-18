@@ -4,4 +4,4 @@ class Square {
     }
 }
 
-modules.exports = Square;
+module.exports = Square;

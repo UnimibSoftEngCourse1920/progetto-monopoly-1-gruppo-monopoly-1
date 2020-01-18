@@ -1,4 +1,4 @@
-import Square from 'http://localhost:1337/server/Square';
+let Square = require('./Square');
 
 class Property extends Square {
     constructor(id, name, cost, rent) {
@@ -29,4 +29,4 @@ class Property extends Square {
     }
 }
 
-modules.exports = Property;
+module.exports = Property;
