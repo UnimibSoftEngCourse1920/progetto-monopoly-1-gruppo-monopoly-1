@@ -37,13 +37,13 @@ class Player {
         }
     }
 
-    get pos() {
+    getPos() {
         return this.pos;
     }
 
-    /*set pos(pos) {
+    setPos(pos) {
         this.pos = pos;
-    }*/
+    }
 
     dicePos(diceNumber) {
         sum = this.pos + diceNumber;

@@ -29,6 +29,7 @@ let contTot = 0, contLocale = 0, contLobbies = 0;
 let lobbies = [];
 let lobby = [];
 let persone = 0;
+let player;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
