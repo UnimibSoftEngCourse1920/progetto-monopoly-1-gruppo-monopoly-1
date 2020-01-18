@@ -82,9 +82,9 @@ class Property {
 }
 
 class HouseProperty extends Property {
-    constructor(id, name, cost, housePrices, colour) {
+    constructor(id, name, cost, housePrices, houseBuildPrice, colour) {
         super(id, name, cost, housePrices[0]);
-        this.housePrice = housePrice;
+        this.houseBuildPrice = houseBuildPrice;
         this.houses = 0;
         this.housePrices = housePrices;
         this.colour = colour;
@@ -125,9 +125,3 @@ class Services {
         this.rentPrices = rentPrices;
     }
 }
-
-modules.exports = Player;
-modules.exports = Property;
-modules.exports = HouseProperty;
-modules.exports = Station;
-modules.exports = Services;

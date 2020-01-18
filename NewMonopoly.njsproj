@@ -32,15 +32,46 @@
     <Content Include="client\index.html">
       <SubType>Code</SubType>
     </Content>
-    <Content Include="client\js\Page1.html">
-      <SubType>Code</SubType>
-    </Content>
     <Content Include="client\Menu.html">
       <SubType>Code</SubType>
     </Content>
+    <Content Include="client\Page1.html">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="client\Game.html" />
     <Content Include="server.js" />
     <Content Include="package.json" />
     <Content Include="README.md" />
+    <Content Include="server\Chance.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\Classes.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\CommunityChest.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\HouseProperty.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\IncomeTax.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\Player.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\Property.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\Services.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\Square.js">
+      <SubType>Code</SubType>
+    </Content>
+    <Content Include="server\Station.js">
+      <SubType>Code</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="client\" />
