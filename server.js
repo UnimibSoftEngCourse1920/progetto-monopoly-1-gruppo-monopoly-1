@@ -24,12 +24,14 @@ serv.listen(1337);
 console.log('starting server');
 let socketList = [];
 let playerList = [];
+let playerList2 = [];
 let io = require('socket.io')(serv, {});
 let contTot = 0, contLocale = 0, contLobbies = 0;
 let lobbies = [];
 let lobby = [];
 let persone = 0;
-let player;
+let i = 0;
+
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -38,7 +40,6 @@ io.sockets.on('connection', function (socket) {
     console.log('socket id ' + socket.id);
     socketList[socket.id] = socket;
     
-    
     socket.on('getId', function (data) {
         console.log("sending id to client");
         socket.emit('id', { id: socket.id });
@@ -46,17 +47,25 @@ io.sockets.on('connection', function (socket) {
     });
     
     socket.on('getLobby', function (data) {
-		let name = data.name + " " + socket.id;
-        player = new Player(socket.id, socket, name);
-        console.log("player attributes: " + player.socket.id + " " + player.socket + " " + player.name);
-        playerList[socket.id] = player;
+        let player = new Player(socket.id, data.name);
+        //let playerAttributes = [];
+        playerList2[i] = player;
+        i++;
+        //playerList2[socket.id] = player;
+        //i++;
+        //console.log(playerList2[socket.id][0] + " " + playerList2[socket.id][1]);
+        //console.log("player attributes: " + player.name);
+        //playerList[socket.id] = player;
         socket.emit('setLobby', { lobbyID: 0 });
         persone++;
         if (persone == 6) {
-            io.emit('startGame');
-            
+            startGame();
+            sendPlayers();
+            //for (let j = 0; j < playerList2.length; j+2)
+              // console.log(playerList2[j] + " " + playerList2[j+1]);
+            //io.emit('startGame', { Players: playerList2 });
         }
-        startGame();
+        
         //lobby[contLocale] = socket;
         /*console.log('id in lobby ' + lobby[contLocale].id);
         socket.emit('setLobby', { lobbyID: contLobbies });
@@ -75,6 +84,15 @@ io.sockets.on('connection', function (socket) {
     });
 });
 
+let sendPlayers = function () {
+    let pack = [];
+    for (let i = 0; i < playerList2.length; i++) {
+        pack.push(playerList2[i]);
+    }
+    for (let i = 0; i < socketList.length; i++) {
+        socketList[i].emit('startGame', pack);
+    }
+}
 let startGame = function () {
     let squares = [];
     squares[0] = new Square(0); //go

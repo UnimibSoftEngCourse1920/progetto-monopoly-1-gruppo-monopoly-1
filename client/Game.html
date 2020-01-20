@@ -18,7 +18,7 @@
         }
 
         #row {
-            display:none;
+            display: none;
             margin-top: 0;
             padding: 0;
             text-align: center;
@@ -29,54 +29,73 @@
         }
     </style>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="http://localhost:1337/client/js/Classes.js"></script>
 </head>
 <body>
 	<div id="waitingDiv">
 		waiting...
 	</div>
-	<div id="row">
-		<div class="column" id="div1">
-			div1<br>ciao<br>
-		</div>
-		<div id="centro">
-			<canvas  id="board" ></canvas>
-		</div>
-		<div class="column" id="div2">
-			div2
-		</div>
-	</div>
+    <div id="row">
+        <div class="column" id="div1">
+            <div id="p1"></div><br>
+            <div id="p2"></div><br>
+            <div id="p3"></div>
+        </div>
+        <div id="centro">
+            <canvas id="board"></canvas>
+        </div>
+        <div class="column" id="div2">
+            <div id="p4"></div><br>
+            <div id="p5"></div><br>
+            <div id="p6"></div>
+        </div>
+    </div>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
 	let socket, id;
-	socket = io();
+    socket = io();
     socket.emit('getId');
 	socket.on('id', function (data) {
-			id = data.id;
+        id = data.id;
+        let playerName = "Player " + id;
+        socket.emit('getLobby', { name: playerName });
     })
+    
+    let lobbyID;
+	socket.on('setLobby', function (data) {
+		lobbyID = data.lobbyID;
+	})
 
-    socket.emit('getLobby', { name: "Player"});
-
-	let lobbyID;
-		socket.on('setLobby', function (data) {
-			lobbyID = data.lobbyID;
-		})
-
-    socket.on('startGame', function () {
+    let players = [];
+    let playersTemp = [];
+    let player;
+    let self;
+    socket.on('startGame', function (data) {
         waitingDiv.style.display = 'none';
         row.style.display = 'block';
         createCanvas();
+        playersTemp = data;
+        let cont = 1;
+        for (let i = 0; i < playersTemp.length; i ++) {
+            
+            player = new Player(playersTemp[i].id, playersTemp[i].name);
+            players[i] = player;
+            let p = "p" + cont;
+            cont++;
+            document.getElementById(p).innerHTML = "player: " + player.name  + " money: " + player.money;
+            console.log(playersTemp[i].id + " " + playersTemp[i].name);
+                
+            
+            
+        }
     })
 
     let dpi = window.devicePixelRatio;
     let img = new Image();
-    img.src = "http://localhost:1337/client/img/monopoly.png";
     let canvas = document.getElementById("board");
     let ctx = canvas.getContext("2d");
 
     let createCanvas = function () {
-        
-        
-        
         let H = $(window).height();
         let W = $(window).width();
         let a = (W - H) / 2;
@@ -84,9 +103,10 @@
         canvas.style.width = H - 10;
         $(".column").width(a);
         fix_dpi();
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
-        //img.onload = function () { 
-        //}
+        img.onload = function () { 
+             ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+        }
+        img.src = "http://localhost:1337/client/img/monopoly.png";
     }
     function fix_dpi() {
             let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
