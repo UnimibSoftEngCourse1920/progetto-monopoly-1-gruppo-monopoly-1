@@ -5,6 +5,7 @@ class GoToJailCard{
 
     excecute = function(player){
         player.setPos(30);
+        return 30;
     }
 
     printDescription = function(){

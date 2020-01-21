@@ -10,13 +10,14 @@ class PayPerBuildingCard{
         props = player.getProps();
 
         for(let i=0; i<props.length; i++){
-            if(props[i].instanceOf(HouseProperty))
+            if(props[i] instanceof HouseProperty)
                 if(props[i].getHouses() == 5)
                     total += amountPerHotel;
                 else
                     total += amountPerHouse*props[i].getHouses();
         }
         player.updateMoney(-total);
+        return -total;
     }
 
     printDescription = function(){

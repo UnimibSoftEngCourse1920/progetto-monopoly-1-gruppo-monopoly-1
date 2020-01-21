@@ -7,12 +7,14 @@ class GoOutOfJailCard{
         actualPos = player.getPos();
         jail = player.isInJail();
 
-        if(actualPos == /*bella domanda*/){
+        if(actualPos == 10){
             if(jail){
                 player.setJail(false);
-                //rollaggio dadi? non qui direi
+                return true;
             }
+            return false;
         }
+        return false;
     }
 
     printDescription = function(){

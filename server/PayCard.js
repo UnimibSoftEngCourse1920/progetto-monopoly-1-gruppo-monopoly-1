@@ -6,6 +6,7 @@ class PayCard{
 
     excecute = function(player){
         player.updateMoney(amount);
+        return amount;
     }
 
     printDescription = function(){

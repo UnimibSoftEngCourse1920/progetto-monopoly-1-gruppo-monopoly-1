@@ -7,9 +7,10 @@ class PayPlayerCard{
     excecute = function(player, players){
         player.updateMoney(-amount*players.length);
         for(let i=0; i < players.length; i++){
-            if(player.getId() != player[i].getId())
-                player[i].updateMoney(amount);
+            if(players.getId() != players[i].getId())
+                players[i].updateMoney(amount);
         }
+        return -amount;
     }
 
     printDescription = function(){
