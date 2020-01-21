@@ -91,6 +91,8 @@
         if (playersTemp[i].id == id)
           self = players[i];
       }
+      //rifacciamo il canvas con i giocatori nella posizione 0
+      paint();
   })
 
   let turn;
@@ -100,14 +102,26 @@
       startTurn();
   })
 
+
   let startTurn = function() {
     let x = rolldice();
 
     //qui mostriamo che dado è uscito
 
     socket.emit('dice', x);
+    updatePosition(x);
 
+    //gestire diverse caselle su cui si capita
 
+    //gestire operazioni di fine turno (scambi, costruzioni..)
+
+    //passa il turno a quello successivo
+  }
+
+  let updatePosition = function(diceNumber) {
+    oldPos = self.pos;
+    newPos = self.dicePos(diceNumber);
+    updatePosPlayer(self, oldPos, newPos);
   }
 
   let rolldice = function() {
@@ -125,20 +139,21 @@
       if (players[i] != self)
         if (players[i].id == player.id) {
           oldPos = players[i].pos;
-          players[i].pos = newPos;
-          updatePosPlayer(player, oldPos, newPos);
+          updatePosPlayer(players[i], oldPos, newPos);
         }
-    }
-    else {
-      oldPos = self.pos;
-      self.pos = newPos;
-      updatePosPlayer(self, oldPos, newPos);
     }
   })
 
   let updatePosPlayer = function(player, oldPos, newPos) {
-
+    player.setPos(newPos);
+    paint();
     //qui dobbiamo aggiornare la pos del player sullo schermo
+
+  }
+
+  let rectangleColours = [];
+  let rectangles = [];
+  let paint = function() {
 
   }
 

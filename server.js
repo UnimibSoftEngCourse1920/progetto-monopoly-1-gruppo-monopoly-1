@@ -29,6 +29,9 @@ let contTot = 0, contLocale = 0;
 let persone = 0;
 let i = 0;
 let turn;
+let squares = [];
+let chance;
+let communityChest;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -78,7 +81,8 @@ let generateTurn = function() {
 }
 
 let startGame = function () {
-    let squares = [];
+    chance = new Deck(true);
+    communityChest = new Deck(false);
     squares[0] = new Square(0); //go
     squares[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
     squares[2] = new CommunityChest(2);

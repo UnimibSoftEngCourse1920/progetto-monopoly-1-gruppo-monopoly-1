@@ -52,6 +52,9 @@ class Player {
         else
             setPos(sum);
     }
+    updatePosPlayer(newPos) {
+      
+    }
 }
 
 module.exports = Player;

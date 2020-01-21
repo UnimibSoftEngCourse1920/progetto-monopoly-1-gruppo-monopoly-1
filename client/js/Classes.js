@@ -6,4 +6,20 @@ class Player {
         this.pos = 0;
         this.props = [];
     }
+
+    dicePos(diceNumber) {
+        sum = this.pos + diceNumber;
+        if (sum > 39)
+            return sum - 40;
+        else
+            return sum;
+    }
+
+    getPos() {
+        return this.pos;
+    }
+
+    setPos(pos) {
+        this.pos = pos;
+    }
 }
