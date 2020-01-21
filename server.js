@@ -12,7 +12,7 @@ let Square = require('./server/Square');
 let Chance = require('./server/Chance');
 let CommunityChest = require('./server/CommunityChest');
 let IncomeTax = require('./server/IncomeTax');
-
+let Deck = require('./server/Deck');
 
 app.get('/', function (req, res) {
     console.log('client connected');
@@ -81,8 +81,8 @@ let generateTurn = function() {
 }
 
 let startGame = function () {
-    chance = new Deck(true);
-    communityChest = new Deck(false);
+    //chance = new Deck(true);
+    //communityChest = new Deck(false);
     squares[0] = new Square(0); //go
     squares[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
     squares[2] = new CommunityChest(2);

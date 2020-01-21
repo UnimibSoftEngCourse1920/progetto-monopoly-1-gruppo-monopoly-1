@@ -23,3 +23,11 @@ class Player {
         this.pos = pos;
     }
 }
+
+class Casella {
+  constructor(x, y, type) {
+    this.x = x;
+    this.y = y;
+    this.type = type;
+  }
+}

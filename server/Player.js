@@ -46,15 +46,15 @@ class Player {
     }
 
     dicePos(diceNumber) {
-        sum = this.pos + diceNumber;
-        if (sum > 39)
-            setPos(sum - 40);
-        else
-            setPos(sum);
+      let  sum = this.pos + diceNumber;
+        if (sum > 39) {
+            this.setPos(sum - 40);
+          }
+        else {
+            this.setPos(sum);
+        }
     }
-    updatePosPlayer(newPos) {
-      
-    }
-}
+ }
+
 
 module.exports = Player;

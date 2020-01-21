@@ -13,21 +13,21 @@ class Deck {
 			this.cards[8] = new PayCard("You inherit $100", 100);
 			this.cards[9] = new PayCard("From sale of stock you earn 50$", 50);
 			this.cards[10] = new PayCard("Holiday fund matures - collect 100$", 100);
-			this.cards[11] = new PayPerBuildingCard(45, 115, "You are assessed for street repairs – $40 per house, $115 per hotel");
+			this.cards[11] = new PayPerBuildingCard(45, 115, "You are assessed for street repairs ï¿½ $40 per house, $115 per hotel");
 			this.cards[12] = new PayPlayerCard(50, false, "Grand Opera Night - collect 50$ from each player");
-			this.cards[13] = new GetOutOfJailCard("Get out of jail free – this card may be kept until needed, or sold");
-			this.cards[14] = new GoToJailCard("Go to jail – go directly to jail – Do not pass Go, do not collect $200 ");
+			this.cards[13] = new GetOutOfJailCard("Get out of jail free ï¿½ this card may be kept until needed, or sold");
+			this.cards[14] = new GoToJailCard("Go to jail ï¿½ go directly to jail ï¿½ Do not pass Go, do not collect $200 ");
 			this.cards[15] = new GoToCard("Advance to Go, Collect 200$", 0);
 		}
 		else {
-			this.cards[0] = new GetOutOfJailCard("Get out of jail free – this card may be kept until needed, or sold");
+			this.cards[0] = new GetOutOfJailCard("Get out of jail free ï¿½ this card may be kept until needed, or sold");
 			this.cards[1] = new GoToCard("Advance to Go, Collect 200$", 0);
 			this.cards[2] = new GoToCard("Advance to Illinois Avenue, collect 200 if you pass go", 24);
 			this.cards[3] = new GoToCard("Advance to St. Charles Place, collect 200 if you pass go", 11);
 			this.cards[4] = new PayCard("Bank pays you dividend of $50 ", 50);
 			this.cards[5] = new MoveBackCard(3, "Go back 3 spaces");
-			this.cards[6] = new GoToJailCard("Go to jail – go directly to jail – Do not pass Go, do not collect $200 ");
-			this.cards[7] = new PayPerBuildingCard(25, 100, "Make general repairs on all your property – $25 per house, $100 per hotel");
+			this.cards[6] = new GoToJailCard("Go to jail ï¿½ go directly to jail ï¿½ Do not pass Go, do not collect $200 ");
+			this.cards[7] = new PayPerBuildingCard(25, 100, "Make general repairs on all your property ï¿½ $25 per house, $100 per hotel");
 			this.cards[8] = new PayCard("Pay poor tax of $15 ", -15);
 			this.cards[9] = new GoToCard("Take a trip to Reading Railroad, if you pass go collect 200", 5);
 			this.cards[10] = new GoToCard("Advance to Boardwalk", 39);
@@ -63,3 +63,5 @@ class Deck {
 		return temp;
 	}
 }
+
+module.exports = Deck;
