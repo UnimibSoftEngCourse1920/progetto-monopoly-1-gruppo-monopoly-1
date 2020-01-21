@@ -23,65 +23,41 @@ serv.listen(1337);
 
 console.log('starting server');
 let socketList = [];
-let playerList = [];
 let playerList2 = [];
 let io = require('socket.io')(serv, {});
-let contTot = 0, contLocale = 0, contLobbies = 0;
-let lobbies = [];
-let lobby = [];
+let contTot = 0, contLocale = 0;
 let persone = 0;
 let i = 0;
-
+let turn;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
     contTot++;
-    console.log('socket connection');
-    console.log('socket id ' + socket.id);
+    console.log('socket connection ' + socket.id);
     socketList[socket.id] = socket;
-    
+
     socket.on('getId', function (data) {
         console.log("sending id to client");
         socket.emit('id', { id: socket.id });
-        //socket.game = data.game;
     });
-    
+
     socket.on('getLobby', function (data) {
-        let player = new Player(socket.id, data.name);
-        //let playerAttributes = [];
-        playerList2[i] = player;
-        i++;
-        //playerList2[socket.id] = player;
-        //i++;
-        //console.log(playerList2[socket.id][0] + " " + playerList2[socket.id][1]);
-        //console.log("player attributes: " + player.name);
-        //playerList[socket.id] = player;
-        socket.emit('setLobby', { lobbyID: 0 });
-        persone++;
-        if (persone == 6) {
-            startGame();
-            sendPlayers();
-            //for (let j = 0; j < playerList2.length; j+2)
-              // console.log(playerList2[j] + " " + playerList2[j+1]);
-            //io.emit('startGame', { Players: playerList2 });
-        }
-        
-        //lobby[contLocale] = socket;
-        /*console.log('id in lobby ' + lobby[contLocale].id);
-        socket.emit('setLobby', { lobbyID: contLobbies });
-        if (lobby.length == 6) {
-            contLocale = 0;
-            lobbies[contLobbies] = lobby;
-            lobby = [];
-            console.log('lobby number ' + contLobbies);
-            let x;
-            for (x of lobbies[contLobbies])
-                console.log(x.id);
-            contLobbies++;
-        }
-        else
-            contLocale++;*/
+      let player = new Player(socket.id, data.name);
+      playerList2[i] = player;
+      i++;
+      socket.emit('setLobby', { lobbyID: 0 });
+      persone++;
+      if (persone == 6) {
+        startGame();
+        sendPlayers();
+        generateTurn();
+      }
     });
+
+    socket.on('dice', function(data) {
+      let player = updatePosition(playerList2[socket.id], data);
+      sendPosUpdate(player);
+    })
 });
 
 let sendPlayers = function () {
@@ -93,6 +69,14 @@ let sendPlayers = function () {
         socketList[i].emit('startGame', pack);
     }
 }
+
+let generateTurn = function() {
+  let x = Math.floor(Math.random()*6);
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('turn', x);
+  }
+}
+
 let startGame = function () {
     let squares = [];
     squares[0] = new Square(0); //go
@@ -126,7 +110,7 @@ let startGame = function () {
     squares[28] = new Services(28, "Water Works", 150);
     squares[29] = new HouseProperty(29, "Marvin Gardens", 280, [24, 120, 360, 850, 1025, 1200], 150, "yellow");
     squares[30] = new Square(30); //go to jail
-    squares[31] = new HouseProperty(31, "Pacific Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green"); 
+    squares[31] = new HouseProperty(31, "Pacific Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green");
     squares[32] = new HouseProperty(32, "North Carolina Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green");
     squares[33] = new CommunityChest(33);
     squares[34] = new HouseProperty(34, "Pennsylvania Avenue", 320, [28, 150, 450, 1000, 1200, 1400], 200, "green");
@@ -134,12 +118,16 @@ let startGame = function () {
     squares[36] = new Chance(36);
     squares[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "dark blue");
     squares[38] = new IncomeTax(38);
-    squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue"); 
-
-    createPlayers();
-
+    squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue");
 }
 
-let createPlayers = function () {
+let updatePosition = function(player, diceNumber) {
+  player.dicePos(diceNumber);
+  return player;
+}
 
+let sendPosUpdate = function(player) {
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('updatePosPlayer', player);
+  }
 }

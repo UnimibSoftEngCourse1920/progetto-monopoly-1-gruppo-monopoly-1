@@ -30,6 +30,7 @@
     </style>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
 	<div id="waitingDiv">
@@ -50,70 +51,123 @@
             <div id="p6"></div>
         </div>
     </div>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
 	let socket, id;
-    socket = io();
-    socket.emit('getId');
+  socket = io();
+  socket.emit('getId');
+
 	socket.on('id', function (data) {
         id = data.id;
         let playerName = "Player " + id;
         socket.emit('getLobby', { name: playerName });
     })
-    
-    let lobbyID;
+
+  let lobbyID;
 	socket.on('setLobby', function (data) {
 		lobbyID = data.lobbyID;
 	})
 
-    let players = [];
-    let playersTemp = [];
-    let player;
-    let self;
-    socket.on('startGame', function (data) {
-        waitingDiv.style.display = 'none';
-        row.style.display = 'block';
-        createCanvas();
-        playersTemp = data;
-        let cont = 1;
-        for (let i = 0; i < playersTemp.length; i ++) {
-            
-            player = new Player(playersTemp[i].id, playersTemp[i].name);
-            players[i] = player;
-            let p = "p" + cont;
-            cont++;
-            document.getElementById(p).innerHTML = "player: " + player.name  + " money: " + player.money;
-            console.log(playersTemp[i].id + " " + playersTemp[i].name);
-                
-            
-            
-        }
-    })
+  let players = [];
+  let playersTemp = [];
+  let player;
+  let self;
 
-    let dpi = window.devicePixelRatio;
-    let img = new Image();
-    let canvas = document.getElementById("board");
-    let ctx = canvas.getContext("2d");
+  socket.on('startGame', function (data) {
+      waitingDiv.style.display = 'none';
+      row.style.display = 'block';
+      createCanvas();
+      playersTemp = data;
+      let cont = 1;
+      for (let i = 0; i < playersTemp.length; i ++) {
+          player = new Player(playersTemp[i].id, playersTemp[i].name);
+          players[i] = player;
+          let p = "p" + cont;
+          cont++;
+          document.getElementById(p).innerHTML = "player: " + player.name  + " money: " + player.money;
+          console.log(playersTemp[i].id + " " + playersTemp[i].name);
+      }
+      for (let i = 0; i < playersTemp.length; i ++) {
+        players[i] = playersTemp[i];
+        if (playersTemp[i].id == id)
+          self = players[i];
+      }
+  })
 
-    let createCanvas = function () {
-        let H = $(window).height();
-        let W = $(window).width();
-        let a = (W - H) / 2;
-        canvas.style.height = H - 10;
-        canvas.style.width = H - 10;
-        $(".column").width(a);
-        fix_dpi();
-        img.onload = function () { 
-             ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+  let turn;
+  socket.on('turn', function(data) {
+    turn = data;
+    if (turn == self.id)
+      startTurn();
+  })
+
+  let startTurn = function() {
+    let x = rolldice();
+
+    //qui mostriamo che dado è uscito
+
+    socket.emit('dice', x);
+
+
+  }
+
+  let rolldice = function() {
+    let min = 1;
+    let max = 12;
+    x = Math.floor(Math.random() * (max - min) + min) + 1;
+    return x;
+  }
+
+  socket.on('updatePosPlayer' function(data){
+    let player = data;
+    let newPos = player.pos;
+    let oldPos;
+    for (let i = 0; i < players.length; i ++) {
+      if (players[i] != self)
+        if (players[i].id == player.id) {
+          oldPos = players[i].pos;
+          players[i].pos = newPos;
+          updatePosPlayer(player, oldPos, newPos);
         }
-        img.src = "http://localhost:1337/client/img/monopoly.png";
     }
-    function fix_dpi() {
-            let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
-            let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
-            canvas.setAttribute('height', style_height * dpi);
-            canvas.setAttribute('width', style_width * dpi);
-        }
+    else {
+      oldPos = self.pos;
+      self.pos = newPos;
+      updatePosPlayer(self, oldPos, newPos);
+    }
+  })
+
+  let updatePosPlayer = function(player, oldPos, newPos) {
+
+    //qui dobbiamo aggiornare la pos del player sullo schermo
+
+  }
+
+  let dpi = window.devicePixelRatio;
+  let img = new Image();
+  let canvas = document.getElementById("board");
+  let ctx = canvas.getContext("2d");
+
+  let createCanvas = function () {
+    let H = $(window).height();
+    let W = $(window).width();
+    let a = (W - H) / 2;
+    canvas.style.height = H - 10;
+    canvas.style.width = H - 10;
+    $(".column").width(a);
+    fix_dpi();
+    img.onload = function () {
+       ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+    }
+    img.src = "http://localhost:1337/client/img/monopoly.png";
+  }
+
+  function fix_dpi() {
+    let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+    let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+    canvas.setAttribute('height', style_height * dpi);
+    canvas.setAttribute('width', style_width * dpi);
+  }
+
 </script>
 
 </body>

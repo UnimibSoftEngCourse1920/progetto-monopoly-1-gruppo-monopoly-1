@@ -48,9 +48,9 @@ class Player {
     dicePos(diceNumber) {
         sum = this.pos + diceNumber;
         if (sum > 39)
-            pos(sum - 40);
+            setPos(sum - 40);
         else
-            pos(sum);
+            setPos(sum);
     }
 }
 
