@@ -32,7 +32,7 @@ let turn;
 let squares = [];
 let chance;
 let communityChest;
-let dice = 0;
+let diceTotal = 0;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -94,7 +94,7 @@ let startGame = function () {
     squares[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
     squares[2] = new CommunityChest(2);
     squares[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown");
-    squares[4] = new IncomeTax(4);
+    squares[4] = new IncomeTax(4, 100);
     squares[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200]);
     squares[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "light blue");
     squares[7] = new Chance(7);
@@ -128,7 +128,7 @@ let startGame = function () {
     squares[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200]);
     squares[36] = new Chance(36);
     squares[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "dark blue");
-    squares[38] = new IncomeTax(38);
+    squares[38] = new IncomeTax(38, 200);
     squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue");
 }
 
@@ -144,16 +144,17 @@ let sendPosUpdate = function(player) {
 }
 
 let handlePlayer = function(player){
-  actualPos = player.getPos();
-  square = squares[actualPos];
+  pos = player.getPos();
+  square = squares[pos];
   owner = square.getOwner();
-  playerSocket = socketList[playerId];
-
+  playerId = player.getId();
+  playerSocket = socketList[playerId]; 
+  //promemoria: handler per ogni tipo di square
   if(square instanceof HouseProperty || square instanceof Station){
     rent = square.getRent();
 
     if(owner != null){
-      if(owner.getId() != player.getId()){  
+      if(owner.getId() != playerId){  
         consoler.log("this property is owned by " + owner.getName());
         if(square.getState() == 'active')
           payRent(rent, player, owner);
@@ -170,12 +171,11 @@ let handlePlayer = function(player){
   } 
   else if(square instanceof Services){
     mult = 0;
-    rent = dice;
+    rent = diceTotal;
 
     if(owner != null){
-      mult = checkServices(owner);
-
-      if(owner.getId() != player.getId()){
+      mult = checkServices(owner); //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
+      if(owner.getId() != playerId){
         consoler.log("this property is owned by " + owner.getName());
         if(square.getState() == 'active')
           payRent(rent*mult, player, owner);
@@ -185,8 +185,26 @@ let handlePlayer = function(player){
     }
     else{
       consoler.log("you landed on an unowned property");      
-      playerSocket.emit('unownedProperty'); //cliente decide se comprare o meno square
+      playerSocket.emit('unownedProperty'); //client decide se comprare o meno square
     }
+  }
+  else if(square instanceof IncomeTax){
+    tax = square.getTax();
+    player.updateMoney(-tax);
+    playerSocket.emit('payTax', tax);
+
+    for(let i = 0; i < socketList.length; i++){
+      if(i != playerId) //per ora playerId = socket[playerId]
+        socketList[i].emit('changeView', playerId); //cambia il balance di player nell'HTML dei client
+    }
+  }
+  else if(square instanceof Chance){
+    card = chance.getCard();
+    //handler per le probabilità
+  }
+  else if(square instanceof CommunityChest){
+    card = communityChest.getCard();
+    //handler per gli imprevisti
   }
 }
 
@@ -194,21 +212,20 @@ let payRent = function(rent, player, owner){
   consoler.log("you must pay him " + rent);
   player.updateMoney(-rent);
   owner.updateMoney(rent);
-  ownerId = owner.getId();
-  playerId = player.getId();
   pack = [];
   pack.push(rent);
   pack.push(player);
   pack.push(owner);
 
-  for(let i = 0; i < socketList.length; i++){
+  for(let i = 0; i < socketList.length; i++)
       socketList[i].emit('payRent', pack); //i client si aggiornano: se sei owner o player updateMoney, se non lo sei aggiorno il div
-  }
+  
 }
 
 let checkServices = function(owner){
   count = 0;
   services = owner.getServices();
+
   for(let i=0; i<serices.length; i++){
    if(services[i] != null)
     count++;
