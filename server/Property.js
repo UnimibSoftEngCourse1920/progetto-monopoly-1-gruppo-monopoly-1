@@ -9,6 +9,7 @@ class Property extends Square {
         this.mortgagePercent = 0.1 * mortgage;
         this.unmortagePrice = this.mortgage + this.mortgagePercent;
         this.rent = rent;
+        this.owner = null;
         this.state = 'active';
     }
 
@@ -28,7 +29,13 @@ class Property extends Square {
         this.state = 'active';
     }
 
-}
+    getOwner(){
+        return this.owner;
+    }
 
+    getState(){
+        return this.state;
+    }
+}
 
 module.exports = Property;
