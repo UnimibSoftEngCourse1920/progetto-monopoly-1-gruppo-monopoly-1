@@ -58,6 +58,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('dice', function(data) {
+      
       let player = updatePosition(playerList2[socket.id], data);
       sendPosUpdate(player);
     })
@@ -147,7 +148,7 @@ let handlePlayer = function(player){
   owner = square.getOwner();
   playerSocket = socketList[playerId];
 
-  if(square instanceof HouseProperty){
+  if(square instanceof HouseProperty || square instanceof Station){
     rent = square.getRent();
 
     if(owner != null){
@@ -166,6 +167,9 @@ let handlePlayer = function(player){
       playerSocket.emit('unownedProperty'); //cliente decide se comprare o meno square
     }
   } 
+  else if(square instanceof Services){
+
+  }
 }
 
 let payRent = function(rent, player, owner){
