@@ -32,6 +32,7 @@ let turn;
 let squares = [];
 let chance;
 let communityChest;
+let dice = 0;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -58,7 +59,7 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('dice', function(data) {
-      
+      dice = data;
       let player = updatePosition(playerList2[socket.id], data);
       sendPosUpdate(player);
     })
@@ -168,7 +169,24 @@ let handlePlayer = function(player){
     }
   } 
   else if(square instanceof Services){
+    mult = 0;
+    rent = dice;
 
+    if(owner != null){
+      mult = checkServices(owner);
+
+      if(owner.getId() != player.getId()){
+        consoler.log("this property is owned by " + owner.getName());
+        if(square.getState() == 'active')
+          payRent(rent*mult, player, owner);
+        else
+          consoler.log("you're lucky, this property is mortgaged");
+      }
+    }
+    else{
+      consoler.log("you landed on an unowned property");      
+      playerSocket.emit('unownedProperty'); //cliente decide se comprare o meno square
+    }
   }
 }
 
@@ -186,4 +204,17 @@ let payRent = function(rent, player, owner){
   for(let i = 0; i < socketList.length; i++){
       socketList[i].emit('payRent', pack); //i client si aggiornano: se sei owner o player updateMoney, se non lo sei aggiorno il div
   }
+}
+
+let checkServices = function(owner){
+  count = 0;
+  services = owner.getServices();
+  for(let i=0; i<serices.length; i++){
+   if(services[i] != null)
+    count++;
+  }
+  if(count==1){
+   return 4;
+  }
+  return 10;
 }

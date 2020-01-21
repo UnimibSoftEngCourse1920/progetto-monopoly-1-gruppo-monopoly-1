@@ -6,6 +6,7 @@ class Player {
         this.money = 1500;
         this.pos = 0;
         this.props = [];
+        this.services = [];
         this.jail = false;
     }
 
@@ -70,6 +71,9 @@ class Player {
         this.jail = jail;
     }
 
+    getServices(){
+        return this.services;
+    }
 }
 
 module.exports = Player;
