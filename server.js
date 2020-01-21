@@ -61,6 +61,7 @@ io.sockets.on('connection', function (socket) {
         if (persone == 6) {
             startGame();
             sendPlayers();
+            
             //for (let j = 0; j < playerList2.length; j+2)
               // console.log(playerList2[j] + " " + playerList2[j+1]);
             //io.emit('startGame', { Players: playerList2 });

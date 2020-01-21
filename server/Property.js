@@ -27,6 +27,8 @@ class Property extends Square {
     unmortgage() {
         this.state = 'active';
     }
+
 }
+
 
 module.exports = Property;

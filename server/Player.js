@@ -6,6 +6,7 @@ class Player {
         this.money = 1500;
         this.pos = 0;
         this.props = [];
+        this.jail = false;
     }
 
     addProp(prop) {
@@ -52,6 +53,23 @@ class Player {
         else
             pos(sum);
     }
+
+    getId(){
+        return this.id;
+    }
+
+    getProps(){
+        return this.props;
+    }
+
+    isInJail(){
+        return this.jail;
+    }
+
+    setJail(jail){
+        this.jail = jail;
+    }
+
 }
 
 module.exports = Player;

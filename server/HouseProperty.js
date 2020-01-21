@@ -28,7 +28,14 @@ class HouseProperty extends Property {
         else
             return false;
     }
+    
+    getHouses(){
+        return this.houses;
+    }
 
+    getBuildPrice(){
+        return this.houseBuildPrice;
+    }
 }
 
 module.exports = HouseProperty;
