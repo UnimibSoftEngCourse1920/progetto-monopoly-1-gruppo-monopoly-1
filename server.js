@@ -64,8 +64,7 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('handlePlayer', function(data){
         let player = data;
-        actualPos = player.getPos();
-        handlePlayer(player, actualPos);
+        handlePlayer(player);
     })
 });
 
@@ -142,16 +141,17 @@ let sendPosUpdate = function(player) {
   }
 }
 
-let handlePlayer = function(player, pos){
-  square = squares[pos];
+let handlePlayer = function(player){
+  actualPos = player.getPos();
+  square = squares[actualPos];
   owner = square.getOwner();
-  playerId = player.getId();
+  playerSocket = socketList[playerId];
 
   if(square instanceof HouseProperty){
     rent = square.getRent();
 
     if(owner != null){
-      if(owner.getId() != playerId){  
+      if(owner.getId() != player.getId()){  
         consoler.log("this property is owned by " + owner.getName());
         if(square.getState() == 'active')
           payRent(rent, player, owner);
@@ -163,15 +163,23 @@ let handlePlayer = function(player, pos){
     }
     else{
       consoler.log("you landed on an unowned property");      
-      socket.emit('unownedProperty', player)
+      playerSocket.emit('unownedProperty'); //cliente decide se comprare o meno square
     }
   } 
-    
-})
+}
 
-let payRent(rent, player, owner){
+let payRent = function(rent, player, owner){
   consoler.log("you must pay him " + rent);
   player.updateMoney(-rent);
   owner.updateMoney(rent);
-  socket.emit('payRent', rent, player, owner);
+  ownerId = owner.getId();
+  playerId = player.getId();
+  pack = [];
+  pack.push(rent);
+  pack.push(player);
+  pack.push(owner);
+
+  for(let i = 0; i < socketList.length; i++){
+      socketList[i].emit('payRent', pack); //i client si aggiornano: se sei owner o player updateMoney, se non lo sei aggiorno il div
+  }
 }
