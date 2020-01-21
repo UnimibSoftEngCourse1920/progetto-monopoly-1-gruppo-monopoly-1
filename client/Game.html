@@ -124,21 +124,54 @@
       }
       createCanvas();
       //rifacciamo il canvas con i giocatori nella posizione 0
-      paint();
+      //paint();
   });
 
-  let calcola = function(i) {
+  let dpi = window.devicePixelRatio;
+  let img = new Image();
+  let canvas = document.getElementById("board");
+  let ctx = canvas.getContext("2d");
+
+  let createCanvas = function () {
+    let H = $(window).height();
+    let W = $(window).width();
+    let a = (W - H) / 2;
+    canvas.style.height = H - 10;
+    canvas.style.width = H - 10;
+    let boardW=$("#centro").width();
+    let cas= boardW*(200/1500);
+    $(".column").width(a);
+    $("#gestore").width(boardW-(cas*2));
+    $("#gestore").offset({ top: cas+100,left:cas + $(".column").width() });
+    fix_dpi();
+    createSquares();
+    img.onload = function () {
+      paint();
+       //ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+    }
+    img.src = "http://localhost:1337/client/img/monopoly.png";
+  }
+
+  function fix_dpi() {
+    let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+    let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+    canvas.setAttribute('height', style_height * dpi);
+    canvas.setAttribute('width', style_width * dpi);
+  }
+
+  /*let calcola = function(i) {
     let boardW=$("#board").width();
     let w=boardW/1500;
     return (i*w);
-  }
+  }*/
 
   let createSquares = function() {
-    let boardW=$("#board").width();
+    //let boardW=$("#board").width();
+    let boardW = canvas.width;
     let w=boardW/1500;
-    /*let calcola=function(i){
+    let calcola=function(i){
       return (i*w);
-    }*/
+    }
     let width = calcola(35);
     for (let i = 0; i < players.length; i ++) {
       players[i].pedina.setDimensions(width, width);
@@ -287,36 +320,7 @@
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }
 
-  let dpi = window.devicePixelRatio;
-  let img = new Image();
-  let canvas = document.getElementById("board");
-  let ctx = canvas.getContext("2d");
 
-  let createCanvas = function () {
-    let H = $(window).height();
-    let W = $(window).width();
-    let a = (W - H) / 2;
-    canvas.style.height = H - 10;
-    canvas.style.width = H - 10;
-    let boardW=$("#centro").width();
-	  let cas= boardW*(200/1500);
-    $(".column").width(a);
-    $("#gestore").width(boardW-(cas*2));
-	  $("#gestore").offset({ top: cas+100,left:cas + $(".column").width() });
-    fix_dpi();
-    createSquares();
-    img.onload = function () {
-       ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
-    }
-    img.src = "http://localhost:1337/client/img/monopoly.png";
-  }
-
-  function fix_dpi() {
-    let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
-    let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
-    canvas.setAttribute('height', style_height * dpi);
-    canvas.setAttribute('width', style_width * dpi);
-  }
 
   let paint = function() {
     ctx.clearRect(0, 0, canvas.width, canvas.width);
