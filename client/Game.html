@@ -310,7 +310,7 @@
 
   socket.on('receiveDice', function(data) {
 
-    printDice(players[data[0]], data[1]);
+    printDice(players[data[0]], data[1][0], data[1][1]);
 
   })
 
