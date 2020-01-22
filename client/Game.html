@@ -295,12 +295,30 @@
   let rolldice = function() {
     dado.style.visibility='hidden';
     let min = 1;
-    let max = 12;
-    x = Math.floor(Math.random() * (max - min) + min) + 1;
-    socket.emit('dice', x);
-    updatePosition(x);
+    let max = 7;
+    let x = Math.floor(Math.random() * (max - min)) + 1;
+    let y = Math.floor(Math.random() * (max - min)) + 1;
+
+    printDice(self, x, y);
+    let pack = [];
+    pack.push(x);
+    pack.push(y);
+    socket.emit('dice', pack);
+    updatePosition(x+y);
+    socket.emit('endTurn');
   }
 
+  socket.on('receiveDice', function(data) {
+
+    printDice(players[data[0]], data[1][0], data[1][1]);
+
+  })
+
+  let printDice = function(player, dice1, dice2) {
+
+    //qui stampiamo che dado è uscito
+
+  }
   socket.on('updatePosPlayer', function(data){
     let player = data;
     let newPos = player.pos;
