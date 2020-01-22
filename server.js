@@ -58,10 +58,30 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('dice', function(data) {
-      let player = updatePosition(playerList2[socket.id], data);
+      let player = updatePosition(playerList2[socket.id], data[0]+data[1]);
       sendPosUpdate(player);
-    })
+
+      //diciamo agli altri che quale giocatore ha tirato e che dado è uscito
+
+      sendDice(player, data);
+    });
+
+    socket.on('endTurn', function() {
+      if (turn == playerList2.length-1)
+        turn = 0;
+      else
+        turn ++;
+      sendTurn();
+    });
 });
+
+let sendDice = function(player, dice) {
+  let pack = [player.id, dice];
+  for (let i = 0; i < socketList.length; i++) {
+    if (i != player.id)
+      socketList[i].emit('receiveDice', pack);
+  }
+}
 
 let sendPlayers = function () {
     let pack = [];
@@ -74,9 +94,13 @@ let sendPlayers = function () {
 }
 
 let generateTurn = function() {
-  let x = Math.floor(Math.random()*6);
+  turn = Math.floor(Math.random()*6);
+  sendTurn();
+}
+
+let sendTurn = function() {
   for (let i = 0; i < socketList.length; i++) {
-      socketList[i].emit('turn', x);
+      socketList[i].emit('turn', turn);
   }
 }
 
