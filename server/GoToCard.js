@@ -4,7 +4,7 @@ class GoToCard{
         this.squareIndex = squareIndex;
     }
 
-    excecute = function(player){
+    execute = function(player){
         actualPos = player.getPos();
         if (actualPos != squareIndex){
             if(actualPos < squareIndex){    

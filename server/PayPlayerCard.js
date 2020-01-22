@@ -4,7 +4,7 @@ class PayPlayerCard{
         this.description = description;
     }
 
-    excecute = function(player, players){
+    execute = function(player, players){
         player.updateMoney(-amount*players.length);
         for(let i=0; i < players.length; i++){
             if(players.getId() != players[i].getId())

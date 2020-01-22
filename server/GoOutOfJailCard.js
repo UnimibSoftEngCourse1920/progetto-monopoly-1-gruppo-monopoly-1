@@ -3,7 +3,7 @@ class GoOutOfJailCard{
         this.description = description;
     }
 
-    excecute = function(player){
+    execute = function(player){
         actualPos = player.getPos();
         jail = player.isInJail();
 

@@ -5,7 +5,7 @@ class PayPerBuildingCard{
         this.description = description;
     }
 
-    excecute = function(player){
+    execute = function(player){
         total = 0;
         props = player.getProps();
 

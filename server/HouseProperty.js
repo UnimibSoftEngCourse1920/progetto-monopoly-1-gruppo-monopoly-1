@@ -36,6 +36,7 @@ class HouseProperty extends Property {
     getBuildPrice(){
         return this.houseBuildPrice;
     }
+
 }
 
 module.exports = HouseProperty;

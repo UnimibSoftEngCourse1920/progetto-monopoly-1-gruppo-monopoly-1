@@ -32,7 +32,7 @@ let turn;
 let squares = [];
 let chance;
 let communityChest;
-let diceTotal = 0;
+let diceTotal;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -59,9 +59,9 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('dice', function(data) {
-      dice = data;
+      diceTotal = data;
       let player = updatePosition(playerList2[socket.id], data);
-      sendPosUpdate(player);
+      sendPosUpdate(player, 'you rolled the dice');
     })
 
     socket.on('handlePlayer', function(data){
@@ -137,13 +137,19 @@ let updatePosition = function(player, diceNumber) {
   return player;
 }
 
-let sendPosUpdate = function(player) {
+let sendPosUpdate = function(player, description) {
+  pack = [];
+  pack.push(player);
+  pack.push(description);
+
   for (let i = 0; i < socketList.length; i++) {
-      socketList[i].emit('updatePosPlayer', player);
+      socketList[i].emit('updatePosPlayer', pack);
   }
 }
 
 let handlePlayer = function(player){
+  let handler;
+  let cardHandler;
   pos = player.getPos();
   square = squares[pos];
   owner = square.getOwner();
@@ -151,42 +157,14 @@ let handlePlayer = function(player){
   playerSocket = socketList[playerId]; 
   //promemoria: handler per ogni tipo di square
   if(square instanceof HouseProperty || square instanceof Station){
-    rent = square.getRent();
-
-    if(owner != null){
-      if(owner.getId() != playerId){  
-        consoler.log("this property is owned by " + owner.getName());
-        if(square.getState() == 'active')
-          payRent(rent, player, owner);
-        else
-          consoler.log("you're lucky, this property is mortgaged");
-      }
-      else
-        consoler.log("you landed on a property of yours");
-    }
-    else{
-      consoler.log("you landed on an unowned property");      
-      playerSocket.emit('unownedProperty'); //cliente decide se comprare o meno square
-    }
+    handler = new HSHandler(player);
+    let res = handler.handle();
+    //payRent che chiama sendUpdateMoney
   } 
   else if(square instanceof Services){
-    mult = 0;
-    rent = diceTotal;
-
-    if(owner != null){
-      mult = checkServices(owner); //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
-      if(owner.getId() != playerId){
-        consoler.log("this property is owned by " + owner.getName());
-        if(square.getState() == 'active')
-          payRent(rent*mult, player, owner);
-        else
-          consoler.log("you're lucky, this property is mortgaged");
-      }
-    }
-    else{
-      consoler.log("you landed on an unowned property");      
-      playerSocket.emit('unownedProperty'); //client decide se comprare o meno square
-    }
+    handler = new ServicesHandler(player, diceTotal);
+    let res = handler.handle();
+    //payRent che chiama sendUpdateMoney
   }
   else if(square instanceof IncomeTax){
     tax = square.getTax();
@@ -198,40 +176,46 @@ let handlePlayer = function(player){
         socketList[i].emit('changeView', playerId); //cambia il balance di player nell'HTML dei client
     }
   }
-  else if(square instanceof Chance){
-    card = chance.getCard();
-    //handler per le probabilità
+  else if(square instanceof Chance || square instanceof CommunityChest){
+    if(square instanceof Chance)
+      card = chance.getCard();
+    else 
+      card = communityChest.getCard();
+    
+    if(card instanceof PayCard){
+      let res = card.excecute();
+      //sendMoneyUpdate()
+    }
+    else if(card instanceof GoToCard || card instanceof GoToJail){
+      let pos = card.excecute();
+      let dsc = card.printDescription();
+      if(pos == 10){} //prigione
+      sendPosUpdate(player, dsc);
+      //handle successivo riguardo a nuova casella
+      
+    }
+    else if(card instanceof CloseServicesCard || card instanceof CloseStationCard){
+      let pack = card.excecute(player);
+      let dsc = card.printDescription();
+      sendPosUpdate(player, dsc);
+      //handle successivo riguardo a nuova casella
+    }
   }
-  else if(square instanceof CommunityChest){
-    card = communityChest.getCard();
-    //handler per gli imprevisti
+  else if(square instanceof Go){
+    player.updateMoney(200);
+    //comunica a clients e setta su giocatore;
   }
-}
+  else if(square instanceof GoToJail){
+    
+  }
+} 
 
 let payRent = function(rent, player, owner){
-  consoler.log("you must pay him " + rent);
+  console.log("you must pay him " + rent);
   player.updateMoney(-rent);
   owner.updateMoney(rent);
   pack = [];
   pack.push(rent);
   pack.push(player);
   pack.push(owner);
-
-  for(let i = 0; i < socketList.length; i++)
-      socketList[i].emit('payRent', pack); //i client si aggiornano: se sei owner o player updateMoney, se non lo sei aggiorno il div
-  
-}
-
-let checkServices = function(owner){
-  count = 0;
-  services = owner.getServices();
-
-  for(let i=0; i<serices.length; i++){
-   if(services[i] != null)
-    count++;
-  }
-  if(count==1){
-   return 4;
-  }
-  return 10;
 }

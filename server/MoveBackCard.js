@@ -4,7 +4,7 @@ class MoveBackCard{
         this.description = description;
     }
 
-    excecute = function(player){
+    execute = function(player){
         actualPos = player.getPos();
         newPos = actualPos - spaces;
 

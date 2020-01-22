@@ -4,8 +4,7 @@ class PayCard{
         this.amount = amount;
     }
 
-    excecute = function(player){
-        player.updateMoney(amount);
+    execute = function(){
         return amount;
     }
 

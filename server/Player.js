@@ -7,10 +7,12 @@ class Player {
         this.pos = 0;
         this.props = [];
         this.services = [];
+        this.stations = [];
         this.jail = false;
     }
 
     addProp(prop) {
+        //controlli sul tipo di prop
         this.props.push(prop);
     }
 
@@ -73,6 +75,10 @@ class Player {
 
     getServices(){
         return this.services;
+    }
+
+    getName(){
+        return this.name;
     }
 }
 

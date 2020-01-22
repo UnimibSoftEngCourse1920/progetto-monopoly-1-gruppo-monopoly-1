@@ -3,9 +3,8 @@ class GoToJailCard{
         this.description = description;
     }
 
-    excecute = function(player){
-        player.setPos(30);
-        return 30;
+    execute = function(){
+        return 10;
     }
 
     printDescription = function(){
