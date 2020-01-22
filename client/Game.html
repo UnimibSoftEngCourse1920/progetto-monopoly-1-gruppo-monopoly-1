@@ -286,10 +286,11 @@
 
   }
 
-  let updatePosition = function(diceNumber) {
+  let updatePosition = function(diceNumber, str) {
     oldPos = self.pos;
     newPos = self.dicePos(diceNumber);
-    updatePosPlayer(self, oldPos, newPos);
+    socket.emit("handlePlayer", self);
+    updatePosPlayer(self, oldPos, newPos, str);
   }
 
   let rolldice = function() {
@@ -298,42 +299,39 @@
     let max = 7;
     let x = Math.floor(Math.random() * (max - min)) + 1;
     let y = Math.floor(Math.random() * (max - min)) + 1;
-
-    printDice(self, x, y);
+    let str = 'you rolled the dice ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
     pack.push(y);
     socket.emit('dice', pack);
     updatePosition(x+y);
+
+
+    //dovremo spostare
     socket.emit('endTurn');
   }
 
-  socket.on('receiveDice', function(data) {
-
-    printDice(players[data[0]], data[1][0], data[1][1]);
-
-  })
-
-  let printDice = function(player, dice1, dice2) {
-
-    //qui stampiamo che dado è uscito
+  let updateScroll(str) {
 
   }
   socket.on('updatePosPlayer', function(data){
-    let player = data;
+    let player = data[0];
+    let desc = data[1];
     let newPos = player.pos;
     let oldPos;
     for (let i = 0; i < players.length; i ++) {
       if (players[i] != self)
         if (players[i].id == player.id) {
           oldPos = players[i].pos;
-          updatePosPlayer(players[i], oldPos, newPos);
+          updatePosPlayer(players[i], oldPos, newPos, desc);
         }
     }
   });
 
-  let updatePosPlayer = function(player, oldPos, newPos) {
+  let updatePosPlayer = function(player, oldPos, newPos, str) {
     player.setPos(newPos);
+    let stringa = player.name + ": " + str;
+    updateScroll(player);
     paint();
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }

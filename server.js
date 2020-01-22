@@ -33,6 +33,8 @@ let squares = [];
 let chance;
 let communityChest;
 let diceTotal;
+let dice1;
+let dice2;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -59,9 +61,15 @@ io.sockets.on('connection', function (socket) {
     });
 
     socket.on('dice', function(data) {
-      diceTotal = data;
-      let player = updatePosition(playerList2[socket.id], data);
-      sendPosUpdate(player, 'you rolled the dice');
+      let player = updatePosition(playerList2[socket.id], data[0]+data[1]);
+      dice1 = data[0];
+      dice2 = data[1];
+
+      //diciamo agli altri che quale giocatore ha tirato e che dado è uscito
+
+      //sendDice(player, data);
+      let str = 'you rolled the dice ' + dice1 + ' ' + dice2;
+      sendPosUpdate(player, str);
     })
 
     socket.on('handlePlayer', function(data){
@@ -69,6 +77,14 @@ io.sockets.on('connection', function (socket) {
         handlePlayer(player);
     })
 });
+
+let sendDice = function(player, dice) {
+  let pack = [player.id, dice];
+  for (let i = 0; i < socketList.length; i++) {
+    if (i != player.id)
+      socketList[i].emit('receiveDice', pack);
+  }
+}
 
 let sendPlayers = function () {
     let pack = [];
@@ -154,13 +170,13 @@ let handlePlayer = function(player){
   square = squares[pos];
   owner = square.getOwner();
   playerId = player.getId();
-  playerSocket = socketList[playerId]; 
+  playerSocket = socketList[playerId];
   //promemoria: handler per ogni tipo di square
   if(square instanceof HouseProperty || square instanceof Station){
     handler = new HSHandler(player);
     let res = handler.handle();
     //payRent che chiama sendUpdateMoney
-  } 
+  }
   else if(square instanceof Services){
     handler = new ServicesHandler(player, diceTotal);
     let res = handler.handle();
@@ -179,9 +195,9 @@ let handlePlayer = function(player){
   else if(square instanceof Chance || square instanceof CommunityChest){
     if(square instanceof Chance)
       card = chance.getCard();
-    else 
+    else
       card = communityChest.getCard();
-    
+
     if(card instanceof PayCard){
       let res = card.excecute();
       //sendMoneyUpdate()
@@ -192,7 +208,7 @@ let handlePlayer = function(player){
       if(pos == 10){} //prigione
       sendPosUpdate(player, dsc);
       //handle successivo riguardo a nuova casella
-      
+
     }
     else if(card instanceof CloseServicesCard || card instanceof CloseStationCard){
       let pack = card.excecute(player);
@@ -206,9 +222,9 @@ let handlePlayer = function(player){
     //comunica a clients e setta su giocatore;
   }
   else if(square instanceof GoToJail){
-    
+
   }
-} 
+}
 
 let payRent = function(rent, player, owner){
   console.log("you must pay him " + rent);
