@@ -163,12 +163,14 @@ let sendPosUpdate = function(player, description) {
   }
 }
 
-let handlePlayer = function(player){
+let handlePlayer = function(pl){
+  let player = playerList2[pl.id];
   let handler;
   let cardHandler;
   pos = player.getPos();
   square = squares[pos];
-  owner = square.getOwner();
+  if (square instanceof Property)
+    owner = square.getOwner();
   playerId = player.getId();
   playerSocket = socketList[playerId];
   //promemoria: handler per ogni tipo di square
