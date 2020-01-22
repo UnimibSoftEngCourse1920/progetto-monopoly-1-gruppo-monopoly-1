@@ -22,18 +22,44 @@
             margin-top: 0;
             padding: 0;
             text-align: center;
+            z-index: 0;
         }
 
         #board {
             border-style: solid;
         }
+        #gestore{
+           display: none;
+	         text-align: center;
+	         position:absolute;
+	         z-index: 1;
+        }
+        #dado{
+          visibility:hidden;
+        	font-size: 30px;
+        	border-radius: 10px;
+        	background-color: black;
+        	border-color:black;
+        	border-style:solid;
+        	transition-duration: 0.3s;
+        	color:white;
+        	font-family: verdana;
+        }
+        #dado:hover{
+        	color:black;
+        	background-color: white;
+        }
     </style>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 </head>
 <body>
 	<div id="waitingDiv">
 		waiting...
+	</div>
+  <div id="gestore">
+		<button id="dado" onclick="rolldice()">Roll dice</button>
 	</div>
     <div id="row">
         <div class="column" id="div1">
@@ -50,70 +76,271 @@
             <div id="p6"></div>
         </div>
     </div>
-<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 <script>
 	let socket, id;
-    socket = io();
-    socket.emit('getId');
+  socket = io();
+  socket.emit('getId');
+
 	socket.on('id', function (data) {
         id = data.id;
         let playerName = "Player " + id;
         socket.emit('getLobby', { name: playerName });
-    })
-    
-    let lobbyID;
+  });
+
+  let lobbyID;
 	socket.on('setLobby', function (data) {
 		lobbyID = data.lobbyID;
-	})
+	});
 
-    let players = [];
-    let playersTemp = [];
-    let player;
-    let self;
-    socket.on('startGame', function (data) {
-        waitingDiv.style.display = 'none';
-        row.style.display = 'block';
-        createCanvas();
-        playersTemp = data;
-        let cont = 1;
-        for (let i = 0; i < playersTemp.length; i ++) {
-            
-            player = new Player(playersTemp[i].id, playersTemp[i].name);
-            players[i] = player;
-            let p = "p" + cont;
-            cont++;
-            document.getElementById(p).innerHTML = "player: " + player.name  + " money: " + player.money;
-            console.log(playersTemp[i].id + " " + playersTemp[i].name);
-                
-            
-            
-        }
-    })
+  let squares = [];
+  let players = [];
+  let pedinaPos = [];
+  let playersTemp = [];
+  let player;
+  let self;
 
-    let dpi = window.devicePixelRatio;
-    let img = new Image();
-    let canvas = document.getElementById("board");
-    let ctx = canvas.getContext("2d");
+  socket.on('startGame', function (data) {
+      waitingDiv.style.display = 'none';
+      row.style.display = 'block';
+      gestore.style.display = 'block';
+      //$("#dado").attr("disabled", true);
 
-    let createCanvas = function () {
-        let H = $(window).height();
-        let W = $(window).width();
-        let a = (W - H) / 2;
-        canvas.style.height = H - 10;
-        canvas.style.width = H - 10;
-        $(".column").width(a);
-        fix_dpi();
-        img.onload = function () { 
-             ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
-        }
-        img.src = "http://localhost:1337/client/img/monopoly.png";
+
+      playersTemp = data;
+      let cont = 1;
+      let colors = ["#FF0000", "#0000E6", "#FFFF00", "#FF80FF", "#FFA64D", "#A31AFF"];
+      for (let i = 0; i < playersTemp.length; i ++) {
+          let pedina = new Pedina(colors[i]);
+          player = new Player(playersTemp[i].id, playersTemp[i].name, pedina);
+          players[i] = player;
+          let p = "p" + cont;
+          cont++;
+          document.getElementById(p).innerHTML = "player: " + player.name  + " money: " + player.money;
+          console.log(playersTemp[i].id + " " + playersTemp[i].name);
+      }
+      for (let i = 0; i < players.length; i ++) {
+        if (players[i].id == id)
+          self = players[i];
+      }
+      createCanvas();
+      //rifacciamo il canvas con i giocatori nella posizione 0
+      //paint();
+  });
+
+  let dpi = window.devicePixelRatio;
+  let img = new Image();
+  let canvas = document.getElementById("board");
+  let ctx = canvas.getContext("2d");
+
+  let createCanvas = function () {
+    let H = $(window).height();
+    let W = $(window).width();
+    let a = (W - H) / 2;
+    canvas.style.height = H - 10;
+    canvas.style.width = H - 10;
+    let boardW=$("#centro").width();
+    let cas= boardW*(200/1500);
+    $(".column").width(a);
+    $("#gestore").width(boardW-(cas*2));
+    $("#gestore").offset({ top: cas+100,left:cas + $(".column").width() });
+    fix_dpi();
+    createSquares();
+    img.onload = function () {
+      paint();
+       //ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
     }
-    function fix_dpi() {
-            let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
-            let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
-            canvas.setAttribute('height', style_height * dpi);
-            canvas.setAttribute('width', style_width * dpi);
+    img.src = "http://localhost:1337/client/img/monopoly.png";
+  }
+
+  function fix_dpi() {
+    let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
+    let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
+    canvas.setAttribute('height', style_height * dpi);
+    canvas.setAttribute('width', style_width * dpi);
+  }
+
+  /*let calcola = function(i) {
+    let boardW=$("#board").width();
+    let w=boardW/1500;
+    return (i*w);
+  }*/
+
+  let createSquares = function() {
+    //let boardW=$("#board").width();
+    let boardW = canvas.width;
+    let w=boardW/1500;
+    let calcola=function(i){
+      return (i*w);
+    }
+    let width = calcola(35);
+    for (let i = 0; i < players.length; i ++) {
+      players[i].pedina.setDimensions(width, width);
+    }
+
+    squares[0]= new Casella(boardW-calcola(200),boardW-calcola(200),0);
+    squares[1]=new Casella(squares[0].x-calcola(123),squares[0].y,1);
+    squares[2]=new Casella(squares[1].x-calcola(122),squares[0].y,1);
+    squares[3]=new Casella(squares[2].x-calcola(123),squares[0].y,1);
+    squares[4]= new Casella(squares[3].x-calcola(122),squares[0].y,1);
+    squares[5]= new Casella(squares[4].x-calcola(125),squares[0].y,1);
+    squares[6]= new Casella(squares[5].x-calcola(123),squares[0].y,1);
+    squares[7]= new Casella(squares[6].x-calcola(122),squares[0].y,1);
+    squares[8]= new Casella(squares[7].x-calcola(123),squares[0].y,1);
+    squares[9]= new Casella(squares[8].x-calcola(122),squares[0].y,1);
+    squares[10]= new Casella(0,squares[0].y,0);
+    squares[11]= new Casella(0,squares[10].y-calcola(123),2);
+    squares[12]= new Casella(0,squares[11].y-calcola(122),2);
+    squares[13]= new Casella(0,squares[12].y-calcola(123),2);
+    squares[14]= new Casella(0,squares[13].y-calcola(122),2);
+    squares[15]= new Casella(0,squares[14].y-calcola(125),2);
+    squares[16]= new Casella(0,squares[15].y-calcola(123),2);
+    squares[17]= new Casella(0,squares[16].y-calcola(122),2);
+    squares[18]= new Casella(0,squares[17].y-calcola(123),2);
+    squares[19]= new Casella(0,squares[18].y-calcola(122),2);
+    squares[20]= new Casella(0,0,0);
+    squares[21]= new Casella(calcola(200),0,3);
+    squares[22]= new Casella(squares[21].x+calcola(122),0,3);
+    squares[23]= new Casella(squares[22].x+calcola(123),0,3);
+    squares[24]= new Casella(squares[23].x+calcola(122),0,3);
+    squares[25]= new Casella(squares[24].x+calcola(123),0,3);
+    squares[26]= new Casella(squares[25].x+calcola(125),0,3);
+    squares[27]= new Casella(squares[26].x+calcola(122),0,3);
+    squares[28]= new Casella(squares[27].x+calcola(123),0,3);
+    squares[29]= new Casella(squares[28].x+calcola(122),0,3);
+    squares[30]= new Casella(boardW-calcola(195),0,0);
+    squares[31]= new Casella(squares[30].x, calcola(200), 4);
+    squares[32]= new Casella(squares[30].x, squares[31].y+calcola(123), 4);
+    squares[33]= new Casella(squares[30].x, squares[32].y+calcola(122), 4);
+    squares[34]= new Casella(squares[30].x, squares[33].y+calcola(123), 4);
+    squares[35]= new Casella(squares[30].x, squares[34].y+calcola(122), 4);
+    squares[36]= new Casella(squares[30].x, squares[35].y+calcola(125), 4);
+    squares[37]= new Casella(squares[30].x, squares[36].y+calcola(123), 4);
+    squares[38]= new Casella(squares[30].x, squares[37].y+calcola(122), 4);
+    squares[39]= new Casella(squares[30].x, squares[38].y+calcola(123), 4);
+
+    for(let i=0;i<players.length;i++)
+      pedinaPos[i] = [];
+
+    pedinaPos[0][0] = new Coordinates(calcola(50), calcola(60));
+    pedinaPos[0][1] = new Coordinates(calcola(20), calcola(60));
+    pedinaPos[0][2] = new Coordinates(calcola(15), calcola(20));
+    pedinaPos[0][3] = new Coordinates(calcola(20), calcola(15));
+    pedinaPos[0][4] = new Coordinates(calcola(60), calcola(20));
+
+    pedinaPos[1][0] = new Coordinates(calcola(50), calcola(105));
+    pedinaPos[1][1] = new Coordinates(calcola(20), calcola(105));
+    pedinaPos[1][2] = new Coordinates(calcola(60), calcola(20));
+    pedinaPos[1][3] = new Coordinates(calcola(20), calcola(60));
+    pedinaPos[1][4] = new Coordinates(calcola(105), calcola(20));
+
+    pedinaPos[2][0] = new Coordinates(calcola(50), calcola(150));
+    pedinaPos[2][1] = new Coordinates(calcola(20), calcola(150));
+    pedinaPos[2][2] = new Coordinates(calcola(105), calcola(20));
+    pedinaPos[2][3] = new Coordinates(calcola(20), calcola(105));
+    pedinaPos[2][4] = new Coordinates(calcola(150), calcola(20));
+
+    pedinaPos[3][0] = new Coordinates(calcola(95), calcola(60));
+    pedinaPos[3][1] = new Coordinates(calcola(65), calcola(60));
+    pedinaPos[3][2] = new Coordinates(calcola(15), calcola(65));
+    pedinaPos[3][3] = new Coordinates(calcola(65), calcola(15));
+    pedinaPos[3][4] = new Coordinates(calcola(60), calcola(65));
+
+    pedinaPos[4][0] = new Coordinates(calcola(95), calcola(105));
+    pedinaPos[4][1] = new Coordinates(calcola(65), calcola(105));
+    pedinaPos[4][2] = new Coordinates(calcola(60), calcola(65));
+    pedinaPos[4][3] = new Coordinates(calcola(65), calcola(60));
+    pedinaPos[4][4] = new Coordinates(calcola(105), calcola(65));
+
+    pedinaPos[5][0] = new Coordinates(calcola(95), calcola(150));
+    pedinaPos[5][1] = new Coordinates(calcola(65), calcola(150));
+    pedinaPos[5][2] = new Coordinates(calcola(105), calcola(65));
+    pedinaPos[5][3] = new Coordinates(calcola(65), calcola(105));
+    pedinaPos[5][4] = new Coordinates(calcola(150), calcola(65));
+
+
+  }
+
+  let turn;
+  socket.on('turn', function(data) {
+    turn = data;
+    if (turn == self.id)
+      startTurn();
+  });
+
+  let startTurn = function() {
+    dado.style.visibility = 'visible';
+    //$("#dado").attr("disabled", false);
+    //let x = rolldice();
+
+
+    //qui mostriamo che dado è uscito
+
+
+
+
+    //gestire diverse caselle su cui si capita
+
+    //gestire operazioni di fine turno (scambi, costruzioni..)
+
+    //passa il turno a quello successivo
+
+  }
+
+  let updatePosition = function(diceNumber) {
+    oldPos = self.pos;
+    newPos = self.dicePos(diceNumber);
+    updatePosPlayer(self, oldPos, newPos);
+  }
+
+  let rolldice = function() {
+    dado.style.visibility='hidden';
+    let min = 1;
+    let max = 12;
+    x = Math.floor(Math.random() * (max - min) + min) + 1;
+    socket.emit('dice', x);
+    updatePosition(x);
+  }
+
+  socket.on('updatePosPlayer', function(data){
+    let player = data;
+    let newPos = player.pos;
+    let oldPos;
+    for (let i = 0; i < players.length; i ++) {
+      if (players[i] != self)
+        if (players[i].id == player.id) {
+          oldPos = players[i].pos;
+          updatePosPlayer(players[i], oldPos, newPos);
         }
+    }
+  });
+
+  let updatePosPlayer = function(player, oldPos, newPos) {
+    player.setPos(newPos);
+    paint();
+    //qui dobbiamo aggiornare la pos del player sullo schermo
+  }
+
+
+
+  let paint = function() {
+    ctx.clearRect(0, 0, canvas.width, canvas.width);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
+    for (let i = 0; i < players.length; i ++) {
+      let X = pedinaPos[i][squares[players[i].pos].type].x+squares[players[i].pos].x;
+      let Y = pedinaPos[i][squares[players[i].pos].type].y+squares[players[i].pos].y;
+      drawPedine(players[i].pedina, X, Y);
+    }
+  }
+
+  let drawPedine = function(pedina, x, y) {
+    //alert("hey");
+    ctx.fillStyle = pedina.color;
+    ctx.fillRect(x, y, pedina.w, pedina.h);
+    ctx.fillStyle = "#000000";
+    ctx.strokeRect(x, y, pedina.w, pedina.h);
+
+  }
+
 </script>
 
 </body>
