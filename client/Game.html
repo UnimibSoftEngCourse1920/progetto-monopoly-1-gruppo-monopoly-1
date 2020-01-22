@@ -1,8 +1,8 @@
 <html>
 <head>
-    <title>
-      Game
-    </title>
+  <title>
+    Game
+  </title>
     <style>
 
         .column, #centro {
@@ -76,7 +76,7 @@
 		waiting...
 	</div>
   <div id="gestore">
-		<button id="dado" onclick="rolldice()">Roll dice</button><br>
+    <button id="dado" onclick="rolldice()">Roll dice</button><br>
     <div id="scrollBox"></div>
 	</div>
     <div id="row">
@@ -94,9 +94,7 @@
             <div id="p5" class="infoPlayer"></div>
         </div>
     </div>
-
 <script>
-
 	let socket, id;
   let lobbyID;
   let squares = [];
@@ -287,7 +285,7 @@
 
   let startTurn = function() {
     dado.style.visibility = 'visible';
-    //$("#dado").attr("disabled", false);
+
     //let x = rolldice();
 
 
@@ -304,58 +302,55 @@
 
   }
 
-  let updatePosition = function(diceNumber) {
+  let updatePosition = function(diceNumber, str) {
     oldPos = self.pos;
     newPos = self.dicePos(diceNumber);
-    updatePosPlayer(self, oldPos, newPos);
+    updatePosPlayer(self, oldPos, newPos, str);
+    //socket.emit("handlePlayer", self);
   }
 
   let rolldice = function() {
     dado.style.visibility='hidden';
-    let min = 1;
-    let max = 7;
-    let x = Math.floor(Math.random() * (max - min)) + 1;
-    let y = Math.floor(Math.random() * (max - min)) + 1;
-
-    printDice(self, x, y);
+    let x = Math.floor(Math.random() * 6) + 1;
+    let y = Math.floor(Math.random() * 6) + 1;
+    let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
     pack.push(y);
     socket.emit('dice', pack);
-    updatePosition(x+y);
+    updatePosition(x+y, str);
+
+
+    //dovremo spostare
     socket.emit('endTurn');
   }
 
-  socket.on('receiveDice', function(data) {
 
-    printDice(players[data[0]], data[1]);
-
-  })
-
-  let printDice = function(player, dice1, dice2) {
-
-    //qui stampiamo che dado è uscito
-
-  }
   socket.on('updatePosPlayer', function(data){
-    let player = data;
+    let player = data[0];
+    let desc = data[1];
     let newPos = player.pos;
     let oldPos;
     for (let i = 0; i < players.length; i ++) {
-      if (players[i] != self)
-        if (players[i].id == player.id) {
+        if ((players[i].id == player.id)  && (players[i] != self)) {
           oldPos = players[i].pos;
-          updatePosPlayer(players[i], oldPos, newPos);
+          updatePosPlayer(players[i], oldPos, newPos, desc);
         }
     }
   });
 
-  let updatePosPlayer = function(player, oldPos, newPos) {
+  let updatePosPlayer = function(player, oldPos, newPos, str) {
     player.setPos(newPos);
+    let stringa = player.name + " " + str;
+    updateScroll(stringa);
     paint();
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }
 
+  let updateScroll = function(str) {
+    let scrollDiv= document.getElementById("scrollBox");
+    scrollDiv.innerHTML += str + "<br>";
+  }
 
 
   let paint = function() {
@@ -369,12 +364,14 @@
   }
 
   let drawPedine = function(pedina, x, y) {
+    //alert("hey");
     ctx.fillStyle = pedina.color;
     ctx.fillRect(x, y, pedina.w, pedina.h);
     ctx.fillStyle = "#000000";
     ctx.strokeRect(x, y, pedina.w, pedina.h);
 
   }
+
 </script>
 
 </body>

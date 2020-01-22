@@ -32,6 +32,9 @@ let turn;
 let squares = [];
 let chance;
 let communityChest;
+let diceTotal;
+let dice1;
+let dice2;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -59,21 +62,33 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('dice', function(data) {
       let player = updatePosition(playerList2[socket.id], data[0]+data[1]);
-      sendPosUpdate(player);
+      dice1 = data[0];
+      dice2 = data[1];
 
       //diciamo agli altri che quale giocatore ha tirato e che dado è uscito
 
-      sendDice(player, data);
-    });
+      //sendDice(player, data);
+      let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
+      sendPosUpdate(player, str);
+    })
 
+    socket.on('handlePlayer', function(data){
+        let player = data;
+        handlePlayer(player);
+    })
     socket.on('endTurn', function() {
-      if (turn == playerList2.length-1)
-        turn = 0;
-      else
-        turn ++;
-      sendTurn();
-    });
+    if (turn == playerList2.length-1)
+      turn = 0;
+    else
+      turn ++;
+    sendTurn();
+  });
 });
+let sendTurn = function() {
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('turn', turn);
+  }
+}
 
 let sendDice = function(player, dice) {
   let pack = [player.id, dice];
@@ -95,23 +110,17 @@ let sendPlayers = function () {
 
 let generateTurn = function() {
   turn = Math.floor(Math.random()*6);
-  sendTurn();
-}
-
-let sendTurn = function() {
-  for (let i = 0; i < socketList.length; i++) {
-      socketList[i].emit('turn', turn);
-  }
+    sendTurn();
 }
 
 let startGame = function () {
-    //chance = new Deck(true);
-    //communityChest = new Deck(false);
+  //  chance = new Deck(true);
+  //  communityChest = new Deck(false);
     squares[0] = new Square(0); //go
     squares[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
     squares[2] = new CommunityChest(2);
     squares[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown");
-    squares[4] = new IncomeTax(4);
+    squares[4] = new IncomeTax(4, 100);
     squares[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200]);
     squares[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "light blue");
     squares[7] = new Chance(7);
@@ -145,7 +154,7 @@ let startGame = function () {
     squares[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200]);
     squares[36] = new Chance(36);
     squares[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "dark blue");
-    squares[38] = new IncomeTax(38);
+    squares[38] = new IncomeTax(38, 200);
     squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue");
 }
 
@@ -154,8 +163,87 @@ let updatePosition = function(player, diceNumber) {
   return player;
 }
 
-let sendPosUpdate = function(player) {
+let sendPosUpdate = function(player, description) {
+  let pack = [];
+  pack.push(player);
+  pack.push(description);
+
   for (let i = 0; i < socketList.length; i++) {
-      socketList[i].emit('updatePosPlayer', player);
+      socketList[i].emit('updatePosPlayer', pack);
   }
+}
+
+let handlePlayer = function(pl){
+  let player = playerList2[pl.id];
+  let handler;
+  let cardHandler;
+  pos = player.getPos();
+  square = squares[pos];
+  if (square instanceof Property)
+    owner = square.getOwner();
+  playerId = player.getId();
+  playerSocket = socketList[playerId];
+  //promemoria: handler per ogni tipo di square
+  if(square instanceof HouseProperty || square instanceof Station){
+    handler = new HSHandler(player);
+    let res = handler.handle();
+    //payRent che chiama sendUpdateMoney
+  }
+  else if(square instanceof Services){
+    handler = new ServicesHandler(player, diceTotal);
+    let res = handler.handle();
+    //payRent che chiama sendUpdateMoney
+  }
+  else if(square instanceof IncomeTax){
+    tax = square.getTax();
+    player.updateMoney(-tax);
+    playerSocket.emit('payTax', tax);
+
+    for(let i = 0; i < socketList.length; i++){
+      if(i != playerId) //per ora playerId = socket[playerId]
+        socketList[i].emit('changeView', playerId); //cambia il balance di player nell'HTML dei client
+    }
+  }
+  else if(square instanceof Chance || square instanceof CommunityChest){
+    if(square instanceof Chance)
+      card = chance.getCard();
+    else
+      card = communityChest.getCard();
+
+    if(card instanceof PayCard){
+      let res = card.excecute();
+      //sendMoneyUpdate()
+    }
+    else if(card instanceof GoToCard || card instanceof GoToJail){
+      let pos = card.excecute();
+      let dsc = card.printDescription();
+      if(pos == 10){} //prigione
+      sendPosUpdate(player, dsc);
+      //handle successivo riguardo a nuova casella
+
+    }
+    else if(card instanceof CloseServicesCard || card instanceof CloseStationCard){
+      let pack = card.excecute(player);
+      let dsc = card.printDescription();
+      sendPosUpdate(player, dsc);
+      //handle successivo riguardo a nuova casella
+    }
+  }
+  else if(square instanceof Go){
+    player.updateMoney(200);
+    //comunica a clients e setta su giocatore;
+  }
+  else if(square instanceof GoToJail){
+
+  }
+}
+
+let payRent = function(rent, player, owner){
+  console.log("you must pay him " + rent);
+  player.updateMoney(-rent);
+  owner.updateMoney(rent);
+  pack = [];
+  pack.push(rent);
+  pack.push(player);
+  pack.push(owner);
 }
