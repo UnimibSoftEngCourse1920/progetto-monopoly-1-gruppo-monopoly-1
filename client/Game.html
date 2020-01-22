@@ -289,8 +289,8 @@
   let updatePosition = function(diceNumber, str) {
     oldPos = self.pos;
     newPos = self.dicePos(diceNumber);
-    socket.emit("handlePlayer", self);
     updatePosPlayer(self, oldPos, newPos, str);
+    socket.emit("handlePlayer", self);
   }
 
   let rolldice = function() {
