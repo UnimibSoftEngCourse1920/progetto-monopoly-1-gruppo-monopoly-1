@@ -6,6 +6,14 @@ class Player {
         this.pos = 0;
         this.props = [];
         this.services = [null, null];
+        this.jail = false;
+        this.jailCount = 0;
+        this.getOutOfJailFree = false;
+    }
+
+    updateJailCount(){
+      this.jailCount++;
+      return jailCount;
     }
 
     addProp(prop) {

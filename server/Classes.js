@@ -1,9 +1,14 @@
 class Player {
     constructor(id) {
-        this.id = id;
-        this.money = 1500;
-        this.pos = 0;
-        this.props = [];
+      this.id = id;
+      this.name = name;
+      this.money = 1500;
+      this.pos = 0;
+      this.props = [];
+      this.services = [null, null];
+      this.jail = false;
+      this.jailCount = 0;
+      this.getOutOfJailFree = false;
     }
 
     addProp(prop) {

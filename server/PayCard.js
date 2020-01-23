@@ -4,11 +4,11 @@ class PayCard{
         this.amount = amount;
     }
 
-    execute = function(){
+    execute(){
         return amount;
     }
 
-    printDescription = function(){
+    printDescription(){
         return this.description;
     }
 }

@@ -273,7 +273,11 @@
   });
 
   let startTurn = function() {
-    dado.style.visibility = 'visible';
+    if (!self.jail)
+      dado.style.visibility = 'visible';
+    else {
+      socket.emit('stillInJail', self);
+    }
   }
 
   let rolldice = function() {
@@ -285,19 +289,42 @@
     pack.push(x);
     pack.push(y);
     socket.emit('dice', pack);
-    updatePosition(x+y, str);
+    //updatePosition(x+y, str);
 
 
     //dovremo spostare
     socket.emit('endTurn');
   }
 
-  let updatePosition = function(diceNumber, str) {
+  let getOutOfJailFree = function() {
+    //getOutOfJailFree.style.visibility = 'hidden';
+    socket.emit('getOutOfJailFree', self);
+  }
+
+  socket.on('getOutOfJailFreeUpdate', function(data) {
+    let player = data;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i].id == player.id) {
+        if (player.getOutOfJailFree) {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' now has a GetOutOfJailCard');
+        } else {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' used his GetOutOfJailCard');
+        }
+      }
+    }
+  })
+
+  let payJail = function() {
+    socket.emit('payJail', self);
+  }
+  /*let updatePosition = function(diceNumber, str) {
     oldPos = self.pos;
     newPos = self.dicePos(diceNumber);
     updatePosPlayer(self, oldPos, newPos, str);
     socket.emit("handlePlayer", self);
-  }
+  }*/
 
   socket.on('updatePosPlayer', function(data){
     let player = data[0];
@@ -305,11 +332,13 @@
     let newPos = player.pos;
     let oldPos;
     for (let i = 0; i < players.length; i ++) {
-        if ((players[i].id == player.id)  && (players[i] != self)) {
+        if (players[i].id == player.id) {
           oldPos = players[i].pos;
           updatePosPlayer(players[i], oldPos, newPos, desc);
         }
     }
+    if (player.id == id && !player.jail)
+      socket.emit('handlePlayer', self);
   });
 
   let updatePosPlayer = function(player, oldPos, newPos, str) {
@@ -327,16 +356,74 @@
 
   socket.on('updateMoneyPlayer', function(data)) {
     //data è un array [rent, player, description]
-    for (let i = 0; i < players.length; i ++)
-      if (players[i].id == data[1].id)
-        players[i].updateMoney(data[0]);
-    updateScroll(data[2]);
+    if(data[0] != 0) {
+      for (let i = 0; i < players.length; i ++)
+        if (players[i].id == data[1].id)
+          players[i].updateMoney(data[0]);
+      updateScroll(data[2]);
+    }
     //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
     //Crea una funzione che quando i soldi di un player (incluso self) vengono modificati, viene modificata automaticamente la div.
     //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
     //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
     //usare lo stesso array per tutti
 
+  }
+
+  socket.on('jailUpdate', function(data) {
+    //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
+    //puo essere cambiato il suo jail count, ovvero quanti turni è in prigione
+    let player = data[0];
+    let double = data[1];
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if (players[i].id == player.id) {
+        players[i].jail = player.jail;
+        if (player.id != self.id) {
+          if (player.jail == false) {
+            str = player.name + ' is out of jail';
+            player[i].jailCount = 0;
+            updateScroll(str);
+          } else {
+            str = player.name + ' is in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          if (player.jail == true) {
+            //socket.emit('endturn');
+          } else {
+            self.jailCount = 0;
+          }
+        }
+      }
+    }
+
+  });
+
+  socket.on('jailCountUpdate', function(data) {
+    let player = data;
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if (players[i].id == player.id) {
+        if (player.id != self.id) {
+          players[i].jailCount = player.jailCount;
+          if (player.jailCount != 0) {
+            str = player.name + ' is still in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          players[i].jailCount = player.jailCount;
+          if (player.jailCount != 0)
+            jailOptions();
+        }
+      }
+    }
+  });
+
+  let jailOptions = function() {
+    //mostra opzioni per quando sei in prigione, quindi rolldice, paga oppure usa carta se ce l'hai
   }
 
   socket.on('unownedProperty', function(data) {

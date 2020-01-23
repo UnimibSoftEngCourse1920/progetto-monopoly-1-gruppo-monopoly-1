@@ -49,6 +49,7 @@ let communityChest;
 let diceTotal;
 let dice1;
 let dice2;
+let doubleDice;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -76,28 +77,115 @@ io.sockets.on('connection', function (socket) {
 
     //turn started, dice received
     socket.on('dice', function(data) {
-      let player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
+      let player = playerList2[socket.id];
       dice1 = data[0];
       dice2 = data[1];
+      diceTotal = dice1 + dice2;
+      if (dice1 == dice2)
+        doubleDice++;
       let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
-      sendPosUpdate(player, str);
-    })
+      //checkDoubles(player, doubles);
+      if (doubleDice == 3) {
+        sendToJail(player);
+      }
+      if (!player.jail) {
+        player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
+        sendPosUpdate(player, str);
+      }
+      if (player.jail && doubleDice==0 && player.jailCount != 3) {
+        sendGenericUpdate(str + ' and stays in jail');
+        updateTurn();
+      } else if (player.jail && doubleDice>0) {
+        player.jail = false;
+        player.jailCount = 0;
+        sendJailUpdate(player, true);
+        player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
+        sendPosUpdate(player, str);
+      } else if (player.jail && doubleDice == 0 && player.jailCount == 3) {
+        let str = player.name + ' pays 50';
+        player.jail = false;
+        player.jailCount = false;
+        sendJailUpdate(player, false);
+        player.updateMoney(-50);
+        sendMoneyUpdate(-50, player, str);
+        player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
+        sendPosUpdate(player, str);
+      }
+    });
 
     //landed on square, handle it
     socket.on('handlePlayer', function(data){
         let player = data;
         handlePlayer(player);
-    })
+    });
+
+    socket.emit('stillInJail', function(data) {
+      let player = playerList2[data.id];
+      let jailCount = player.updateJailCount();
+      for (let i = 0; i < socketList.length; i++) {
+          socketList[i].emit('jailCountUpdate', player);
+      }
+    });
+
+    socket.on('getOutOfJailFree', function(data) {
+      let player = playerList2[data.id];
+      player.getOutOfJailFree = false;
+      player.jail = false;
+      player.jailCount = 0;
+      for (let i = 0; i < socketList.length; i++) {
+          socketList[i].emit('getOutOfJailFreeUpdate', player);
+      }
+      sendJailUpdate(player, false);
+      sendTurn();
+    });
+
+    socket.on('payJail', function(data) {
+      let player = playerList2[data.id];
+      let outcome = player.updateMoney(50);
+      let str = player.name + ' pays 50 to get out of jail';
+      sendMoneyUpdate(50, player, str);
+      player.jail = false;
+      player.jailCount = 0;
+      sendJailUpdate(player, false);
+      sendTurn();
+    });
 
     //turn ended, tell next player to start
     socket.on('endTurn', function() {
-    if (turn == playerList2.length-1)
-      turn = 0;
-    else
-      turn ++;
-    sendTurn();
+      diceTotal = 0;
+      dice2 = 0;
+      dice1 = 0;
+      if (doubleDice == 0) {
+          updateTurn();
+      } else {
+        sendTurn();
+      }
   });
 });
+
+let sendToJail(player) {
+  let str = player.name + ' sent to jail';
+  player.jail = true;
+  player.setPos(10);
+  sendPosUpdate(player, str);
+  sendJailUpdate(player, true);
+  doubleDice = 0;
+  updateTurn();
+}
+
+let sendJailCountUpdate = function(player) {
+  for (let i = 0; i < playerList2.length; i++) {
+    socketList[i].emit('jailCountUpdate', player);
+  }
+}
+
+let updateTurn = function() {
+  if (turn == playerList2.length-1)
+    turn = 0;
+  else
+    turn ++;
+    sendTurn();
+}
 
 let startGame = function () {
     chance = new Deck(true);
@@ -186,6 +274,15 @@ let sendMoneyUpdate = function(rent, player, description) {
   }
 }
 
+let sendJailUpdate = function(player, doubles) {
+  let pack = [];
+  pack.push(player);
+  pack.push(doubles);
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('jailUpdate', pack);
+  }
+}
+
 let sendGenericUpdate = function(desc) {
   for (let i = 0; i < socketList.length; i++) {
       socketList[i].emit('genericUpdate', desc);
@@ -197,10 +294,16 @@ let updatePositionDice = function(player, diceNumber) {
   return player;
 }
 
+let updatePosition = function(player, pos) {
+  player.setPos(pos);
+}
+
 let handlePlayer = function(pl){
   let player = playerList2[pl.id];
   let handler;
   let cardHandler;
+  let owner;
+  let card;
   pos = player.getPos();
   square = squares[pos];
   if (square instanceof Property)
@@ -246,14 +349,10 @@ let handlePlayer = function(pl){
     }
   }
   else if(square instanceof IncomeTax){
-    tax = square.getTax();
-    player.updateMoney(-tax);
-    playerSocket.emit('payTax', tax);
-
-    for(let i = 0; i < socketList.length; i++){
-      if(i != playerId) //per ora playerId = socket[playerId]
-        socketList[i].emit('changeView', playerId); //cambia il balance di player nell'HTML dei client
-    }
+    let tax = square.getTax();
+    let outcome = player.updateMoney(-tax);
+    let str = player.name + ' pays ' + tax + ' in taxes';
+    sendMoneyUpdate(-tax, player, str);
   }
   else if(square instanceof Chance || square instanceof CommunityChest){
     if(square instanceof Chance)
@@ -262,16 +361,29 @@ let handlePlayer = function(pl){
       card = communityChest.getCard();
 
     if(card instanceof PayCard){
-      let res = card.excecute();
-      //sendMoneyUpdate()
+      let res = card.execute();
+      let outcome = player.updateMoney(res);
+      sendMoneyUpdate(res, player, card.description);
     }
-    else if(card instanceof GoToCard || card instanceof GoToJail){
-      let pos = card.excecute();
+    else if(card instanceof GoToCard){
+      let pack = card.execute(player);
       let dsc = card.printDescription();
-      if(pos == 10){} //prigione
+      //if(pos == 10){} //prigione
+      player.setPos(pack[0]);
+      let str;
+      if(pack[1] == 0)
+        str = null;
+      else {
+        str = player.name + ' receives 200 by passing go';
+      }
+      let outcome = player.updateMoney(pack[1]);
       sendPosUpdate(player, dsc);
+      sendMoneyUpdate(pack[1], player, str);
       //handle successivo riguardo a nuova casella
 
+    }
+    else if(card instanceof GoToJailCard) {
+      sendToJail(player);
     }
     else if(card instanceof CloseServicesCard || card instanceof CloseStationCard){
       let pack = card.excecute(player);
@@ -281,18 +393,21 @@ let handlePlayer = function(pl){
     }
   }
   else if(square instanceof Go){
-    player.updateMoney(200);
+    let outcome = player.updateMoney(200);
     //comunica a clients e setta su giocatore;
   }
   else if(square instanceof GoToJail){
-
+    sendToJail(player);
+  }
+  if (doubleDice == 0) {
+    updateTurn();
   }
 }
 
 let payRent = function(rent, player, owner){
   //console.log("you must pay him " + rent);
-  player.updateMoney(-rent);
-  owner.updateMoney(rent);
+  let outcome = player.updateMoney(-rent);
+  let outcome = owner.updateMoney(rent);
   let str = player.name + ' pays ' + rent + ' to ' + owner.name;
   let str2 = owner.name + ' receives ' + rent;
   sendMoneyUpdate(-rent, player, str);
