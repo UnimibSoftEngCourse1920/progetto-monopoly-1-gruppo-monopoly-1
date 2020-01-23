@@ -5,6 +5,10 @@ class IncomeTax extends Square {
         super(id);
         this.tax = tax;
     }
+
+    getTax(){
+        return this.tax;
+    }
 }
 
 module.exports = IncomeTax;

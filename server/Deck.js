@@ -33,8 +33,8 @@ class Deck {
 			this.cards[10] = new GoToCard("Advance to Boardwalk", 39);
 			this.cards[11] = new PayPlayerCard(50, true, "You have been elected chairman of the board - pay 50$ to each player");
 			this.cards[12] = new PayCard("Your building loan matures - collect $150", 150);
-			this.cards[13] = new CloseUtilCard("Advance token to nearest Utility, if unowned you may buy it, if owned throw dice and pay owner 10 times the amount thrown");
-			this.cards[14] = new CloseRailRoadCard("Advance token to the nearest Railroad and pay owner twice the rent if owned, if unowned you may buy it");
+			this.cards[13] = new CloseServicesCard("Advance token to nearest Utility, if unowned you may buy it, if owned throw dice and pay owner 10 times the amount thrown");
+			this.cards[14] = new CloseStationCard("Advance token to the nearest Railroad and pay owner twice the rent if owned, if unowned you may buy it");
 			this.cards[15] = new PayCard("You have won a crossword competition collect 100", 100);
 		}
 		this.shuffle(cards);
@@ -63,5 +63,3 @@ class Deck {
 		return temp;
 	}
 }
-
-module.exports = Deck;

@@ -5,6 +5,7 @@ class Station extends Property {
         super(id, name, cost, rentPrices[0]);
         this.rentPrices = rentPrices;
     }
+
 }
 
 module.exports = Station;
