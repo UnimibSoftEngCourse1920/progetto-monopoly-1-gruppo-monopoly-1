@@ -107,6 +107,7 @@
   let img = new Image();
   let canvas = document.getElementById("board");
   let ctx = canvas.getContext("2d");
+  let turn;
 
   socket = io();
 
@@ -142,11 +143,7 @@
           document.getElementById(p).style.background=colors[i];
       }
       createCanvas();
-      //rifacciamo il canvas con i giocatori nella posizione 0
-      //paint();
   });
-
-
 
   let createCanvas = function () {
     let H = $(window).height();
@@ -163,7 +160,6 @@
     createSquares();
     img.onload = function () {
       paint();
-       //ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
     }
     img.src = "http://localhost:1337/client/img/monopoly.png";
   }
@@ -174,12 +170,6 @@
     canvas.setAttribute('height', style_height * dpi);
     canvas.setAttribute('width', style_width * dpi);
   }
-
-  /*let calcola = function(i) {
-    let boardW=$("#board").width();
-    let w=boardW/1500;
-    return (i*w);
-  }*/
 
   let createSquares = function() {
     //let boardW=$("#board").width();
@@ -276,7 +266,6 @@
 
   }
 
-  let turn;
   socket.on('turn', function(data) {
     turn = data;
     if (turn == self.id)
@@ -285,28 +274,6 @@
 
   let startTurn = function() {
     dado.style.visibility = 'visible';
-
-    //let x = rolldice();
-
-
-    //qui mostriamo che dado è uscito
-
-
-
-
-    //gestire diverse caselle su cui si capita
-
-    //gestire operazioni di fine turno (scambi, costruzioni..)
-
-    //passa il turno a quello successivo
-
-  }
-
-  let updatePosition = function(diceNumber, str) {
-    oldPos = self.pos;
-    newPos = self.dicePos(diceNumber);
-    updatePosPlayer(self, oldPos, newPos, str);
-    //socket.emit("handlePlayer", self);
   }
 
   let rolldice = function() {
@@ -325,6 +292,12 @@
     socket.emit('endTurn');
   }
 
+  let updatePosition = function(diceNumber, str) {
+    oldPos = self.pos;
+    newPos = self.dicePos(diceNumber);
+    updatePosPlayer(self, oldPos, newPos, str);
+    socket.emit("handlePlayer", self);
+  }
 
   socket.on('updatePosPlayer', function(data){
     let player = data[0];
@@ -346,6 +319,36 @@
     paint();
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }
+
+  socket.on('genericUpdate', function(data)) {
+    //data è una stringa, devi solo inserirla nella scroll
+    updateScroll(data);
+  }
+
+  socket.on('updateMoneyPlayer', function(data)) {
+    //data è un array [rent, player, description]
+    for (let i = 0; i < players.length; i ++)
+      if (players[i].id == data[1].id)
+        players[i].updateMoney(data[0]);
+    updateScroll(data[2]);
+    //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
+    //Crea una funzione che quando i soldi di un player (incluso self) vengono modificati, viene modificata automaticamente la div.
+    //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
+    //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
+    //usare lo stesso array per tutti
+
+  }
+
+  socket.on('unownedProperty', function(data) {
+    //data è un oggetto di tipo Property
+    //questo viene ricevuto solo dal client interessato, non da tutti
+    //qua bisogna mettere sul canvas due tasti, Buy e Auction per dare una scelta al giocatore, e magari mettere una descrizione della
+    //property su cui è capitato (hai tutte le informazioni in Property)
+    //poi ci sara un oncclick metodo che inviera al server la scelta
+    //fai in modo che i due bottoni invochino la stessa funzione, che pero fa una socket.emit diversa nei due casi:
+    //socket.emit('buyOrAuction', str), dove str = 'buy' o str = 'auction'
+
+  });
 
   let updateScroll = function(str) {
     let scrollDiv= document.getElementById("scrollBox");

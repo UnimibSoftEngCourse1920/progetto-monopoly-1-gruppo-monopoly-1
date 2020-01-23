@@ -9,36 +9,32 @@ class Property extends Square {
         this.mortgagePercent = 0.1 * mortgage;
         this.unmortagePrice = this.mortgage + this.mortgagePercent;
         this.rent = rent;
-        this.owner = null;
         this.state = 'active';
+        this.owner = null;
+    }
+
+    setOwner(owner) {
+      this.owner = owner;
+    }
+
+    getOwner() {
+      return this.owner;
     }
 
     mortgaged() {
         this.state = 'mortgaged';
     }
 
-    setRent(rent){
-        this.rent = rent; //lo sposterei dentro alle classi specializzate
+    getRent() {
+        return this.rent;
     }
 
-    getRent(){
-        return this.rent;
+    setRent(rent) {
+        this.rent = rent;
     }
 
     unmortgaged() {
         this.state = 'active';
-    }
-
-    setOwner(owner){
-        this.owner = owner;
-    }
-
-    getOwner(){
-        return this.owner;
-    }
-
-    getState(){
-        return this.state;
     }
 }
 

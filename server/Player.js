@@ -11,6 +11,10 @@ class Player {
         this.props.push(prop);
     }
 
+    getId() {
+      return this.id;
+    }
+    
     removeProp(prop) {
         stop = false
         for (i = 0; i < props.length && !stop; i++) {

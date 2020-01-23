@@ -60,22 +60,22 @@ io.sockets.on('connection', function (socket) {
       }
     });
 
+    //turn started, dice received
     socket.on('dice', function(data) {
-      let player = updatePosition(playerList2[socket.id], data[0]+data[1]);
+      let player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
       dice1 = data[0];
       dice2 = data[1];
-
-      //diciamo agli altri che quale giocatore ha tirato e che dado è uscito
-
-      //sendDice(player, data);
       let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
       sendPosUpdate(player, str);
     })
 
+    //landed on square, handle it
     socket.on('handlePlayer', function(data){
         let player = data;
         handlePlayer(player);
     })
+
+    //turn ended, tell next player to start
     socket.on('endTurn', function() {
     if (turn == playerList2.length-1)
       turn = 0;
@@ -84,38 +84,10 @@ io.sockets.on('connection', function (socket) {
     sendTurn();
   });
 });
-let sendTurn = function() {
-  for (let i = 0; i < socketList.length; i++) {
-      socketList[i].emit('turn', turn);
-  }
-}
-
-let sendDice = function(player, dice) {
-  let pack = [player.id, dice];
-  for (let i = 0; i < socketList.length; i++) {
-    if (i != player.id)
-      socketList[i].emit('receiveDice', pack);
-  }
-}
-
-let sendPlayers = function () {
-    let pack = [];
-    for (let i = 0; i < playerList2.length; i++) {
-        pack.push(playerList2[i]);
-    }
-    for (let i = 0; i < socketList.length; i++) {
-        socketList[i].emit('startGame', pack);
-    }
-}
-
-let generateTurn = function() {
-  turn = Math.floor(Math.random()*6);
-    sendTurn();
-}
 
 let startGame = function () {
-  //  chance = new Deck(true);
-  //  communityChest = new Deck(false);
+    chance = new Deck(true);
+    communityChest = new Deck(false);
     squares[0] = new Square(0); //go
     squares[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
     squares[2] = new CommunityChest(2);
@@ -158,9 +130,25 @@ let startGame = function () {
     squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue");
 }
 
-let updatePosition = function(player, diceNumber) {
-  player.dicePos(diceNumber);
-  return player;
+let sendPlayers = function () {
+    let pack = [];
+    for (let i = 0; i < playerList2.length; i++) {
+        pack.push(playerList2[i]);
+    }
+    for (let i = 0; i < socketList.length; i++) {
+        socketList[i].emit('startGame', pack);
+    }
+}
+
+let generateTurn = function() {
+  turn = Math.floor(Math.random()*6);
+    sendTurn();
+}
+
+let sendTurn = function() {
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('turn', turn);
+  }
 }
 
 let sendPosUpdate = function(player, description) {
@@ -171,6 +159,28 @@ let sendPosUpdate = function(player, description) {
   for (let i = 0; i < socketList.length; i++) {
       socketList[i].emit('updatePosPlayer', pack);
   }
+}
+
+let sendMoneyUpdate = function(rent, player, description) {
+  let pack = [];
+  pack.push(rent);
+  pack.push(player);
+  pack.push(description);
+
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('updateMoneyPlayer', pack);
+  }
+}
+
+let sendGenericUpdate = function(desc) {
+  for (let i = 0; i < socketList.length; i++) {
+      socketList[i].emit('genericUpdate', desc);
+  }
+}
+
+let updatePositionDice = function(player, diceNumber) {
+  player.dicePos(diceNumber);
+  return player;
 }
 
 let handlePlayer = function(pl){
@@ -185,9 +195,25 @@ let handlePlayer = function(pl){
   playerSocket = socketList[playerId];
   //promemoria: handler per ogni tipo di square
   if(square instanceof HouseProperty || square instanceof Station){
-    handler = new HSHandler(player);
+    handler = new HSHandler(player, square);
     let res = handler.handle();
     //payRent che chiama sendUpdateMoney
+    switch(res) {
+      case 'active':
+        payRent(square.getRent(), player, square.getOwner());
+        break;
+      case 'mortgaged':
+        sendGenericUpdate(player.name + ' landed on a mortgaged property');
+        break;
+      case 'yourProperty':
+        sendGenericUpdate(player.name + ' landed on his own property');
+        break;
+      case 'unownedProperty':
+        unownedProperty(player, square);
+        break;
+      default:
+        break;
+    }
   }
   else if(square instanceof Services){
     handler = new ServicesHandler(player, diceTotal);
@@ -239,11 +265,21 @@ let handlePlayer = function(pl){
 }
 
 let payRent = function(rent, player, owner){
-  console.log("you must pay him " + rent);
+  //console.log("you must pay him " + rent);
   player.updateMoney(-rent);
   owner.updateMoney(rent);
-  pack = [];
-  pack.push(rent);
-  pack.push(player);
-  pack.push(owner);
+  let str = player.name + ' pays ' + rent + ' to ' + owner.name;
+  let str2 = owner.name + ' receives ' + rent;
+  sendMoneyUpdate(-rent, player, str);
+  sendMoneyUpdate(rent, owner, str2);
+}
+
+
+let unownedProperty = function(player, square) {
+  let str;
+  if (square instanceof Property) {
+    str = player.name + ' lands on unowned property ' + square.name;
+    sendGenericUpdate(str);
+    socketList[player.id].emit('unownedProperty', square);
+  }
 }
