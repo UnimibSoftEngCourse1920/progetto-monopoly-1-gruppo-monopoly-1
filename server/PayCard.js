@@ -12,3 +12,5 @@ class PayCard{
         return this.description;
     }
 }
+
+module.exports = PayCard;

@@ -5,6 +5,7 @@ class Player {
         this.money = 1500;
         this.pos = 0;
         this.props = [];
+        this.services = [null, null];
     }
 
     addProp(prop) {
@@ -14,7 +15,7 @@ class Player {
     getId() {
       return this.id;
     }
-    
+
     removeProp(prop) {
         stop = false
         for (i = 0; i < props.length && !stop; i++) {
@@ -38,6 +39,10 @@ class Player {
                 return true;
             }
         }
+    }
+
+    getServices() {
+      return this.services;
     }
 
     getPos() {

@@ -6,3 +6,5 @@ class PlayerHandler{
 
     handle(){}
 }
+
+module.exports = PlayerHandler;

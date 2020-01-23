@@ -5,24 +5,24 @@ class ServicesHandler extends PlayerHandler{
     }
 
     handle(){
-        pos = player.getPos();
-        owner = square.getOwner();
+        let pos = player.getPos();
+        let owner = square.getOwner();
         let mult = 0;
 
         if(owner != null){ //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
             if(owner.getId() != playerId){
                 mult = checkServices(owner);
-                console.log("this property is owned by " + owner.getName());
+                //console.log("this property is owned by " + owner.getName());
                 if(square.getState() == 'active')
-                    return mult;
+                    return mult*diceTotal;
                 else{
-                    console.log("you're lucky, this property is mortgaged");
+                    //console.log("you're lucky, this property is mortgaged");
                     return 0;
                 }
             }
         }
         else{
-            console.log("you landed on an unowned property");
+            //console.log("you landed on an unowned property");
             return -1; //client decide se comprare o meno square
         }
     }
@@ -40,3 +40,5 @@ class ServicesHandler extends PlayerHandler{
         return 10;
       }
 }
+
+module.exports = ServicesHandler;

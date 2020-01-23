@@ -13,6 +13,20 @@ let Chance = require('./server/Chance');
 let CommunityChest = require('./server/CommunityChest');
 let IncomeTax = require('./server/IncomeTax');
 let Deck = require('./server/Deck');
+let CardHandler = require('./server/CardHandler');
+let CloseServicesCard = require('./server/CloseServicesCard');
+let CloseStationCard = require('./server/CloseStationCard');
+let GetOutOfJailCard = require('./server/GetOutOfJailCard');
+let GoToCard = require('./server/GoToCard');
+let GoToJailCard = require('./server/GoToJailCard');
+let HSHandler = require('./server/HSHandler');
+let MoveBackCard = require('./server/MoveBackCard');
+let PayCard = require('./server/PayCard');
+let PayPerBuildingCard = require('./server/PayPerBuildingCard');
+let PayPlayerCard = require('./server/PayPlayerCard');
+let PlayerHandler = require('./server/PlayerHandler');
+let ServicesHandler = require('./server/ServicesHandler');
+
 
 app.get('/', function (req, res) {
     console.log('client connected');
@@ -216,9 +230,20 @@ let handlePlayer = function(pl){
     }
   }
   else if(square instanceof Services){
-    handler = new ServicesHandler(player, diceTotal);
+    handler = new ServicesHandler(player, diceTotal, square);
     let res = handler.handle();
     //payRent che chiama sendUpdateMoney
+    switch(res) {
+      case -1:
+        unownedProperty(player, square);
+        break;
+      case 0:
+      sendGenericUpdate(player.name + ' landed on a mortgaged property');
+      break;
+      default:
+      payRent(res, player, square.getOwner());
+      break;
+    }
   }
   else if(square instanceof IncomeTax){
     tax = square.getTax();

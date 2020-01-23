@@ -17,3 +17,5 @@ class PayPlayerCard{
         return this.description;
     }
 }
+
+module.exports = PayPlayerCard;

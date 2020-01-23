@@ -11,3 +11,5 @@ class GoToJailCard{
         return this.description;
     }
 }
+
+module.exports = GoToJailCard;

@@ -6,8 +6,8 @@ class PayPerBuildingCard{
     }
 
     execute = function(player){
-        total = 0;
-        props = player.getProps();
+        let total = 0;
+        let props = player.getProps();
 
         for(let i=0; i<props.length; i++){
             if(props[i] instanceof HouseProperty)
@@ -24,3 +24,5 @@ class PayPerBuildingCard{
         return this.description;
     }
 }
+
+module.exports = PayPerBuildingCard;

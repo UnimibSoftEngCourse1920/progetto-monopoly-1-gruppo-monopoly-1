@@ -54,7 +54,7 @@ class Deck {
 	}
 
 	getCard = function () {
-		temp = cards[currentCard];
+		let temp = cards[currentCard];
 		currentCard++;
 		if (currentCard == total) {
 			shuffle(cards);
@@ -63,3 +63,5 @@ class Deck {
 		return temp;
 	}
 }
+
+module.exports = Deck;

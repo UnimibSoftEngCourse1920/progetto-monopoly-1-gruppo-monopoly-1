@@ -4,9 +4,9 @@ class CloseStationCard{
     }
 
     execute = function(player){
-        actualPos = player.getPos();
-        newPos = 0;
-        pack = [];
+        let actualPos = player.getPos();
+        let newPos = 0;
+        let pack = [];
 
         if(actualPos > 0 && actualPos < 5){
             newPos = player.setPos(5);
@@ -45,3 +45,5 @@ class CloseStationCard{
         return this.description;
     }
 }
+
+module.exports = CloseStationCard;

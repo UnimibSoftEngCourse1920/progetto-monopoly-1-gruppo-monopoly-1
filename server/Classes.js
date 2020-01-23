@@ -11,7 +11,7 @@ class Player {
     }
 
     removeProp(prop) {
-        stop = false
+        let stop = false
         for (i = 0; i < props.length && !stop; i++) {
             if (props[i] == prop) {
                 this.props.delete(props[i]);
@@ -37,14 +37,14 @@ class Player {
 
     get pos() {
         return this.pos;
-    } 
+    }
 
     set pos(pos) {
         this.pos = pos;
     }
 
     dicePos(diceNumber) {
-        sum = this.pos + diceNumber;
+        let sum = this.pos + diceNumber;
         if (sum > 39)
             pos(sum - 40);
         else

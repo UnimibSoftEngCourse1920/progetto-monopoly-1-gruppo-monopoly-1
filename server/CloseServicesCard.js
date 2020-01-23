@@ -4,8 +4,8 @@ class CloseServicesCard{
     }
 
     execute = function(player){
-        actualPos = player.getPos();
-        newPos = 0;
+        let actualPos = player.getPos();
+        let newPos = 0;
         let pack = [];
 
         if(actualPos >= 0 && actualPos < 12){
@@ -27,10 +27,12 @@ class CloseServicesCard{
             pack.push(0);
             return pack;
         }
-        
+
     }
 
     printDescription = function(){
         return this.description;
     }
 }
+
+module.exports = CloseServicesCard;

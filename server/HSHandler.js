@@ -4,10 +4,10 @@ class HSHandler extends PlayerHandler{
     }
 
     handle(){
-        pos = player.getPos();
-        owner = square.getOwner();
-        playerId = player.getId();
-        rent = square.getRent();
+        let pos = player.getPos();
+        let owner = square.getOwner();
+        let playerId = player.getId();
+        let rent = square.getRent();
 
         if(owner != null){
             if(owner.getId() != playerId){
@@ -32,3 +32,5 @@ class HSHandler extends PlayerHandler{
 
 
 }
+
+module.exports = HSHandler;

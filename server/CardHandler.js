@@ -4,5 +4,7 @@ class CardHandler{
     }
 
     handle(){}
-    
+
 }
+
+module.exports = CardHandler;

@@ -28,3 +28,5 @@ class GoToCard{
     }
 
 }
+
+module.exports = GoToCard;

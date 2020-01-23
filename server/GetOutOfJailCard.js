@@ -4,8 +4,8 @@ class GetOutOfJailCard{
     }
 
     execute = function(player){
-        actualPos = player.getPos();
-        jail = player.isInJail();
+        let actualPos = player.getPos();
+        let jail = player.isInJail();
 
         if(actualPos == 10){
             if(jail){
@@ -21,3 +21,5 @@ class GetOutOfJailCard{
         return this.description;
     }
 }
+
+module.exports = GetOutOfJailCard;
