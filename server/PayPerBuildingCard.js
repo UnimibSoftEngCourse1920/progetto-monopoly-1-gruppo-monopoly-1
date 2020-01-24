@@ -23,7 +23,7 @@ class PayPerBuildingCard extends Card{
                 else
                     total += amountPerHouse*props[i].getHouses();
         }
-        player.updateMoney(-total);
+        //player.updateMoney(-total);
         return -total;
     }
 

@@ -445,7 +445,9 @@ let handlePlayer = function(pl){
       }
     }
     else if (card instanceof PayPerBuildingCard) {
-
+      let res = card.execute(player);
+      let outcome = player.updateMoney(res);
+      sendMoneyUpdate(res, player, card.description);
     }
   }
   else if(square instanceof Go){
@@ -457,9 +459,11 @@ let handlePlayer = function(pl){
   else if(square instanceof GoToJail){
     sendToJail(player);
   }
+
+  //fine del turno
   if (doubleDice == 0 && != player.jail) {
     updateTurn();
-  } else (if doubleDice>0 && !=player.jail) {
+  } else if (doubleDice>0 && !=player.jail) {
     sendTurn();
   }
 }

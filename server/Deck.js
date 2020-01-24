@@ -23,7 +23,7 @@ class Deck {
 			this.cards[8] = new PayCard("You inherit $100", 100);
 			this.cards[9] = new PayCard("From sale of stock you earn 50$", 50);
 			this.cards[10] = new PayCard("Holiday fund matures - collect 100$", 100);
-			this.cards[11] = new PayPerBuildingCard(45, 115, "You are assessed for street repairs � $40 per house, $115 per hotel");
+			this.cards[11] = new PayPerBuildingCard(45, 115, "You are assessed for street repairs � $45 per house, $115 per hotel");
 			this.cards[12] = new PayPlayerCard(50, false, "Grand Opera Night - collect 50$ from each player");
 			this.cards[13] = new GetOutOfJailCard("Get out of jail free � this card may be kept until needed, or sold");
 			this.cards[14] = new GoToJailCard("Go to jail � go directly to jail � Do not pass Go, do not collect $200 ");
