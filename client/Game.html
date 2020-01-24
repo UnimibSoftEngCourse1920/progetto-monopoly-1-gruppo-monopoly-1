@@ -29,6 +29,12 @@
         #board {
             border-style: solid;
         }
+        #buyProperty{
+          display: none;
+          text-align: center;
+          position:absolute;
+          z-index: 2;
+        }
         #gestore{
            display: none;
 	         text-align: center;
@@ -66,6 +72,10 @@
           border-style: solid;
           border-radius: 5px;
         }
+        #description{
+          border-style: solid;
+          width:150px;
+        }
     </style>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
@@ -75,10 +85,16 @@
 	<div id="waitingDiv">
 		waiting...
 	</div>
-  <div id="gestore">
+  <div id="gestore" class='position'>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
     <div id="scrollBox"></div>
 	</div>
+  <div id="buyProperty" class="position">
+    <div id="description"></div><br>
+    <div>vuoi acquistare questa propietà?</div><br>
+    <button id="yes" onclick="propertyRisp(true)">yes</button>
+    <button id="auction" onclick="propertyRisp(false)">auction</button>
+  </div>
     <div id="row">
         <div class="column" id="div1">
             <div id="p0" class="infoPlayer"></div><br>
@@ -154,8 +170,8 @@
     let boardW=$("#centro").width();
     let cas= boardW*(200/1500);
     $(".column").width(a);
-    $("#gestore").width(boardW-(cas*2));
-    $("#gestore").offset({ top: cas+100,left:cas + $(".column").width() });
+    $(".position").width(boardW-(cas*2));
+    $(".position").offset({ top: cas+100,left:cas + $(".column").width() });
     fix_dpi();
     createSquares();
     img.onload = function () {
@@ -427,6 +443,18 @@
 
   }
 
+  let propertyRisp = function (risp){
+    let str;
+    if(risp){
+      str="buy";
+   }else {
+     str="auction";
+     }
+     socket.emit('buyOrAuction', str);
+     buyProperty.style.display="none";
+     gestore.style.display="block";
+  }
+
   socket.on('unownedProperty', function(data) {
     //data è un oggetto di tipo Property
     //questo viene ricevuto solo dal client interessato, non da tutti
@@ -435,8 +463,53 @@
     //poi ci sara un oncclick metodo che inviera al server la scelta
     //fai in modo che i due bottoni invochino la stessa funzione, che pero fa una socket.emit diversa nei due casi:
     //socket.emit('buyOrAuction', str), dove str = 'buy' o str = 'auction'
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i].id == data[0].id) {
+        if (players[i].id != self.id) {
+          let str = player.name + ' lands on an unownedProperty';
+          updateScroll(str);
+        } else {
+          //sei tu
+            gestore.style.display="none";
+             buyProperty.style.display="block";
+             let propTemp=data[1];
+             let n = "Nome propietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0= "rendita: " + propTemp.housePrices[0];
+             let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
+             let r2= "rendita con 2 case: " + propTemp.housePrices[2];
+             let r3= "rendita con 3 case: " + propTemp.housePrices[3];
+             let r4= "rendita con 4 case: " + propTemp.housePrices[4];
+             let r5= "rendita con albergo: " + propTemp.housePrices[5];
+             let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
+             let frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
+             document.getElementById("description").innerHTML=frase;
+             document.getElementById("description").style.border-color=propTemp.colour;
+          }
+        }
+      }
 
   });
+
+socket.on('addProp', function(data) {
+  let prop = data[0];
+  let player = data[1];
+  let str = data[2];
+  for (let i = 0; i < players.length; i ++) {
+    if(players[i].id == data[0].id) {
+      if (players[i].id != self.id) {
+        players[i].addProp(prop);
+        //aggiorna div
+      } else {
+        //sei tu
+        self.addProp(prop);
+        //aggiorna div
+      }
+    }
+  }
+  updateScroll(str);
+})
+
 
   let updateScroll = function(str) {
     let scrollDiv= document.getElementById("scrollBox");

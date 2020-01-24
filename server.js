@@ -163,9 +163,40 @@ io.sockets.on('connection', function (socket) {
         sendTurn();
       }
   });
+
+  socket.on('buyOrAuction', function(data){
+    let str = data;
+    let player = playerList2[socket.id];
+    if (str == 'buy') {
+      handleBuy(player);
+    } else {
+      //auction
+    }
+  })
 });
 
-let sendToJail(player) {
+let handleBuy = function(player) {
+  let prop = squares[player.pos];
+  let str = player.name + ' spends ' + prop.cost;
+  let str2 = player.name + ' buys ' + prop.name;
+  let outcome = player.updateMoney(-prop.cost);
+  sendMoneyUpdate(-prop.cost, player, str);
+  player.props.push(prop);
+  // fare controlli se su services
+  sendPropUpdate(prop, player, str2);
+}
+
+let sendPropUpdate = function(prop, player, str) {
+  let pack = [];
+  pack.push(prop);
+  pack.push(player);
+  pack.push(str);
+  for (let i = 0; i < playerList2.length; i ++) {
+    socketList[i].emit('addProp', pack);
+  }
+}
+
+let sendToJail = function(player) {
   let str = player.name + ' sent to jail';
   player.jail = true;
   player.setPos(10);
@@ -342,7 +373,7 @@ let handlePlayer = function(pl){
         break;
     }
   }
-  else if(square instanceof Services){
+  /*else if(square instanceof Services){
     handler = new ServicesHandler(player, diceTotal, square);
     let res = handler.handle();
     //payRent che chiama sendUpdateMoney
@@ -459,7 +490,7 @@ let handlePlayer = function(pl){
   else if(square instanceof GoToJail){
     sendToJail(player);
   }
-
+*/
   //fine del turno
   if (doubleDice == 0 && != player.jail) {
     updateTurn();
