@@ -1,3 +1,8 @@
+let Property = require('./server/Property');
+let HouseProperty = require('./server/HouseProperty');
+let Services = require('./server/Services');
+let Station = require('./server/Station');
+let Square = require('./server/Square');
 class Player {
     constructor(id, name) {
         this.id = id;

@@ -1,8 +1,15 @@
-class PayPerBuildingCard{
+let Card = require('./server/Card');
+let Player = require('./server/Player');
+let Square = require('./server/Square');
+let Property = require('./server/Property');
+let HouseProperty = require('./server/HouseProperty');
+let Station = require('./server/Station');
+let Services = require('./server/Services');
+class PayPerBuildingCard extends Card{
     constructor(amountPerHouse, amountPerHotel, description) {
+      super(description);
         this.amountPerHouse = amountPerHouse;
         this.amountPerHotel = amountPerHotel;
-        this.description = description;
     }
 
     execute = function(player){

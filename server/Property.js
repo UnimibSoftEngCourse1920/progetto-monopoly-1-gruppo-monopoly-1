@@ -1,5 +1,5 @@
 let Square = require('./Square');
-
+let Player = require('./server/Player');
 class Property extends Square {
     constructor(id, name, cost, rent, mortgage) {
         super(id);

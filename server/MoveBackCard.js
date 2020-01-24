@@ -1,7 +1,9 @@
-class MoveBackCard{
+let Player = require('./server/Player');
+let Card = require('./server/Card');
+class MoveBackCard extends Card{
     constructor(spaces, description) {
+      super(description);
         this.spaces = spaces;
-        this.description = description;
     }
 
     execute = function(player){

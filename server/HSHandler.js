@@ -1,3 +1,8 @@
+let Player = require('./server/Player');
+let Property = require('./server/Property');
+let Square = require('./server/Square');
+let HouseProperty = require('./server/HouseProperty');
+let Station = require('./server/Station');
 class HSHandler extends PlayerHandler{
     constructor(player, square){
         super(player, square);

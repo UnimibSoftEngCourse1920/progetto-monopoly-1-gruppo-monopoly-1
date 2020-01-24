@@ -1,6 +1,8 @@
-class GetOutOfJailCard{
+let Card = require('./server/Card');
+let Player = require('./server/Player');
+class GetOutOfJailCard extends Card{
     constructor(description) {
-        this.description = description;
+        super(description);
     }
 
     execute = function(player){

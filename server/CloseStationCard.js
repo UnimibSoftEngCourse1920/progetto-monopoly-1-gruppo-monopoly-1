@@ -1,6 +1,8 @@
-class CloseStationCard{
+let Card = require('./server/Card');
+let Player = require('./server/Player');
+class CloseStationCard extends Card{
     constructor(description) {
-        this.description = description;
+        super(description);
     }
 
     execute = function(player){
@@ -34,7 +36,6 @@ class CloseStationCard{
         }
         else if(actualPos > 35 && actualPos < 40){
             newPos = player.setPos(5);
-            player.updateMoney(200);
             pack.push(newPos);
             pack.push(200);
             return pack;

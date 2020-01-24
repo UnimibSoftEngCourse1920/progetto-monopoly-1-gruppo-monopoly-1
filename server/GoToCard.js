@@ -1,7 +1,8 @@
 let Player = require('./server/Player');
-class GoToCard{
+let Card = require('./server/Card');
+class GoToCard extends Card{
     constructor(description, squareIndex){
-        this.description = description;
+      super(description);
         this.squareIndex = squareIndex;
     }
 

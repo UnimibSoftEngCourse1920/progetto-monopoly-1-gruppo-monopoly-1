@@ -1,3 +1,13 @@
+let PayCard = require('./server/PayCard');
+let Card = require('./server/Card');
+let PayPerBuildingCard = require('./server/PayPerBuildingCard');
+let PayPlayerCard = require('./server/PayPlayerCard');
+let GetOutOfJailCard = require('./server/GetOutOfJailCard');
+let GoToJailCard = require('./server/GoToJailCard');
+let GoToCard = require('./server/GoToCard');
+let MoveBackCard = require('./server/MoveBackCard');
+let CloseStationCard = require('./server/CloseStationCard');
+let CloseServicesCard = require('./server/CloseServicesCard');
 class Deck {
     constructor(chance) {
         this.cards = [];

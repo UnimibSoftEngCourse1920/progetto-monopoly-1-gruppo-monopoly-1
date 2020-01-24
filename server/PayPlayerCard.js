@@ -1,16 +1,13 @@
-class PayPlayerCard{
-    constructor(amount, description) {
+let Card = require('./server/Card');
+class PayPlayerCard extends Card{
+    constructor(amount, boo, description) {
+      super(description);
         this.amount = amount;
-        this.description = description;
+        this.boo = boo;
     }
 
-    execute = function(player, players){
-        player.updateMoney(-amount*players.length);
-        for(let i=0; i < players.length; i++){
-            if(players.getId() != players[i].getId())
-                players[i].updateMoney(amount);
-        }
-        return -amount;
+    execute = function(){
+      return amount;
     }
 
     printDescription = function(){
