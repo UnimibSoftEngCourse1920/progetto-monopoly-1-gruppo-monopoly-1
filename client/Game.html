@@ -365,12 +365,12 @@
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }
 
-  socket.on('genericUpdate', function(data)) {
+  socket.on('genericUpdate', function(data) {
     //data è una stringa, devi solo inserirla nella scroll
     updateScroll(data);
-  }
+  });
 
-  socket.on('updateMoneyPlayer', function(data)) {
+  socket.on('updateMoneyPlayer', function(data) {
     //data è un array [rent, player, description]
     if(data[0] != 0) {
       for (let i = 0; i < players.length; i ++)
@@ -384,7 +384,7 @@
     //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
     //usare lo stesso array per tutti
 
-  }
+  });
 
   socket.on('jailUpdate', function(data) {
     //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
@@ -484,7 +484,7 @@
              let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
              let frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
              document.getElementById("description").innerHTML=frase;
-             document.getElementById("description").style.border-color=propTemp.colour;
+             //document.getElementById("description").style.border-color=propTemp.colour;
           }
         }
       }
@@ -499,6 +499,7 @@ socket.on('addProp', function(data) {
     if(players[i].id == data[0].id) {
       if (players[i].id != self.id) {
         players[i].addProp(prop);
+        prop.owner= player;
         //aggiorna div
       } else {
         //sei tu

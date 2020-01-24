@@ -1,4 +1,4 @@
-let Card = require('./server/Card');
+let Card = require('./Card');
 class PayPlayerCard extends Card{
     constructor(amount, boo, description) {
       super(description);

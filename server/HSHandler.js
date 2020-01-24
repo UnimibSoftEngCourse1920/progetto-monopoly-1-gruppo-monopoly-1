@@ -1,18 +1,19 @@
-let Player = require('./server/Player');
-let Property = require('./server/Property');
-let Square = require('./server/Square');
-let HouseProperty = require('./server/HouseProperty');
-let Station = require('./server/Station');
+let Player = require('./Player');
+let Property = require('./Property');
+let Square = require('./Square');
+let HouseProperty = require('./HouseProperty');
+let Station = require('./Station');
+let PlayerHandler = require('./PlayerHandler');
 class HSHandler extends PlayerHandler{
     constructor(player, square){
         super(player, square);
     }
 
     handle(){
-        let pos = player.getPos();
-        let owner = square.getOwner();
-        let playerId = player.getId();
-        let rent = square.getRent();
+        let pos = this.player.getPos();
+        let owner = this.square.getOwner();
+        let playerId = this.player.getId();
+        let rent = this.square.getRent();
 
         if(owner != null){
             if(owner.getId() != playerId){

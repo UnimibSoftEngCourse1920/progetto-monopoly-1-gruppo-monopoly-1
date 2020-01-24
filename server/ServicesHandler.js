@@ -1,7 +1,8 @@
-let Property = require('./server/Property');
-let Square = require('./server/Square');
-let Player = require('./server/Player');
-let Services = require('./server/Services');
+let Property = require('./Property');
+let Square = require('./Square');
+let Player = require('./Player');
+let Services = require('./Services');
+let PlayerHandler = require('./PlayerHandler');
 class ServicesHandler extends PlayerHandler{
     constructor(player, diceTotal, square){
         super(player, square);

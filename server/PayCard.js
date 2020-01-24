@@ -1,7 +1,7 @@
-let Card = require('./server/Card');
+let Card = require('./Card');
 class PayCard extends Card{
     constructor(description, amount) {
-        super(description;)
+        super(description);
         this.amount = amount;
     }
 

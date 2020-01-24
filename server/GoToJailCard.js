@@ -1,5 +1,5 @@
-let Player = require('./server/Player');
-let Card = require('./server/Card');
+let Player = require('./Player');
+let Card = require('./Card');
 class GoToJailCard extends Card{
     constructor(description){
         super(description);

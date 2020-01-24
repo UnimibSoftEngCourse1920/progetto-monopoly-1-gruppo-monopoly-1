@@ -1,10 +1,10 @@
-let Card = require('./server/Card');
-let Player = require('./server/Player');
-let Square = require('./server/Square');
-let Property = require('./server/Property');
-let HouseProperty = require('./server/HouseProperty');
-let Station = require('./server/Station');
-let Services = require('./server/Services');
+let Card = require('./Card');
+let Player = require('./Player');
+let Square = require('./Square');
+let Property = require('./Property');
+let HouseProperty = require('./HouseProperty');
+let Station = require('./Station');
+let Services = require('./Services');
 class PayPerBuildingCard extends Card{
     constructor(amountPerHouse, amountPerHotel, description) {
       super(description);

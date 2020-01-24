@@ -1,5 +1,5 @@
-let Card = require('./server/Card');
-let Player = require('./server/Player');
+let Card = require('./Card');
+let Player = require('./Player');
 class CloseStationCard extends Card{
     constructor(description) {
         super(description);

@@ -1,3 +1,4 @@
+
 class Square {
     constructor(id) {
         this.id = id;

@@ -1,5 +1,5 @@
-let Player = require('./server/Player');
-let Card = require('./server/Card');
+let Player = require('./Player');
+let Card = require('./Card');
 class MoveBackCard extends Card{
     constructor(spaces, description) {
       super(description);

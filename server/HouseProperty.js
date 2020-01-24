@@ -1,5 +1,5 @@
 let Property = require('./Property');
-let Player = require('./server/Player');
+//let Player = require('./Player');
 class HouseProperty extends Property {
     constructor(id, name, cost, housePrices, houseBuildPrice, colour) {
         super(id, name, cost, housePrices[0]);
