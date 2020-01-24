@@ -10,7 +10,7 @@ class PlayerHandler{
         this.square = square;
     }
 
-    handle(){}
+    handle(player){}
 }
 
 module.exports = PlayerHandler;

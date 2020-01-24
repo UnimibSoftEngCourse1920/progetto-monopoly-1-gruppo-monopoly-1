@@ -74,7 +74,9 @@
         }
         #description{
           border-style: solid;
-          width:150px;
+          width:300px;
+          margin:auto;
+          font-size: 20px;
         }
     </style>
     <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
@@ -97,17 +99,23 @@
   </div>
     <div id="row">
         <div class="column" id="div1">
-            <div id="p0" class="infoPlayer"></div><br>
-            <div id="p1" class="infoPlayer"></div><br>
+            <div id="p0" class="infoPlayer"></div>
+            <div id="m0"></div><br>
+            <div id="p1" class="infoPlayer"></div>
+            <div id="m1"></div><br>
             <div id="p2" class="infoPlayer"></div>
+            <div id="m2"></div>
         </div>
         <div id="centro">
             <canvas id="board"></canvas>
         </div>
         <div class="column" id="div2">
-            <div id="p3" class="infoPlayer"></div><br>
-            <div id="p4" class="infoPlayer"></div><br>
+            <div id="p3" class="infoPlayer"></div>
+            <div id="m3"></div><br>
+            <div id="p4" class="infoPlayer"></div>
+            <div id="m4"></div><br>
             <div id="p5" class="infoPlayer"></div>
+            <div id="m5"></div>
         </div>
     </div>
 <script>
@@ -149,13 +157,16 @@
           let pedina = new Pedina(colors[i]);
           players[i] = new Player(playersTemp[i].id, playersTemp[i].name, pedina);
           let p = "p" + i;
+          let m= "m" + i;
           console.log(playersTemp[i].id + " " + playersTemp[i].name);
           if(players[i].id==id){
             self = players[i];
-            document.getElementById(p).innerHTML =  "(sei tu) " + players[i].name  + "    money: " + players[i].money;
+            document.getElementById(p).innerHTML =  "(sei tu) " + players[i].name;
+
           }else{
-            document.getElementById(p).innerHTML = players[i].name + "    money: " + players[i].money;
+            document.getElementById(p).innerHTML = players[i].name;
           }
+          document.getElementById(m).innerHTML =  "money: " + players[i].money;
           document.getElementById(p).style.background=colors[i];
       }
       createCanvas();
@@ -372,10 +383,13 @@
 
   socket.on('updateMoneyPlayer', function(data) {
     //data è un array [rent, player, description]
+    let p;
     if(data[0] != 0) {
       for (let i = 0; i < players.length; i ++)
-        if (players[i].id == data[1].id)
+        if (players[i].id == data[1].id) {
           players[i].updateMoney(data[0]);
+          p = players[i];
+        }
       updateScroll(data[2]);
     }
     //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
@@ -383,7 +397,8 @@
     //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
     //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
     //usare lo stesso array per tutti
-
+    let str = 'm' + p.id;
+  document.getElementById(str).innerHTML = "money: " + p.money;
   });
 
   socket.on('jailUpdate', function(data) {
@@ -463,17 +478,15 @@
     //poi ci sara un oncclick metodo che inviera al server la scelta
     //fai in modo che i due bottoni invochino la stessa funzione, che pero fa una socket.emit diversa nei due casi:
     //socket.emit('buyOrAuction', str), dove str = 'buy' o str = 'auction'
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i].id == data[0].id) {
-        if (players[i].id != self.id) {
-          let str = player.name + ' lands on an unownedProperty';
-          updateScroll(str);
-        } else {
+    gestore.style.display="none";
+   buyProperty.style.display="block";
+   let propTemp=data[1];
+   let type = data[2];
+   let frase;
           //sei tu
-            gestore.style.display="none";
-             buyProperty.style.display="block";
-             let propTemp=data[1];
-             let n = "Nome propietà: "+ propTemp.name;
+          if (type == 'HouseProperty') {
+
+             let n = "Nome proprietà: "+ propTemp.name;
              let c=  "Costo di acquisto: "+ propTemp.cost;
              let r0= "rendita: " + propTemp.housePrices[0];
              let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
@@ -482,24 +495,38 @@
              let r4= "rendita con 4 case: " + propTemp.housePrices[4];
              let r5= "rendita con albergo: " + propTemp.housePrices[5];
              let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
-             let frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
-             document.getElementById("description").innerHTML=frase;
+             frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
              //document.getElementById("description").style.border-color=propTemp.colour;
-          }
-        }
-      }
+           } else if (type == 'Station') {
+
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r1= "rendita con 1 stazione: " + propTemp.rentPrices[0];
+             let r2= "rendita con 2 stazioni: " + propTemp.rentPrices[1];
+             let r3= "rendita con 3 stazioni: " + propTemp.rentPrices[2];
+             let r4= "rendita con 4 stazioni: " + propTemp.rentPrices[3];
+             frase= n + "<br>" + c + "<br>" + r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4;
+           } else if (type == 'Services') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0 = "Se si possiede una proprieta di tipo Services, la rendita è: 4 x il numero dei dadi tirati";
+             let r1 = "Se si possiedono entrambe le proprieta di tipo Services, la rendita è: 10 x il numero dei dadi tirati";
+             frase = n + "<br>" + c + "<br>" + r0 + "<br>"+ r1;
+           }
+           document.getElementById("description").innerHTML=frase;
 
   });
 
 socket.on('addProp', function(data) {
+  console.log("ci sono");
   let prop = data[0];
-  let player = data[1];
+  let player = players[data[1]];
   let str = data[2];
   for (let i = 0; i < players.length; i ++) {
     if(players[i].id == data[0].id) {
       if (players[i].id != self.id) {
         players[i].addProp(prop);
-        prop.owner= player;
+        prop.owner= player.id;
         //aggiorna div
       } else {
         //sei tu

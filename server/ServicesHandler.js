@@ -9,17 +9,16 @@ class ServicesHandler extends PlayerHandler{
         this.diceTotal = diceTotal;
     }
 
-    handle(){
-        let pos = player.getPos();
-        let owner = square.getOwner();
+    handle(owner){
+        let pos = this.player.getPos();
         let mult = 0;
 
         if(owner != null){ //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
-            if(owner.getId() != playerId){
+            if(owner != this.player.id){
                 mult = checkServices(owner);
                 //console.log("this property is owned by " + owner.getName());
-                if(square.getState() == 'active')
-                    return mult*diceTotal;
+                if(this.square.state == 'active')
+                    return mult*this.diceTotal;
                 else{
                     //console.log("you're lucky, this property is mortgaged");
                     return 0;

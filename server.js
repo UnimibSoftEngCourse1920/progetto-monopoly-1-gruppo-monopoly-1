@@ -53,6 +53,8 @@ let dice2 = 0;
 let doubleDice = 0;
 let outcome = true;
 let double = false;
+let unownedProp = true;
+let worker;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -87,6 +89,8 @@ io.sockets.on('connection', function (socket) {
       if (dice1 == dice2) {
         doubleDice++;
         double = true;
+      } else {
+        doubleDice = 0;
       }
       let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
       //checkDoubles(player, doubles);
@@ -187,9 +191,14 @@ let handleBuy = function(player) {
   outcome = player.updateMoney(-prop.cost);
   sendMoneyUpdate(-prop.cost, player, str);
   player.props.push(prop);
-  prop.setOwner(player);
+  console.log("prima di setOwner");
+  prop.setOwner(player.id);
+  console.log("dopo setOwner");
   // fare controlli se su services
   sendPropUpdate(prop, player, str2);
+  console.log("dopo sendPropUpdate");
+  //unownedProp = false;
+
 }
 
 let sendPropUpdate = function(prop, player, str) {
@@ -197,8 +206,11 @@ let sendPropUpdate = function(prop, player, str) {
   pack.push(prop);
   pack.push(player);
   pack.push(str);
-  for (let i = 0; i < playerList2.length; i ++) {
+  console.log("loaded pack");
+  for (let i = 0; i < playerList2.length; i++) {
+
     socketList[i].emit('addProp', pack);
+    console.log("sent pack to " + i);
   }
 }
 
@@ -349,22 +361,28 @@ let getOutOfJailFreeUpdate = function(player) {
   }
 }
 let handlePlayer = function(pl){
-  console.log("entered handlePlayer");
-  let player = playerList2[pl.id];
-  let handler;
-  let cardHandler;
-  let owner;
-  let card;
-  let pos = player.getPos();
-  let square = squares[pos];
+    let player;
+    let handler;
+    let cardHandler;
+    let owner;
+    let card;
+    let pos;
+    let square;
+    let playerId;
+    let playerSocket;
+    let res;
+  //console.log("entered handlePlayer");
+  player = playerList2[pl.id];
+   pos = player.getPos();
+   square = squares[pos];
   if (square instanceof Property)
     owner = square.getOwner();
-  let playerId = player.getId();
-  let playerSocket = socketList[playerId];
+   playerId = player.getId();
+   playerSocket = socketList[playerId];
   //promemoria: handler per ogni tipo di square
   if(square instanceof HouseProperty || square instanceof Station){
     handler = new HSHandler(player, square);
-    let res = handler.handle();
+     res = handler.handle(player);
     //payRent che chiama sendUpdateMoney
     switch(res) {
       case 'active':
@@ -378,14 +396,15 @@ let handlePlayer = function(pl){
         break;
       case 'unownedProperty':
         unownedProperty(player, square);
+        //while(unownedProp){}
         break;
       default:
         break;
     }
   }
-  /*else if(square instanceof Services){
+  else if(square instanceof Services){
     handler = new ServicesHandler(player, diceTotal, square);
-    let res = handler.handle();
+    let res = handler.handle(owner);
     //payRent che chiama sendUpdateMoney
     switch(res) {
       case -1:
@@ -398,7 +417,7 @@ let handlePlayer = function(pl){
       payRent(res, player, square.getOwner());
       break;
     }
-  }
+  } /*
   else if(square instanceof IncomeTax){
     let tax = square.getTax();
     outcome = player.updateMoney(-tax);
@@ -503,32 +522,42 @@ let handlePlayer = function(pl){
 */
   //fine del turno
   if (doubleDice == 0 && !player.jail) {
-    console.log("entered check");
+    //console.log("entered check");
     updateTurn();
   } else if (doubleDice>0 && !player.jail) {
     sendTurn();
   }
+
+
+
 }
 
 let payRent = function(rent, player, owner){
   //console.log("you must pay him " + rent);
   outcome = player.updateMoney(-rent);
-  let outcome2 = owner.updateMoney(rent);
-  let str = player.name + ' pays ' + rent + ' to ' + owner.name;
-  let str2 = owner.name + ' receives ' + rent;
+  let outcome2 = playerList2[owner].updateMoney(rent);
+  let str = player.name + ' pays ' + rent + ' to ' + playerList2[owner].name;
+  let str2 = playerList2[owner].name + ' receives ' + rent;
   sendMoneyUpdate(-rent, player, str);
-  sendMoneyUpdate(rent, owner, str2);
+  sendMoneyUpdate(rent, playerList2[owner], str2);
 }
 
 
 let unownedProperty = function(player, square) {
-  let str;
   let pack = [];
   pack.push(player);
   pack.push(square);
+  let str, str2;
+  if(square instanceof HouseProperty)
+  str = 'HouseProperty';
+  else if (square instanceof Services)
+  str = 'Services';
+  else if (square instanceof Station)
+  str = 'Station';
+  pack.push(str);
   if (square instanceof Property) {
-    str = player.name + ' lands on unowned property ' + square.name;
-    sendGenericUpdate(str);
+    str2 = player.name + ' lands on unowned property ' + square.name;
+    sendGenericUpdate(str2);
     socketList[player.id].emit('unownedProperty', pack);
   }
 }

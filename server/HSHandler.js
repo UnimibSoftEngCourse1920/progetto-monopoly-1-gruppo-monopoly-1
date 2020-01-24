@@ -9,16 +9,16 @@ class HSHandler extends PlayerHandler{
         super(player, square);
     }
 
-    handle(){
+    handle(player1){
         let pos = this.player.getPos();
         let owner = this.square.getOwner();
         let playerId = this.player.getId();
         let rent = this.square.getRent();
 
         if(owner != null){
-            if(owner.getId() != playerId){
+            if(owner != playerId){
                 //console.log("this property is owned by " + owner.getName());
-                if(square.getState() == 'active')
+                if(this.square.state == 'active')
                     return 'active';
                 else{
                     //console.log("you're lucky, this property is mortgaged");
