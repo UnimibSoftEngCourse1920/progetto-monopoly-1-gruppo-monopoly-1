@@ -42,7 +42,6 @@ let playerList2 = [];
 let io = require('socket.io')(serv, {});
 let contTot = 0, contLocale = 0;
 let persone = 0;
-let i = 0;
 let turn;
 let squares = [];
 let chance;
@@ -111,12 +110,12 @@ io.sockets.on('connection', function (socket) {
         player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
         sendPosUpdate(player, str);
       } else if (player.jail && doubleDice == 0 && player.jailCount == 3) {
-        let str = player.name + ' pays 50';
+        let str2 = player.name + ' pays 50';
         player.jail = false;
-        player.jailCount = false;
+        player.jailCount = 0;
         sendJailUpdate(player, false);
         player.updateMoney(-50);
-        sendMoneyUpdate(-50, player, str);
+        sendMoneyUpdate(-50, player, str2);
         player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
         sendPosUpdate(player, str);
       }
@@ -128,7 +127,7 @@ io.sockets.on('connection', function (socket) {
         handlePlayer(player);
     });
 
-    socket.emit('stillInJail', function(data) {
+    socket.on('stillInJail', function(data) {
       let player = playerList2[data.id];
       let jailCount = player.updateJailCount();
       for (let i = 0; i < socketList.length; i++) {
@@ -191,12 +190,12 @@ let handleBuy = function(player) {
   outcome = player.updateMoney(-prop.cost);
   sendMoneyUpdate(-prop.cost, player, str);
   player.props.push(prop);
-  console.log("prima di setOwner");
+  //console.log("prima di setOwner");
   prop.setOwner(player.id);
-  console.log("dopo setOwner");
+  //console.log("dopo setOwner");
   // fare controlli se su services
   sendPropUpdate(prop, player, str2);
-  console.log("dopo sendPropUpdate");
+  //console.log("dopo sendPropUpdate");
   //unownedProp = false;
 
 }
@@ -206,11 +205,11 @@ let sendPropUpdate = function(prop, player, str) {
   pack.push(prop);
   pack.push(player);
   pack.push(str);
-  console.log("loaded pack");
+  //console.log("loaded pack");
   for (let i = 0; i < playerList2.length; i++) {
 
     socketList[i].emit('addProp', pack);
-    console.log("sent pack to " + i);
+    //console.log("sent pack to " + i);
   }
 }
 
@@ -239,7 +238,7 @@ let updateTurn = function() {
     turn = 0;
   else
     turn ++;
-    console.log("entered updateTurn " + turn);
+    //console.log("entered updateTurn " + turn);
     sendTurn();
 }
 
@@ -375,8 +374,9 @@ let handlePlayer = function(pl){
   player = playerList2[pl.id];
    pos = player.getPos();
    square = squares[pos];
-  if (square instanceof Property)
+  if (square instanceof Property) {
     owner = square.getOwner();
+  }
    playerId = player.getId();
    playerSocket = socketList[playerId];
   //promemoria: handler per ogni tipo di square
@@ -404,7 +404,7 @@ let handlePlayer = function(pl){
   }
   else if(square instanceof Services){
     handler = new ServicesHandler(player, diceTotal, square);
-    let res = handler.handle(owner);
+    res = handler.handle(owner);
     //payRent che chiama sendUpdateMoney
     switch(res) {
       case -1:

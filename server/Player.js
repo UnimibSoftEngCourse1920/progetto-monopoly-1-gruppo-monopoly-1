@@ -31,7 +31,7 @@ class Player {
 
     removeProp(prop) {
         stop = false
-        for (i = 0; i < props.length && !stop; i++) {
+        for (let i = 0; i < props.length && !stop; i++) {
             if (props[i] == prop) {
                 this.props.delete(props[i]);
                 stop = true;

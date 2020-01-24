@@ -1,13 +1,13 @@
-let PayCard = require('./PayCard');
-let Card = require('./Card');
-let PayPerBuildingCard = require('./PayPerBuildingCard');
-let PayPlayerCard = require('./PayPlayerCard');
-let GetOutOfJailCard = require('./GetOutOfJailCard');
-let GoToJailCard = require('./GoToJailCard');
-let GoToCard = require('./GoToCard');
-let MoveBackCard = require('./MoveBackCard');
-let CloseStationCard = require('./CloseStationCard');
-let CloseServicesCard = require('./CloseServicesCard');
+let PayCard = require('./server/PayCard');
+let Card = require('./server/Card');
+let PayPerBuildingCard = require('./server/PayPerBuildingCard');
+let PayPlayerCard = require('./server/PayPlayerCard');
+let GetOutOfJailCard = require('./server/GetOutOfJailCard');
+let GoToJailCard = require('./server/GoToJailCard');
+let GoToCard = require('./server/GoToCard');
+let MoveBackCard = require('./server/MoveBackCard');
+let CloseStationCard = require('./server/CloseStationCard');
+let CloseServicesCard = require('./server/CloseServicesCard');
 class Deck {
     constructor(chance) {
         this.cards = [];
@@ -47,7 +47,7 @@ class Deck {
 			this.cards[14] = new CloseStationCard("Advance token to the nearest Railroad and pay owner twice the rent if owned, if unowned you may buy it");
 			this.cards[15] = new PayCard("You have won a crossword competition collect 100", 100);
 		}
-		this.shuffle(this.cards);
+		this.shuffle(cards);
 		this.currentCard = 0;
 		this.total = 16;
 	}
@@ -64,11 +64,11 @@ class Deck {
 	}
 
 	getCard = function () {
-		let temp = cards[currentCard];
-		currentCard++;
+		let temp = cards[this.currentCard];
+		this.currentCard++;
 		if (currentCard == total) {
 			shuffle(cards);
-			currentCard = 0;
+			this.currentCard = 0;
 		}
 		return temp;
 	}
