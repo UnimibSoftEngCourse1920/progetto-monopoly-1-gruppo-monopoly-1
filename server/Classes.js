@@ -63,7 +63,7 @@ class Property {
         this.name = name;
         this.cost = cost;
         this.mortgage = cost / 2;
-        this.mortgagePercent = 0.1 * mortgage;
+        this.mortgagePercent = 0.1 * this.mortgage;
         this.unmortagePrice = this.mortgage + this.mortgagePercent;
         this.rent = rent;
         this.state = 'active';
@@ -117,14 +117,14 @@ class HouseProperty extends Property {
 
 }
 
-class Station {
+class Station extends Property{
     constructor(id, name, cost, rentPrices) {
         super(id, name, cost, rentPrices[0]);
         this.rentPrices = rentPrices;
     }
 }
 
-class Services {
+class Services extends Property{
     constructor(id, name, cost, rentPrices) {
         super(id, name, cost, rentPrices[0]);
         this.rentPrices = rentPrices;
