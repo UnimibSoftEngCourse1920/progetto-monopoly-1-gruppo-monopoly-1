@@ -379,7 +379,6 @@ let handlePlayer = function(pl){
     let playerId;
     let playerSocket;
     let res;
-  //console.log("entered handlePlayer");
   player = playerList2[pl.id];
    pos = player.getPos();
    square = squares[pos];
@@ -388,11 +387,9 @@ let handlePlayer = function(pl){
   }
    playerId = player.getId();
    playerSocket = socketList[playerId];
-  //promemoria: handler per ogni tipo di square
   if(square instanceof HouseProperty || square instanceof Station){
     handler = new HSHandler(player, square);
      res = handler.handle(player);
-    //payRent che chiama sendUpdateMoney
     switch(res) {
       case 'active':
         payRent(square.getRent(), player, square.getOwner());
@@ -407,7 +404,6 @@ let handlePlayer = function(pl){
         break;
       case 'unownedProperty':
         unownedProperty(player, square);
-        //while(unownedProp){}
         break;
       default:
         break;
