@@ -73,7 +73,7 @@ class Square {
     }
 }
 class Property extends Square {
-    constructor(id, name, cost, rent) {
+    constructor(id, name, cost, rent, mortgage) {
         super(id);
         this.name = name;
         this.cost = cost;
