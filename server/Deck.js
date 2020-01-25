@@ -64,11 +64,11 @@ class Deck {
 	}
 
 	getCard = function () {
-		let temp = cards[currentCard];
-		currentCard++;
+		let temp = cards[this.currentCard];
+		this.currentCard++;
 		if (currentCard == total) {
-			shuffle(cards);
-			currentCard = 0;
+			shuffle(this.cards);
+			this.currentCard = 0;
 		}
 		return temp;
 	}

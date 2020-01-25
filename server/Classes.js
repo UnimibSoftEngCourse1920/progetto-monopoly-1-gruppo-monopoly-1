@@ -17,7 +17,7 @@ class Player {
 
     removeProp(prop) {
         let stop = false
-        for (i = 0; i < props.length && !stop; i++) {
+        for (let i = 0; i < props.length && !stop; i++) {
             if (props[i] == prop) {
                 this.props.delete(props[i]);
                 stop = true;
@@ -98,7 +98,7 @@ class HouseProperty extends Property {
     addHouse() {
         if (houses < 5) {
             houses++;
-            rent = housePrices[houses];
+            this.rent = housePrices[houses];
             return true;
         }
         else
@@ -108,7 +108,7 @@ class HouseProperty extends Property {
     removeHouse() {
         if (houses > 0) {
             houses--;
-            rent = housePrices[houses];
+            this.rent = housePrices[houses];
             return true;
         }
         else

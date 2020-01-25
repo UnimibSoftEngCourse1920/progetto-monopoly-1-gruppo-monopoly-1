@@ -30,10 +30,10 @@ class Player {
     }
 
     removeProp(prop) {
-        stop = false
-        for (i = 0; i < props.length && !stop; i++) {
-            if (props[i] == prop) {
-                this.props.delete(props[i]);
+        let stop = false
+        for (let i = 0; i < this.props.length && !stop; i++) {
+            if (this.props[i] == prop) {
+                this.props.delete(this.props[i]);
                 stop = true;
             }
         }

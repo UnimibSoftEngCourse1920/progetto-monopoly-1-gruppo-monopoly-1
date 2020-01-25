@@ -10,9 +10,9 @@ class HouseProperty extends Property {
     }
 
     addHouse() {
-        if (houses < 5) {
-            houses++;
-            rent = housePrices[houses];
+        if (this.houses < 5) {
+            this.houses++;
+            this.rent = this.housePrices[this.houses];
             return true;
         }
         else
@@ -20,9 +20,9 @@ class HouseProperty extends Property {
     }
 
     removeHouse() {
-        if (houses > 0) {
-            houses--;
-            rent = housePrices[houses];
+        if (this.houses > 0) {
+            this.houses--;
+            this.rent = this.housePrices[this.houses];
             return true;
         }
         else

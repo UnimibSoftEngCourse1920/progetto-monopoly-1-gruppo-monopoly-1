@@ -10,7 +10,6 @@ class ServicesHandler extends PlayerHandler{
     }
 
     handle(owner){
-        let pos = this.player.getPos();
         let mult = 0;
 
         if(owner != null){ //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
@@ -23,6 +22,8 @@ class ServicesHandler extends PlayerHandler{
                     //console.log("you're lucky, this property is mortgaged");
                     return 0;
                 }
+            } else if (owner == this.player.id) {
+              return -2;
             }
         }
         else{
