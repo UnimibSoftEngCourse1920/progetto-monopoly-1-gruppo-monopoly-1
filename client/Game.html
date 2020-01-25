@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+
 <html lang="en">
 <head>
   <title>
@@ -41,6 +41,7 @@
 	         text-align: center;
 	         position:absolute;
 	         z-index: 1;
+           background-color:white;
         }
         #dado{
           visibility:hidden;
@@ -58,6 +59,7 @@
         	background-color: white;
         }
         .infoPlayer{
+          cursor: pointer;
           font-size: 23px;
           border-style: solid;
           border-color:black;
@@ -79,16 +81,61 @@
           margin:auto;
           font-size: 20px;
         }
+        #endmenu{
+          visibility:hidden;
+        }
+        #u1, #u3{
+          color:brown;
+        }
+        #u6,#u8,#u9{
+          color:lightblue;
+        }
+        #u11,#u13,#u14{
+          color:pink;
+        }
+        #u16,#u18,#u19{
+          color:orange;
+        }
+        #u21,#u23,#u24{
+          color:red;
+        }
+        #u26,#u27,#u29{
+          color:yellow;
+        }
+        #u31,#u32,#u34{
+          color:green;
+        }
+        #u37,#u39{
+          color:darkblue;
+        }
+        #u12,#u28{
+          color:gray;
+        }
+        #u5,#u15,#u25,#u35{
+          color:black;
+        }
+        .io,.loro{
+          display: none;
+        }
+        #them{
+          visibility:hidden;
+        }
     </style>
-    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+    <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
-    <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <script src="http://localhost:1337/client/js/jquery-3.4.1.min.js"></script>
 </head>
-<body>
+<body style="background-color:#06C3B6;">
 	<div id="waitingDiv">
 		waiting...
 	</div>
   <div id="gestore" class='position'>
+    <div id="endmenu">
+      <button id="scroll">Event log</button>
+      <button id="buid">Build houses</button>
+      <button id="trade">Trade</button>
+      <button id="end" onclick="endTurn()">End turn</button><br>
+    </div>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
     <div id="scrollBox"></div>
 	</div>
@@ -106,6 +153,36 @@
             <div id="m1"></div><br>
             <div id="p2" class="infoPlayer"></div>
             <div id="m2"></div>
+            <div id="us">
+              <input type="checkbox" class="io" value="1"><div id="u1" >Mediterranean Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u3">Baltic Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u6">Oriental Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u8">Vermont Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u9">Connecticut Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u11">St. Charles Place</div>
+              <input type="checkbox" class="io" value="1"><div id="u13">States Avenue</div>
+             <input type="checkbox" class="io" value="1"><div id="u14">Viriginia Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u16">St. James Place</div>
+              <div id="u18">Tennessee Avenue</div>
+              <div id="u19">New York Avenue</div>
+              <div id="u21">Kentucky Avenue</div>
+              <div id="u23">Indiana Avenue</div>
+              <div id="u24">Illinois Avenue</div>
+              <div id="u26">Atlantic Avenue</div>
+              <div id="u27">Ventnor Avenue</div>
+              <div id="u29">Marvin Gardens</div>
+              <div id="u31">Pacific Avenue</div>
+              <div id="u32">North Carolina Avenue</div>
+              <div id="u34">Pennsylvania Avenue</div>
+              <div id="u37">Park Place</div>
+              <div id="u39">Boardwalk</div>
+              <div id="u12">Electric Company</div>
+              <div id="u28">Water Works</div>
+              <div id="u5">Reading Railroad</div>
+              <div id="u15">Pennsylvania Railroad</div>
+              <div id="u25">B. & O. Railroad</div>
+              <div id="u35">Short Line</div>
+            </div>
         </div>
         <div id="centro">
             <canvas id="board"></canvas>
@@ -117,6 +194,36 @@
             <div id="m4"></div><br>
             <div id="p5" class="infoPlayer"></div>
             <div id="m5"></div>
+            <div id="them">
+              <input type="checkbox" class="loro" value="1"><div id="l1" >Mediterranean Avenue</div>
+              <input type="checkbox" class="loro" value="1"><div id="l3">Baltic Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="l6">Oriental Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u8">Vermont Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u9">Connecticut Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u11">St. Charles Place</div>
+              <input type="checkbox" class="io" value="1"><div id="u13">States Avenue</div>
+             <input type="checkbox" class="io" value="1"><div id="u14">Viriginia Avenue</div>
+              <input type="checkbox" class="io" value="1"><div id="u16">St. James Place</div>
+              <div id="u18">Tennessee Avenue</div>
+              <div id="u19">New York Avenue</div>
+              <div id="u21">Kentucky Avenue</div>
+              <div id="u23">Indiana Avenue</div>
+              <div id="u24">Illinois Avenue</div>
+              <div id="u26">Atlantic Avenue</div>
+              <div id="u27">Ventnor Avenue</div>
+              <div id="u29">Marvin Gardens</div>
+              <div id="u31">Pacific Avenue</div>
+              <div id="u32">North Carolina Avenue</div>
+              <div id="u34">Pennsylvania Avenue</div>
+              <div id="u37">Park Place</div>
+              <div id="u39">Boardwalk</div>
+              <div id="u12">Electric Company</div>
+              <div id="u28">Water Works</div>
+              <div id="u5">Reading Railroad</div>
+              <div id="u15">Pennsylvania Railroad</div>
+              <div id="u25">B. & O. Railroad</div>
+              <div id="u35">Short Line</div>
+            </div>
         </div>
     </div>
 <script>
@@ -182,8 +289,8 @@
     let boardW=$("#centro").width();
     let cas= boardW*(200/1500);
     $(".column").width(a);
-    $(".position").width(boardW-(cas*2));
-    $(".position").offset({ top: cas+100,left:cas + $(".column").width() });
+    $(".position").width(boardW-(cas*3));
+    $(".position").offset({ top: cas+100,left:(cas*1.5) + $(".column").width() });
     fix_dpi();
     createSquares();
     img.onload = function () {
@@ -542,7 +649,8 @@ socket.on('addProp', function(data) {
 
   let updateScroll = function(str) {
     let scrollDiv= document.getElementById("scrollBox");
-    scrollDiv.innerHTML += str + "<br>";
+    let sdiv=scrollDiv.innerHTML;
+    scrollDiv.innerHTML = str + "<br>" + sdiv ;
   }
 
 
@@ -564,6 +672,83 @@ socket.on('addProp', function(data) {
     ctx.strokeRect(x, y, pedina.w, pedina.h);
 
   }
+
+  socket.on('endMenu', function(data) {
+    endMenu(data);
+  })
+
+  let endMenu = function(data) {
+    document.getElementById("endmenu").style.visibility="visible";
+    let boo = data[0];
+    let money = data[1];
+    let owner = data[2];
+    //opzione 1: finisci il turno => emitti socket.emit('endTurn');
+    //opzione 2: costruzione case => socket.emit('houseBuild');
+    //opzione 3: trading => socket.emit('trade');
+    //opzione 4: dichiara bancarotta => socket.emit('bankrupt');
+  }
+
+  let endTurn = function() {
+    socket.emit('endTurn');
+    document.getElementById("endmenu").style.visibility="hidden";
+  }
+
+  let houseBuild = function(property, build) {
+    //build è un boolean, false se togli una casa, true se costruisci
+    //viene invocata sempre questa funzione una casa alla volta
+    //se numCase è uguale a zero, togliere una casa vuol dire ipotecare
+    let prop = self.props[property];
+    let pack = [];
+    pack.push(prop);
+    pack.push(build);
+    socket.emit('houseBuild', pack);
+  }
+
+  let trade = function(playerId) {
+    socket.emit('trade', players[playerId]);
+  }
+
+  let bankrupt = function() {
+    socket.emit('bankrupt');
+  }
+  p0.onclick= function(){
+
+  }
+  p1.onclick= function(){
+
+  }
+  p2.onclick= function(){
+
+  }
+  p3.onclick= function(){
+
+  }
+  p4.onclick= function(){
+
+  }
+  p5.onclick= function(){
+
+  }
+  $(document).ready(function(){
+        $('input[class="io"]').click(function(){
+            if($(this).is(":checked")){
+				let a = $(this).attr("value");
+                alert(a);
+            }
+            else if($(this).is(":not(:checked)")){
+                alert("Checkbox is unchecked.");
+            }
+        });
+		$('input[class="loro"]').click(function(){
+            if($(this).is(":checked")){
+				let a = $(this).attr("value");
+                alert(a);
+            }
+            else if($(this).is(":not(:checked)")){
+                alert("Checkbox is unchecked.");
+            }
+        });
+    });
 
 </script>
 

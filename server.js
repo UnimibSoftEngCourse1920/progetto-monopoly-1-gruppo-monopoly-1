@@ -54,7 +54,7 @@ let outcome = true;
 let double = false;
 let unownedProp = true;
 let worker;
-
+let numPlayer=0;
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
     contTot++;
@@ -68,8 +68,8 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('getLobby', function (data) {
       let player = new Player(socket.id, data.name);
-      playerList2[i] = player;
-      i++;
+      playerList2[numPlayer] = player;
+      numPlayer++;
       socket.emit('setLobby', { lobbyID: 0 });
       persone++;
       if (persone == 6) {
@@ -102,7 +102,7 @@ io.sockets.on('connection', function (socket) {
       }
       if (player.jail && doubleDice==0 && player.jailCount != 3) {
         sendGenericUpdate(str + ' and stays in jail');
-        sendEndMenu(player, true, 0, null);
+        sendEndTurn(player, true, 0, null);
       } else if (player.jail && doubleDice>0) {
         player.jail = false;
         player.jailCount = 0;
@@ -204,7 +204,7 @@ let handleBuy = function(player) {
   prop.setOwner(player.id);
   // fare controlli se su services
   sendPropUpdate(prop, player, str2);
-  sendEndMenu(player, true, 0, null);
+  sendEndTurn(player, true, 0, null);
   //unownedProp = false;
 
 }
@@ -225,7 +225,7 @@ let sendToJail = function(player) {
   player.setPos(10);
   sendPosUpdate(player, str);
   sendJailUpdate(player, true);
-  sendEndMenu(player, true, 0, null);
+  sendEndTurn(player, true, 0, null);
 }
 
 let sendJailCountUpdate = function(player) {
@@ -252,10 +252,10 @@ let startGame = function () {
     squares[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown");
     squares[4] = new IncomeTax(4, 100);
     squares[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200]);
-    squares[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "light blue");
+    squares[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue");
     squares[7] = new Chance(7);
-    squares[8] = new HouseProperty(8, "Vermont Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "light blue");
-    squares[9] = new HouseProperty(9, "Connecticut Avenue", 120, [8, 40, 100, 300, 450, 600], 50, "light blue");
+    squares[8] = new HouseProperty(8, "Vermont Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue");
+    squares[9] = new HouseProperty(9, "Connecticut Avenue", 120, [8, 40, 100, 300, 450, 600], 50, "lightblue");
     squares[10] = new Square(10); //jail
     squares[11] = new HouseProperty(11, "St. Charles Place", 140, [10, 50, 150, 450, 625, 750], 100, "pink");
     squares[12] = new Services(12, "Electric Company", 150);
@@ -283,9 +283,9 @@ let startGame = function () {
     squares[34] = new HouseProperty(34, "Pennsylvania Avenue", 320, [28, 150, 450, 1000, 1200, 1400], 200, "green");
     squares[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200]);
     squares[36] = new Chance(36);
-    squares[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "dark blue");
+    squares[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "darkblue");
     squares[38] = new IncomeTax(38, 200);
-    squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "dark blue");
+    squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "darkblue");
 }
 
 let sendPlayers = function () {
@@ -390,11 +390,11 @@ let handlePlayer = function(pl){
         break;
       case 'mortgaged':
         sendGenericUpdate(player.name + ' landed on a mortgaged property');
-        sendEndMenu(player, true, 0, null);
+        sendEndTurn(player, true, 0, null);
         break;
       case 'yourProperty':
         sendGenericUpdate(player.name + ' landed on his own property');
-        sendEndMenu(player, true, 0, null);
+        sendEndTurn(player, true, 0, null);
         break;
       case 'unownedProperty':
         unownedProperty(player, square);
@@ -414,11 +414,11 @@ let handlePlayer = function(pl){
         break;
       case 0:
       sendGenericUpdate(player.name + ' landed on a mortgaged property');
-      sendEndMenu(player, true, 0, null);
+      sendEndTurn(player, true, 0, null);
       break;
       case -2:
       sendGenericUpdate(player.name + ' landed on his own property');
-      sendEndMenu(player, true, 0, null);
+      sendEndTurn(player, true, 0, null);
       break;
       default:
       payRent(res, player, square.getOwner());
@@ -548,9 +548,9 @@ let payRent = function(rent, player, owner){
   if(outcome) {
     sendMoneyUpdate(-rent, player, str);
     sendMoneyUpdate(rent, playerList2[owner], str2);
-    sendEndMenu(player, true, 0, null);
+    sendEndTurn(player, true, 0, null);
   } else {
-    sendEndMenu(player, false, rent, owner);
+    sendEndTurn(player, false, rent, owner);
   }
 }
 
