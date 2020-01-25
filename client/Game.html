@@ -565,6 +565,40 @@ socket.on('addProp', function(data) {
 
   }
 
+  socket.on('endMenu', function() {
+    endMenu();
+  })
+
+  let endMenu = function() {
+    //opzione 1: finisci il turno => emitti socket.emit('endTurn');
+    //opzione 2: costruzione case => socket.emit('houseBuild');
+    //opzione 3: trading => socket.emit('trade');
+    //opzione 4: dichiara bancarotta => socket.emit('bankrupt');
+  }
+
+  let endTurn = function() {
+    socket.emit('endTurn');
+  }
+
+  let houseBuild = function(property, build) {
+    //build è un boolean, false se togli una casa, true se costruisci
+    //viene invocata sempre questa funzione una casa alla volta
+    //se numCase è uguale a zero, togliere una casa vuol dire ipotecare
+    let prop = self.props[property];
+    let pack = [];
+    pack.push(prop);
+    pack.push(build);
+    socket.emit('houseBuild', pack);
+  }
+
+  let trade = function(playerId) {
+    socket.emit('trade', players[playerId]);
+  }
+
+  let bankrupt = function() {
+    socket.emit('bankrupt');
+  }
+
 </script>
 
 </body>

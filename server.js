@@ -102,7 +102,7 @@ io.sockets.on('connection', function (socket) {
       }
       if (player.jail && doubleDice==0 && player.jailCount != 3) {
         sendGenericUpdate(str + ' and stays in jail');
-        updateTurn();
+        sendEndMenu(player);
       } else if (player.jail && doubleDice>0) {
         player.jail = false;
         player.jailCount = 0;
@@ -158,19 +158,7 @@ io.sockets.on('connection', function (socket) {
       sendTurn();
     });
 
-    //turn ended, tell next player to start
-    socket.on('endTurn', function() {
-      diceTotal = 0;
-      dice2 = 0;
-      dice1 = 0;
-      doubleDice = 0;
-      double = false;
-      if (doubleDice == 0) {
-          updateTurn();
-      } else {
-        sendTurn();
-      }
-  });
+
 
   socket.on('buyOrAuction', function(data){
     let str = data;
@@ -180,6 +168,31 @@ io.sockets.on('connection', function (socket) {
     } else {
       //auction
     }
+  });
+
+  //turn ended, tell next player to start
+  socket.on('endTurn', function() {
+    diceTotal = 0;
+    dice2 = 0;
+    dice1 = 0;
+    double = false;
+    if (doubleDice == 0) {
+        updateTurn();
+    } else {
+      sendTurn();
+    }
+  });
+
+  socket.on('houseBuild', function(data) {
+    //gestisci build
+  });
+
+  socket.on('trade', function(data) {
+    //gestisci trade
+  });
+
+  socket.on('bankrupt', function() {
+    //gestisci bankrupt
   })
 });
 
@@ -195,6 +208,7 @@ let handleBuy = function(player) {
   //console.log("dopo setOwner");
   // fare controlli se su services
   sendPropUpdate(prop, player, str2);
+  sendEndMenu(player);
   //console.log("dopo sendPropUpdate");
   //unownedProp = false;
 
@@ -229,11 +243,7 @@ let sendJailCountUpdate = function(player) {
 }
 
 let updateTurn = function() {
-  diceTotal = 0;
-  dice1 = 0;
-  dice2 = 0;
   doubleDice = 0;
-  double = false;
   if (turn == playerList2.length-1)
     turn = 0;
   else
@@ -303,7 +313,6 @@ let generateTurn = function() {
 }
 
 let sendTurn = function() {
-  double = false;
   for (let i = 0; i < socketList.length; i++) {
       socketList[i].emit('turn', turn);
   }
@@ -390,9 +399,11 @@ let handlePlayer = function(pl){
         break;
       case 'mortgaged':
         sendGenericUpdate(player.name + ' landed on a mortgaged property');
+        sendEndMenu(player);
         break;
       case 'yourProperty':
         sendGenericUpdate(player.name + ' landed on his own property');
+        sendEndMenu(player);
         break;
       case 'unownedProperty':
         unownedProperty(player, square);
@@ -412,7 +423,11 @@ let handlePlayer = function(pl){
         break;
       case 0:
       sendGenericUpdate(player.name + ' landed on a mortgaged property');
+      sendEndMenu(player);
       break;
+      case -2:
+      sendGenericUpdate(player.name + ' landed on his own property');
+      sendEndMenu(player);
       default:
       payRent(res, player, square.getOwner());
       break;
@@ -521,15 +536,19 @@ let handlePlayer = function(pl){
   }
 */
   //fine del turno
-  if (doubleDice == 0 && !player.jail) {
+  /*if (doubleDice == 0 && !player.jail) {
     //console.log("entered check");
     updateTurn();
   } else if (doubleDice>0 && !player.jail) {
     sendTurn();
-  }
+  }*/
 
 
 
+}
+
+let sendEndMenu(player) {
+  socketList[player.id].emit('endMenu');
 }
 
 let payRent = function(rent, player, owner){
@@ -540,6 +559,7 @@ let payRent = function(rent, player, owner){
   let str2 = playerList2[owner].name + ' receives ' + rent;
   sendMoneyUpdate(-rent, player, str);
   sendMoneyUpdate(rent, playerList2[owner], str2);
+  sendEndMenu(player);
 }
 
 

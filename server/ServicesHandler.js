@@ -22,6 +22,8 @@ class ServicesHandler extends PlayerHandler{
                     //console.log("you're lucky, this property is mortgaged");
                     return 0;
                 }
+            } else if (owner == this.player.id) {
+              return -2;
             }
         }
         else{
