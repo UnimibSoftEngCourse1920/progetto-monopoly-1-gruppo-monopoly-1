@@ -14,7 +14,7 @@ class ServicesHandler extends PlayerHandler{
 
         if(owner != null){ //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
             if(owner != this.player.id){
-                mult = checkServices(owner);
+                mult = this.checkServices(owner);
                 //console.log("this property is owned by " + owner.getName());
                 if(this.square.state == 'active')
                     return mult*this.diceTotal;
