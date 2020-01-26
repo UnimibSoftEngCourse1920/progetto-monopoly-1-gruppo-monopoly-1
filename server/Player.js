@@ -10,7 +10,8 @@ class Player {
         this.money = 1500;
         this.pos = 0;
         this.props = [];
-        this.services = [null, null];
+        this.services = [];
+        this.stations = [];
         this.jail = false;
         this.jailCount = 0;
         this.getOutOfJailFree = false;
@@ -56,6 +57,10 @@ class Player {
 
     getServices() {
       return this.services;
+    }
+
+    getStations() {
+      return this.stations;
     }
 
     getPos() {

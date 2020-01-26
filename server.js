@@ -26,6 +26,7 @@ let PayPerBuildingCard = require('./server/PayPerBuildingCard');
 let PayPlayerCard = require('./server/PayPlayerCard');
 let PlayerHandler = require('./server/PlayerHandler');
 let ServicesHandler = require('./server/ServicesHandler');
+let StationHandler = require('./server/StationHandler');
 let Card = require('./server/Card');
 
 
@@ -191,6 +192,19 @@ io.sockets.on('connection', function (socket) {
 
   socket.on('bankrupt', function() {
     //gestisci bankrupt
+  });
+
+  socket.on('proposeTrade', function(data) {
+    let proposer = playerList2[socket.id];
+    let receiver = playerList2[data[0].id];
+    let proposerProps = data[1];
+    let receiverProps = data[2];
+    let proposerMon = data[3];
+    let receiverMon = data[4];
+    let str = proposer.name + ' is trading with ' + receiver.name;
+    sendGenericUpdate(str);
+    let pack = [proposer, proposerProps, receiverProps, proposerMon, receiverMon];
+    socketList[receiver.id].emit('tradeProposal', pack);
   })
 });
 
@@ -201,24 +215,47 @@ let handleBuy = function(player) {
   outcome = player.updateMoney(-prop.cost);
   sendMoneyUpdate(-prop.cost, player, str);
   player.props.push(prop);
+  if (prop instanceof Station) {
+    player.stations.push(prop);
+  }
+  if(prop instanceof Services) {
+    player.services.push(prop);
+  }
   prop.setOwner(player.id);
   // fare controlli se su services
-  sendPropUpdate(prop, player, str2);
+  sendPropUpdate(prop, player, 0, str2);
   sendEndTurn(player, true, 0, null);
   //unownedProp = false;
 
 }
 
-let sendPropUpdate = function(prop, player, str) {
+let sendPropUpdate = function(prop, player, action, str) {
   let pack = [];
   pack.push(prop);
   pack.push(player);
   pack.push(str);
-  for (let i = 0; i < playerList2.length; i++) {
-    socketList[i].emit('addProp', pack);
+  let controllo = 0;
+  if (prop instanceof Station) {
+    controllo = 1;
+  }
+  if(prop instanceof Services) {
+    controllo = 2;
+  }
+  pack.push(controllo);
+  if (action == 0) {
+    for (let i = 0; i < playerList2.length; i++) {
+      socketList[i].emit('addProp', pack);
+    }
+  } else {
+    for (let i = 0; i < playerList2.length; i++) {
+      socketList[i].emit('removeProp', pack);
+    }
   }
 }
 
+let handleTrade = function(player) {
+
+}
 let sendToJail = function(player) {
   let str = player.name + ' sent to jail';
   player.jail = true;
@@ -375,12 +412,12 @@ let handlePlayer = function(pl){
    pos = player.getPos();
    square = squares[pos];
   if (square instanceof Property) {
-    owner = square.getOwner();
+    owner = playerList2[square.getOwner()];
   }
    playerId = player.getId();
    playerSocket = socketList[playerId];
   //promemoria: handler per ogni tipo di square
-  if(square instanceof HouseProperty || square instanceof Station){
+  if(square instanceof HouseProperty){
     handler = new HSHandler(player, square);
      res = handler.handle(player);
     //payRent che chiama sendUpdateMoney
@@ -404,7 +441,30 @@ let handlePlayer = function(pl){
         break;
     }
   }
-  else if(square instanceof Services){
+
+  else if (square instanceof Station){
+    handler = new StationHandler(player, square);
+    res = handler.handle(owner);
+    //payRent che chiama sendUpdateMoney
+    switch(res) {
+      case -1:
+        unownedProperty(player, square);
+        break;
+      case 0:
+      sendGenericUpdate(player.name + ' landed on a mortgaged property');
+      sendEndTurn(player, true, 0, null);
+      break;
+      case -2:
+      sendGenericUpdate(player.name + ' landed on his own property');
+      sendEndTurn(player, true, 0, null);
+      break;
+      default:
+      payRent(res, player, square.getOwner());
+      break;
+    }
+  }
+
+  else if (square instanceof Services){
     handler = new ServicesHandler(player, diceTotal, square);
     res = handler.handle(owner);
     //payRent che chiama sendUpdateMoney

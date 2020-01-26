@@ -5,6 +5,8 @@ class Player {
         this.money = 1500;
         this.pos = 0;
         this.props = [];
+        this.services = [];
+        this.stations = [];
         this.pedina = pedina;
     }
 
@@ -20,7 +22,7 @@ class Player {
     addProp(prop) {
         this.props.push(prop);
     }
-    
+
     getPos() {
         return this.pos;
     }
