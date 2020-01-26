@@ -17,6 +17,10 @@ class Player {
             return sum;
     }
 
+    addProp(prop) {
+        this.props.push(prop);
+    }
+    
     getPos() {
         return this.pos;
     }

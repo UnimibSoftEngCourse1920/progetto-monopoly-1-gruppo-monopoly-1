@@ -424,7 +424,9 @@ let handlePlayer = function(pl){
       payRent(res, player, square.getOwner());
       break;
     }
-  } /*
+  } else {
+    sendEndTurn(player, true, 0, null);
+  }/*
   else if(square instanceof IncomeTax){
     let tax = square.getTax();
     outcome = player.updateMoney(-tax);

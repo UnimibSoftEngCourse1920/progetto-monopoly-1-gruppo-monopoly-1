@@ -84,41 +84,41 @@
         #endmenu{
           visibility:hidden;
         }
-        #u1, #u3{
+        #u1,#u3,#l1,#l3{
           color:brown;
         }
-        #u6,#u8,#u9{
+        #u6,#u8,#u9,#l6,#l8,#l9{
           color:lightblue;
         }
-        #u11,#u13,#u14{
+        #u11,#u13,#u14,#l11,#l13,#l14{
           color:pink;
         }
-        #u16,#u18,#u19{
+        #u16,#u18,#u19,#l16,#l18,#l19{
           color:orange;
         }
-        #u21,#u23,#u24{
+        #u21,#u23,#u24,#l21,#l23,#l24{
           color:red;
         }
-        #u26,#u27,#u29{
+        #u26,#u27,#u29,#l26,#l27,#l29{
           color:yellow;
         }
-        #u31,#u32,#u34{
+        #u31,#u32,#u34,#l31,#l32,#l34{
           color:green;
         }
-        #u37,#u39{
+        #u37,#u39,#l37,#l39{
           color:darkblue;
         }
-        #u12,#u28{
+        #u12,#u28,#l12,#l28{
           color:gray;
         }
-        #u5,#u15,#u25,#u35{
+        #u5,#u15,#u25,#u35,#l5,#l15,#l25,#l35{
           color:black;
         }
-        .io,.loro{
-          display: none;
+        .io,.loro,.iodiv,.lorodiv{
+          display:none;
         }
         #them{
-          visibility:hidden;
+          visibility:visible;
         }
     </style>
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
@@ -154,34 +154,34 @@
             <div id="p2" class="infoPlayer"></div>
             <div id="m2"></div>
             <div id="us">
-              <input type="checkbox" class="io" value="1"><div id="u1" >Mediterranean Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u3">Baltic Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u6">Oriental Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u8">Vermont Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u9">Connecticut Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u11">St. Charles Place</div>
-              <input type="checkbox" class="io" value="1"><div id="u13">States Avenue</div>
-             <input type="checkbox" class="io" value="1"><div id="u14">Viriginia Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u16">St. James Place</div>
-              <div id="u18">Tennessee Avenue</div>
-              <div id="u19">New York Avenue</div>
-              <div id="u21">Kentucky Avenue</div>
-              <div id="u23">Indiana Avenue</div>
-              <div id="u24">Illinois Avenue</div>
-              <div id="u26">Atlantic Avenue</div>
-              <div id="u27">Ventnor Avenue</div>
-              <div id="u29">Marvin Gardens</div>
-              <div id="u31">Pacific Avenue</div>
-              <div id="u32">North Carolina Avenue</div>
-              <div id="u34">Pennsylvania Avenue</div>
-              <div id="u37">Park Place</div>
-              <div id="u39">Boardwalk</div>
-              <div id="u12">Electric Company</div>
-              <div id="u28">Water Works</div>
-              <div id="u5">Reading Railroad</div>
-              <div id="u15">Pennsylvania Railroad</div>
-              <div id="u25">B. & O. Railroad</div>
-              <div id="u35">Short Line</div>
+              <input type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div>
+              <input type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div>
+              <input type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div>
+              <input type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div>
+              <input type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div>
+              <input type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div>
+              <input type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div>
+             <input type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div>
+              <input type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div>
+              <input type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div>
+              <input type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div>
+              <input type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div>
+              <input type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div>
+              <input type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div>
+              <input type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div>
+              <input type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div>
+              <input type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div>
+              <input type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div>
+              <input type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div>
+              <input type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div>
+              <input type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div>
+              <input type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div>
+              <input type="checkbox" class="io" value="12"><div id="u12" class = "iodiv">Electric Company</div>
+              <input type="checkbox" class="io" value="28"><div id="u28" class = "iodiv">Water Works</div>
+              <input type="checkbox" class="io" value="5"><div id="u5" class = "iodiv">Reading Railroad</div>
+              <input type="checkbox" class="io" value="15"><div id="u15" class = "iodiv">Pennsylvania Railroad</div>
+              <input type="checkbox" class="io" value="25"><div id="u25" class = "iodiv">B. & O. Railroad</div>
+              <input type="checkbox" class="io" value="35"><div id="u35" class = "iodiv">Short Line</div>
             </div>
         </div>
         <div id="centro">
@@ -195,34 +195,34 @@
             <div id="p5" class="infoPlayer"></div>
             <div id="m5"></div>
             <div id="them">
-              <input type="checkbox" class="loro" value="1"><div id="l1" >Mediterranean Avenue</div>
-              <input type="checkbox" class="loro" value="1"><div id="l3">Baltic Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="l6">Oriental Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u8">Vermont Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u9">Connecticut Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u11">St. Charles Place</div>
-              <input type="checkbox" class="io" value="1"><div id="u13">States Avenue</div>
-             <input type="checkbox" class="io" value="1"><div id="u14">Viriginia Avenue</div>
-              <input type="checkbox" class="io" value="1"><div id="u16">St. James Place</div>
-              <div id="u18">Tennessee Avenue</div>
-              <div id="u19">New York Avenue</div>
-              <div id="u21">Kentucky Avenue</div>
-              <div id="u23">Indiana Avenue</div>
-              <div id="u24">Illinois Avenue</div>
-              <div id="u26">Atlantic Avenue</div>
-              <div id="u27">Ventnor Avenue</div>
-              <div id="u29">Marvin Gardens</div>
-              <div id="u31">Pacific Avenue</div>
-              <div id="u32">North Carolina Avenue</div>
-              <div id="u34">Pennsylvania Avenue</div>
-              <div id="u37">Park Place</div>
-              <div id="u39">Boardwalk</div>
-              <div id="u12">Electric Company</div>
-              <div id="u28">Water Works</div>
-              <div id="u5">Reading Railroad</div>
-              <div id="u15">Pennsylvania Railroad</div>
-              <div id="u25">B. & O. Railroad</div>
-              <div id="u35">Short Line</div>
+              <input type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" name="lorodivname">Mediterranean Avenue</div>
+              <input type="checkbox" class="loro" value="3"><div id="l3" class="lorodiv" name="lorodivname">Baltic Avenue</div>
+              <input type="checkbox" class="loro" value="6"><div id="l6" class="lorodiv" name="lorodivname">Oriental Avenue</div>
+              <input type="checkbox" class="loro" value="8"><div id="l8" class="lorodiv" name="lorodivname">Vermont Avenue</div>
+              <input type="checkbox" class="loro" value="9"><div id="l9" class="lorodiv" name="lorodivname">Connecticut Avenue</div>
+              <input type="checkbox" class="loro" value="11"><div id="l11" class="lorodiv" name="lorodivname">St. Charles Place</div>
+              <input type="checkbox" class="loro" value="13"><div id="l13" class="lorodiv" name="lorodivname">States Avenue</div>
+             <input type="checkbox" class="loro" value="14"><div id="l14" class="lorodiv" name="lorodivname">Viriginia Avenue</div>
+              <input type="checkbox" class="loro" value="16"><div id="l16" class="lorodiv" name="lorodivname">St. James Place</div>
+              <input type="checkbox" class="loro" value="18"><div id="l18" class="lorodiv" name="lorodivname">Tennessee Avenue</div>
+              <input type="checkbox" class="loro" value="19"><div id="l19" class="lorodiv" name="lorodivname">New York Avenue</div>
+              <input type="checkbox" class="loro" value="21"><div id="l21" class="lorodiv" name="lorodivname">Kentucky Avenue</div>
+              <input type="checkbox" class="loro" value="23"><div id="l23" class="lorodiv" name="lorodivname">Indiana Avenue</div>
+              <input type="checkbox" class="loro" value="24"><div id="l24" class="lorodiv" name="lorodivname">Illinois Avenue</div>
+              <input type="checkbox" class="loro" value="26"><div id="l26" class="lorodiv" name="lorodivname">Atlantic Avenue</div>
+              <input type="checkbox" class="loro" value="27"><div id="l27" class="lorodiv" name="lorodivname">Ventnor Avenue</div>
+              <input type="checkbox" class="loro" value="29"><div id="l29" class="lorodiv" name="lorodivname">Marvin Gardens</div>
+              <input type="checkbox" class="loro" value="31"><div id="l31" class="lorodiv" name="lorodivname">Pacific Avenue</div>
+              <input type="checkbox" class="loro" value="32"><div id="l32" class="lorodiv" name="lorodivname">North Carolina Avenue</div>
+              <input type="checkbox" class="loro" value="34"><div id="l34" class="lorodiv" name="lorodivname">Pennsylvania Avenue</div>
+              <input type="checkbox" class="loro" value="37"><div id="l37" class="lorodiv" name="lorodivname">Park Place</div>
+              <input type="checkbox" class="loro" value="39"><div id="l39" class="lorodiv" name="lorodivname">Boardwalk</div>
+              <input type="checkbox" class="loro" value="12"><div id="l12" class="lorodiv" name="lorodivname">Electric Company</div>
+              <input type="checkbox" class="loro" value="28"><div id="l28" class="lorodiv" name="lorodivname">Water Works</div>
+              <input type="checkbox" class="loro" value="5"><div id="l5" class="lorodiv" name="lorodivname">Reading Railroad</div>
+              <input type="checkbox" class="loro" value="15"><div id="l15" class="lorodiv" name="lorodivname">Pennsylvania Railroad</div>
+              <input type="checkbox" class="loro" value="25"><div id="l25" class="lorodiv" name="lorodivname">B. & O. Railroad</div>
+              <input type="checkbox" class="loro" value="35"><div id="l35" class="lorodiv" name="lorodivname">Short Line</div>
             </div>
         </div>
     </div>
@@ -240,6 +240,7 @@
   let canvas = document.getElementById("board");
   let ctx = canvas.getContext("2d");
   let turn;
+  let tradeState = false;
 
   socket = io();
 
@@ -712,22 +713,22 @@ socket.on('addProp', function(data) {
     socket.emit('bankrupt');
   }
   p0.onclick= function(){
-
+    viewProps('p0');
   }
   p1.onclick= function(){
-
+    viewProps('p1');
   }
   p2.onclick= function(){
-
+    viewProps('p2');
   }
   p3.onclick= function(){
-
+    viewProps('p3');
   }
   p4.onclick= function(){
-
+    viewProps('p4');
   }
   p5.onclick= function(){
-
+    viewProps('p5');
   }
   $(document).ready(function(){
         $('input[class="io"]').click(function(){
@@ -749,6 +750,33 @@ socket.on('addProp', function(data) {
             }
         });
     });
+
+    let viewProps = function(idDiv) {
+      document.getElementById("them").style.visibility='visible';
+      //disattivo le div attive precedenti
+      let elements = document.getElementsByTagName("lorodivname");
+      for (let i = 0; i < elements.length; i ++) {
+        let element = elements[i];
+        element.style.display='none';
+      }
+      //controllo di non avere cliccato su me stesso
+      let thisId = idDiv.substr(1);
+      if (thisId != id) {
+        //controllo se sono in stato di trading o meno
+        let player = players[thisId];
+        if (!tradeState) {
+          for (let i = 0; i < player.props.length; i ++) {
+            if(props[i] != null) {
+              let j = 'l' + props[i].id;
+              //mostra la div della proprieta
+              document.getElementById(j).style.display='block';
+            }
+          }
+        } else {
+          //trade, quindi anche checkbox
+        }
+      }
+    }
 
 </script>
 
