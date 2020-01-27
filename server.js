@@ -395,7 +395,7 @@ let startGame = function () {
     squares[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
     squares[2] = new CommunityChest(2);
     squares[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown");
-    squares[4] = new IncomeTax(4, 100);
+    squares[4] = new IncomeTax(4, 200);
     squares[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200]);
     squares[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue");
     squares[7] = new Chance(7);
@@ -429,7 +429,7 @@ let startGame = function () {
     squares[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200]);
     squares[36] = new Chance(36);
     squares[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "darkblue");
-    squares[38] = new IncomeTax(38, 200);
+    squares[38] = new IncomeTax(38, 100);
     squares[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "darkblue");
 }
 
@@ -609,6 +609,10 @@ let handlePlayer = function(pl){
     outcome = player.updateMoney(-tax);
     let str = player.name + ' pays ' + tax + ' in taxes';
     sendMoneyUpdate(-tax, player, str);
+    if(outcome)
+      sendEndTurn(player, true, 0, null);
+    else
+      sendEndTurn(player, false, tax, null);
   }/*
   else if(square instanceof Chance || square instanceof CommunityChest){
     if(square instanceof Chance)
