@@ -5,7 +5,8 @@ class Player {
       this.money = 1500;
       this.pos = 0;
       this.props = [];
-      this.services = [null, null];
+      this.services = [];
+      this.stations = [];
       this.jail = false;
       this.jailCount = 0;
       this.getOutOfJailFree = false;
@@ -19,7 +20,7 @@ class Player {
         let stop = false
         for (let i = 0; i < props.length && !stop; i++) {
             if (props[i] == prop) {
-                this.props.delete(props[i]);
+                this.props.splice(i, 1);
                 stop = true;
             }
         }

@@ -13,7 +13,7 @@ class ServicesHandler extends PlayerHandler{
         let mult = 0;
 
         if(owner != null){ //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
-            if(owner != this.player.id){
+            if(owner.id != this.player.id){
                 mult = this.checkServices(owner);
                 //console.log("this property is owned by " + owner.getName());
                 if(this.square.state == 'active')
@@ -22,7 +22,7 @@ class ServicesHandler extends PlayerHandler{
                     //console.log("you're lucky, this property is mortgaged");
                     return 0;
                 }
-            } else if (owner == this.player.id) {
+            } else if (owner.id == this.player.id) {
               return -2;
             }
         }

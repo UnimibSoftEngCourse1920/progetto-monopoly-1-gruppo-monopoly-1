@@ -968,6 +968,59 @@ socket.on('addProp', function(data) {
       theirMoney=0;
       proposer = null;
     }
+
+    socket.on('removeProp', function(data) {
+      let prop = data[0];
+      let playerArrived = data[1];
+      let player = players[playerArrived.id];
+      let str = data[2];
+      let tipoProp = data[3];
+      let boo = false;
+      for (let i = 0; i < players.length; i ++) {
+        if(players[i].id == player.id) {
+          if(players[i] != self) {
+            boo = true;
+            for (let j = 0; j < players[i].props.length; j ++) {
+              if(prop.id == players[i].props[j].id) {
+                players[i].removeProp(players[i].props[j]);
+              }
+            }
+            if(tipoProp == 1) {
+              for (let j = 0; j < players[i].stations.length; j ++) {
+                if(prop.id == players[i].stations[j].id) {
+                  players[i].stations.splice(j, 1);
+                }
+              }
+            } else if (tipoProp == 2) {
+              for (let j = 0; j < players[i].services.length; j ++) {
+                if(prop.id == players[i].services[j].id) {
+                  players[i].services.splice(j, 1);
+                }
+              }
+            }
+          }
+        }
+      }
+      if(!boo) {
+        for (let j = 0; j < self.props.length; j ++) {
+          if(prop.id == self.props[j].id) {
+            self.removeProp(self.props[j]);
+          }
+        } if(tipoProp == 1) {
+          for (let j = 0; j < self.stations.length; j ++) {
+            if(prop.id == self.stations[j].id) {
+              self.stations.splice(j, 1);
+            }
+          }
+        } else if (tipoProp == 2) {
+          for (let j = 0; j < self.services.length; j ++) {
+            if(prop.id == self.services[j].id) {
+              self.services.splice(j, 1);
+            }
+          }
+        }
+      }
+    })
 </script>
 
 </body>

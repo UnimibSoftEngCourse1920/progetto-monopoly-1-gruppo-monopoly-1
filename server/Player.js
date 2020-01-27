@@ -34,7 +34,7 @@ class Player {
         let stop = false
         for (let i = 0; i < this.props.length && !stop; i++) {
             if (this.props[i] == prop) {
-                this.props.delete(this.props[i]);
+                this.props.splice(i, 1);
                 stop = true;
             }
         }

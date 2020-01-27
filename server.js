@@ -96,12 +96,10 @@ io.sockets.on('connection', function (socket) {
       //checkDoubles(player, doubles);
       if (doubleDice == 3) {
         sendToJail(player);
-      }
-      if (!player.jail) {
+      } else if (!player.jail) {
         player = updatePositionDice(playerList2[socket.id], data[0]+data[1]);
         sendPosUpdate(player, str);
-      }
-      if (player.jail && doubleDice==0 && player.jailCount != 3) {
+      } else if (player.jail && doubleDice==0 && player.jailCount != 3) {
         sendGenericUpdate(str + ' and stays in jail');
         sendEndTurn(player, true, 0, null);
       } else if (player.jail && doubleDice>0) {
@@ -257,8 +255,11 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
     }
     //if else instance of station, services... per aggiornare tutte le liste
     player1.props.splice( player1.props.indexOf(currentProp), 1 );
-    if(player1.props == [])
+    if(player1.props.length == 0)
     console.log("hey1");
+    else {
+      console.log("hey12");
+    }
     if(currentProp instanceof Station) {
       player1.stations.splice( player1.stations.indexOf(currentProp), 1 );
     } else if(currentProp instanceof Services) {
@@ -506,7 +507,7 @@ let handlePlayer = function(pl){
     let player;
     let handler;
     let cardHandler;
-    let owner;
+    let owner = -1;
     let card;
     let pos;
     let square;
@@ -551,7 +552,10 @@ let handlePlayer = function(pl){
 
   else if (square instanceof Station){
     handler = new StationHandler(player, square);
-    res = handler.handle(owner);
+    if(owner == -1)
+    res = handler.handle(null);
+    else
+    res = handler.handle(playerList2[owner]);
     //payRent che chiama sendUpdateMoney
     switch(res) {
       case -1:
@@ -573,7 +577,10 @@ let handlePlayer = function(pl){
 
   else if (square instanceof Services){
     handler = new ServicesHandler(player, diceTotal, square);
-    res = handler.handle(owner);
+    if(owner == -1)
+    res = handler.handle(null);
+    else
+    res = handler.handle(playerList2[owner]);
     //payRent che chiama sendUpdateMoney
     switch(res) {
       case -1:
