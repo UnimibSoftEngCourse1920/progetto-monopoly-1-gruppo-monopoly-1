@@ -491,7 +491,11 @@ let sendGenericUpdate = function(desc) {
 }
 
 let updatePositionDice = function(player, diceNumber) {
-  player.dicePos(diceNumber);
+  let mon = player.dicePos(diceNumber);
+  if (mon == 200) {
+    let str = player.name + ' passes go and collects 200';
+    sendMoneyUpdate(200, player, str);
+  }
   return player;
 }
 
@@ -599,15 +603,13 @@ let handlePlayer = function(pl){
       payRent(res, player, square.getOwner());
       break;
     }
-  } else {
-    sendEndTurn(player, true, 0, null);
-  }/*
+  }
   else if(square instanceof IncomeTax){
     let tax = square.getTax();
     outcome = player.updateMoney(-tax);
     let str = player.name + ' pays ' + tax + ' in taxes';
     sendMoneyUpdate(-tax, player, str);
-  }
+  }/*
   else if(square instanceof Chance || square instanceof CommunityChest){
     if(square instanceof Chance)
       card = chance.getCard();
@@ -693,27 +695,20 @@ let handlePlayer = function(pl){
       outcome = player.updateMoney(res);
       sendMoneyUpdate(res, player, card.description);
     }
-  }
-  else if(square instanceof Go){
+  }*/
+  else if(square.id == 0){
     let str = player.name + ' passes go and collects 200'
     outcome = player.updateMoney(200);
     sendMoneyUpdate(200, player, str);
     //comunica a clients e setta su giocatore;
   }
-  else if(square instanceof GoToJail){
+  else if(square.id == 30){
     sendToJail(player);
   }
-*/
+  else {
+    sendEndTurn(player, true, 0, null);
+  }
   //fine del turno
-  /*if (doubleDice == 0 && !player.jail) {
-    //console.log("entered check");
-    updateTurn();
-  } else if (doubleDice>0 && !player.jail) {
-    sendTurn();
-  }*/
-
-
-
 }
 
 let payRent = function(rent, player, owner){

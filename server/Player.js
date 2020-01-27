@@ -76,9 +76,11 @@ class Player {
       let  sum = this.pos + diceNumber;
         if (sum > 39) {
             this.setPos(sum - 40);
+            return 200;
           }
         else {
             this.setPos(sum);
+            return 0;
         }
     }
  }
