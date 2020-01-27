@@ -10,7 +10,7 @@ class Property extends Square {
         this.unmortagePrice = this.mortgage + this.mortgagePercent;
         this.rent = rent;
         this.state = 'active';
-        this.owner = null;
+        this.owner = -1;
     }
 
     setOwner(owner) {

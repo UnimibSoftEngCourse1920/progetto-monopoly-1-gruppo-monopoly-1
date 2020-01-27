@@ -13,7 +13,7 @@ class HSHandler extends PlayerHandler{
         let owner = this.square.getOwner();
         let playerId = this.player.getId();
 
-        if(owner != null){
+        if(owner != -1){
             if(owner != playerId){
                 //console.log("this property is owned by " + owner.getName());
                 if(this.square.state == 'active')

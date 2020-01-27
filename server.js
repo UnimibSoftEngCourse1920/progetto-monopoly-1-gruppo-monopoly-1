@@ -197,19 +197,126 @@ io.sockets.on('connection', function (socket) {
   socket.on('proposeTrade', function(data) {
     let proposer = playerList2[socket.id];
     let receiver = playerList2[data[0].id];
-    let proposerProps = data[1];
-    let receiverProps = data[2];
+    let proposerPropsNum = data[1];
+    let proposerProps = [];
+    for (let i = 0; i < proposerPropsNum.length; i++) {
+      proposerProps.push(squares[proposerPropsNum[i]]);
+    }
+    let receiverPropsNum = data[2];
+    let receiverProps = [];
+    for (let i = 0; i < receiverPropsNum.length; i++) {
+      receiverProps.push(squares[receiverPropsNum[i]]);
+    }
     let proposerMon = data[3];
     let receiverMon = data[4];
     let str = proposer.name + ' is trading with ' + receiver.name;
     sendGenericUpdate(str);
+    console.log(proposerProps[0].id);
+    console.log(receiverProps[0].id);
     let pack = [proposer, proposerProps, receiverProps, proposerMon, receiverMon];
     socketList[receiver.id].emit('tradeProposal', pack);
+  });
+
+  socket.on('tradeAnswer', function(data) {
+    let proposer = data[0];
+    let receiver = playerList2[socket.id];
+    let proposerProps = data[1];
+    let receiverProps = data[2];
+    let proposerMon = data[3];
+    let receiverMon = data[4];
+    let response = data[5];
+    //update tutto
+    if(response == 0) {
+      let str = receiver.name + ' declined offer of ' + proposer.name;
+      sendGenericUpdate(str);
+    } else {
+      let str = receiver.name + ' accepted offer of ' + proposer.name;
+      sendGenericUpdate(str);
+      sortOutProps(proposer, receiver, proposerProps, receiverProps, proposerMon, receiverMon);
+    }
   })
 });
 
+
+let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, proposerMon, receiverMon) {
+  outcome = playerList2[receiver.id].updateMoney(proposerMon);
+  outcome = playerList2[proposer.id].updateMoney(receiverMon);
+  let str = proposer.name + ' and ' + receiver.name + ' exchange money';
+  let str2 = receiver.name + ' and ' + proposer.name + ' exchange money';
+  sendMoneyUpdate(proposerMon, receiver, str);
+  sendMoneyUpdate(receiverMon, proposer, str2);
+  let player1 = playerList2[proposer.id];
+  let player2 = playerList2[receiver.id];
+
+  for (let i = 0; i < proposerProps.length; i++) {
+    let proposerPropsId = proposerProps[i].id;
+    let currentProp;
+    for(let j = 0; j < player1.props.length; j++) {
+      if(player1.props[j].id == proposerPropsId)
+        currentProp = player1.props[j];
+    }
+    //if else instance of station, services... per aggiornare tutte le liste
+    player1.props.splice( player1.props.indexOf(currentProp), 1 );
+    if(player1.props == [])
+    console.log("hey1");
+    if(currentProp instanceof Station) {
+      player1.stations.splice( player1.stations.indexOf(currentProp), 1 );
+    } else if(currentProp instanceof Services) {
+      player1.services.splice( player1.services.indexOf(currentProp), 1 );
+    }
+    let str = player1.name + ' sells ' + currentProp.name + ' to ' + player2.name;
+    sendPropUpdate(currentProp, player1, 1, str);
+  }
+
+  for (let i = 0; i < receiverProps.length; i++) {
+    let receiverPropsId = receiverProps[i].id;
+    let currentProp;
+    for(let j = 0; j < player2.props.length; j++) {
+      if(player2.props[j].id == receiverPropsId)
+        currentProp = player2.props[j];
+    }
+    //if else instance of station, services... per aggiornare tutte le liste
+    player2.props.splice( player2.props.indexOf(currentProp), 1 );
+    if(player2.props == [])
+    console.log("hey2");
+    if(currentProp instanceof Station) {
+      player2.stations.splice( player2.stations.indexOf(currentProp), 1 );
+    } else if(currentProp instanceof Services) {
+      player2.services.splice( player2.services.indexOf(currentProp), 1 );
+    }
+    let str = player2.name + ' sells ' + currentProp.name + ' to ' + player1.name;
+    sendPropUpdate(currentProp, player2, 1, str);
+  }
+
+  for (let i = 0; i < proposerProps.length; i++) {
+    let p = squares[proposerProps[i].id];
+    p.setOwner(player2.id);
+    player2.props.push(p);
+    if(p instanceof Station) {
+      player2.stations.push(p);
+    } else if(p instanceof Station) {
+      player2.services.push(p);
+    }
+    let str = player2.name + ' buys ' + p.name + ' from ' + player1.name;
+    sendPropUpdate(p, player2, 0, str);
+  }
+  for (let i = 0; i < receiverProps.length; i++) {
+    let p = squares[receiverProps[i].id];
+    p.setOwner(player1.id);
+    player1.props.push(p);
+    if(p instanceof Station) {
+      player1.stations.push(p);
+    } else if(p instanceof Station) {
+      player1.services.push(p);
+    }
+    let str = player1.name + ' buys ' + p.name + ' from ' + player2.name;
+    sendPropUpdate(p, player1, 0, str);
+  }
+}
+
 let handleBuy = function(player) {
   let prop = squares[player.pos];
+  console.log("prop: " + prop.id);
   let str = player.name + ' spends ' + prop.cost;
   let str2 = player.name + ' buys ' + prop.name;
   outcome = player.updateMoney(-prop.cost);
@@ -217,8 +324,7 @@ let handleBuy = function(player) {
   player.props.push(prop);
   if (prop instanceof Station) {
     player.stations.push(prop);
-  }
-  if(prop instanceof Services) {
+  } else if(prop instanceof Services) {
     player.services.push(prop);
   }
   prop.setOwner(player.id);
@@ -412,7 +518,8 @@ let handlePlayer = function(pl){
    pos = player.getPos();
    square = squares[pos];
   if (square instanceof Property) {
-    owner = playerList2[square.getOwner()];
+    if(square.owner != -1)
+      owner = playerList2[square.getOwner()].id;
   }
    playerId = player.getId();
    playerSocket = socketList[playerId];
