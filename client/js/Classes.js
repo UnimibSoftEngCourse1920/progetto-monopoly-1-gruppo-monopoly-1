@@ -9,6 +9,7 @@ class Player {
         this.stations = [];
         this.pedina = pedina;
         this.getOutOfJailFree = false;
+        this.numHouses = 0;
     }
 
     dicePos(diceNumber) {

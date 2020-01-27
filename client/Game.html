@@ -159,7 +159,7 @@
   </div>
   <div id="gestore" class='position'>
     <div id="endmenu">
-      <button id="buid">Build houses</button>
+      <button id="build">Build houses</button>
       <button id="trade" onclick="trade()">Trade</button>
       <button id="end" onclick="endTurn()">End turn</button><br>
     </div>
@@ -278,6 +278,8 @@
   let theirMoney=0;
   let receiver;
   let proposer;
+  let payedOff = true;
+  let moneyOwed = 0;
   socket = io();
 
   socket.emit('getId');
@@ -461,10 +463,10 @@
     dado.style.visibility='hidden';
     document.getElementById("payjail").style.visibility='hidden';
     document.getElementById("getoutofjailfree").style.visibility='hidden';
-    //let x = Math.floor(Math.random() * 6) + 1;
-    //let y = Math.floor(Math.random() * 6) + 1;
-    let x = 6;
-    let y = 5;
+    let x = Math.floor(Math.random() * 6) + 1;
+    let y = Math.floor(Math.random() * 6) + 1;
+    //let x = 6;
+    //let y = 5;
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
@@ -499,8 +501,12 @@
   })
 
   let payJail = function() {
-    document.getElementById("payjail").style.visibility='hidden';
-    socket.emit('payJail', self);
+    if (self.money >= 50) {
+      document.getElementById("payjail").style.visibility='hidden';
+      socket.emit('payJail', self);
+    } else {
+      updateScroll("You can't leave jail as you need to pay 50 which you don't have");
+    }
   }
   /*let updatePosition = function(diceNumber, str) {
     oldPos = self.pos;
@@ -741,10 +747,28 @@ socket.on('addProp', function(data) {
   })
 
   let endMenu = function(data) {
-    document.getElementById("endmenu").style.visibility="visible";
+
     let boo = data[0];
     let money = data[1];
     let owner = data[2];
+    let done = false;
+    if(boo) {
+      document.getElementById("endmenu").style.visibility="visible";
+    }
+    else if (!boo) {
+      updateScroll("You are in debt! you need to find a way to earn " + money + " or declare bankrupt");
+      moneyOwed = money;
+      payedOff = false;
+
+      setTimeout(function(){ document.getElementById("endmenu").style.visibility="visible"; document.getElementById("end").style.visibility="hidden"; done = true; clearTimeout();}, 2500);
+      setInterval(function() {
+        if(payedOff) {
+          let pack = [money, owner]
+          socket.emit('payedDebt', pack);
+          clearTimeout();
+        }
+      }, 300);
+    }
     //opzione 1: finisci il turno => emitti socket.emit('endTurn');
     //opzione 2: costruzione case => socket.emit('houseBuild');
     //opzione 3: trading => socket.emit('trade');
