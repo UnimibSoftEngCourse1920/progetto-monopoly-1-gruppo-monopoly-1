@@ -18,8 +18,8 @@ class Player {
 
     removeProp(prop) {
         let stop = false
-        for (let i = 0; i < props.length && !stop; i++) {
-            if (props[i] == prop) {
+        for (let i = 0; i < this.props.length && !stop; i++) {
+            if (this.props[i] == prop) {
                 this.props.splice(i, 1);
                 stop = true;
             }

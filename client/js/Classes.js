@@ -8,6 +8,7 @@ class Player {
         this.services = [];
         this.stations = [];
         this.pedina = pedina;
+        this.getOutOfJailFree = false;
     }
 
     dicePos(diceNumber) {
@@ -22,7 +23,15 @@ class Player {
     addProp(prop) {
         this.props.push(prop);
     }
-
+    removeProp(prop) {
+        let stop = false
+        for (let i = 0; i < this.props.length && !stop; i++) {
+            if (this.props[i] == prop) {
+                this.props.splice(i, 1);
+                stop = true;
+            }
+        }
+    }
     getPos() {
         return this.pos;
     }
@@ -32,15 +41,16 @@ class Player {
     }
 
     updateMoney(delta) {
-        if (delta > 0) {
-            this.money += delta;
+      let delta1 = delta*1;
+        if (delta1 > 0) {
+            this.money += delta1;
             return true;
         }
-        else if (delta <= 0) {
-            if ((this.money + delta) < 0)
+        else if (delta1 <= 0) {
+            if ((this.money + delta1) < 0)
                 return false;
             else {
-                this.money += delta;
+                this.money += delta1;
                 return true;
             }
         }

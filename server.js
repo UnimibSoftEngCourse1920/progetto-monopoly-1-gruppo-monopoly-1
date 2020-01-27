@@ -148,9 +148,9 @@ io.sockets.on('connection', function (socket) {
 
     socket.on('payJail', function(data) {
       let player = playerList2[data.id];
-      outcome = player.updateMoney(50);
+      outcome = player.updateMoney(-50);
       let str = player.name + ' pays 50 to get out of jail';
-      sendMoneyUpdate(50, player, str);
+      sendMoneyUpdate(-50, player, str);
       player.jail = false;
       player.jailCount = 0;
       sendJailUpdate(player, false);
@@ -173,8 +173,8 @@ io.sockets.on('connection', function (socket) {
     dice2 = 0;
     dice1 = 0;
     double = false;
-    if (doubleDice == 0) {
-        updateTurn();
+    if (doubleDice == 0 || playerList2[socket.id].jail) {
+      updateTurn();
     } else {
       sendTurn();
     }
@@ -239,10 +239,14 @@ io.sockets.on('connection', function (socket) {
 let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, proposerMon, receiverMon) {
   outcome = playerList2[receiver.id].updateMoney(proposerMon);
   outcome = playerList2[proposer.id].updateMoney(receiverMon);
+  outcome = playerList2[receiver.id].updateMoney(-receiverMon);
+  outcome = playerList2[proposer.id].updateMoney(-proposerMon);
   let str = proposer.name + ' and ' + receiver.name + ' exchange money';
   let str2 = receiver.name + ' and ' + proposer.name + ' exchange money';
   sendMoneyUpdate(proposerMon, receiver, str);
   sendMoneyUpdate(receiverMon, proposer, str2);
+  sendMoneyUpdate(-receiverMon, receiver, str);
+  sendMoneyUpdate(-proposerMon, proposer, str2);
   let player1 = playerList2[proposer.id];
   let player2 = playerList2[receiver.id];
 
@@ -255,11 +259,7 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
     }
     //if else instance of station, services... per aggiornare tutte le liste
     player1.props.splice( player1.props.indexOf(currentProp), 1 );
-    if(player1.props.length == 0)
-    console.log("hey1");
-    else {
-      console.log("hey12");
-    }
+    //console.log("hey1");
     if(currentProp instanceof Station) {
       player1.stations.splice( player1.stations.indexOf(currentProp), 1 );
     } else if(currentProp instanceof Services) {
@@ -267,6 +267,7 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
     }
     let str = player1.name + ' sells ' + currentProp.name + ' to ' + player2.name;
     sendPropUpdate(currentProp, player1, 1, str);
+    console.log("currentProp.name")
   }
 
   for (let i = 0; i < receiverProps.length; i++) {

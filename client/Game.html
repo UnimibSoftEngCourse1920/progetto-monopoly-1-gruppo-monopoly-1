@@ -132,6 +132,9 @@
         #them{
           visibility:visible;
         }
+        #payjail,#getoutofjailfree{
+          visibility:hidden;
+        }
     </style>
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
@@ -162,6 +165,8 @@
     </div>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
     <div id="scrollBox"></div>
+    <button id="payjail" onclick="payJail()">Pay Jail</button>
+    <button id="getoutofjailfree" onclick="getOutOfJailFree()">Use "Get out of jail free" card</button>
 	</div>
   <div id="buyProperty" class="position">
     <div id="description"></div><br>
@@ -444,13 +449,22 @@
       dado.style.visibility = 'visible';
     else {
       socket.emit('stillInJail', self);
+      dado.style.visibility = 'visible';
+      document.getElementById("payjail").style.visibility='visible';
+      if(self.getOutOfJailFree) {
+        document.getElementById("getoutofjailfree").style.visibility='visible';
+      }
     }
   }
 
   let rolldice = function() {
     dado.style.visibility='hidden';
+    document.getElementById("payjail").style.visibility='hidden';
+    document.getElementById("getoutofjailfree").style.visibility='hidden';
     let x = Math.floor(Math.random() * 6) + 1;
     let y = Math.floor(Math.random() * 6) + 1;
+    //let x = 5;
+    //let y = 5;
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
@@ -466,6 +480,7 @@
   let getOutOfJailFree = function() {
     //getOutOfJailFree.style.visibility = 'hidden';
     socket.emit('getOutOfJailFree', self);
+    document.getElementById("getoutofjailfree").style.visibility='hidden';
   }
 
   socket.on('getOutOfJailFreeUpdate', function(data) {
@@ -484,6 +499,7 @@
   })
 
   let payJail = function() {
+    document.getElementById("payjail").style.visibility='hidden';
     socket.emit('payJail', self);
   }
   /*let updatePosition = function(diceNumber, str) {
@@ -529,6 +545,8 @@
         if (players[i].id == data[1].id) {
           players[i].updateMoney(data[0]);
           p = players[i];
+          let str = 'm' + p.id;
+          document.getElementById(str).innerHTML = "money: " + p.money;
         }
       updateScroll(data[2]);
     }
@@ -537,8 +555,8 @@
     //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
     //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
     //usare lo stesso array per tutti
-    let str = 'm' + p.id;
-  document.getElementById(str).innerHTML = "money: " + p.money;
+
+
   });
 
   socket.on('jailUpdate', function(data) {
@@ -658,7 +676,6 @@
   });
 
 socket.on('addProp', function(data) {
-  console.log("ci sono");
   let playerArrived = data[1];
   let prop = data[0];
   let player = players[playerArrived.id];
@@ -814,7 +831,11 @@ socket.on('addProp', function(data) {
 
     });
     let updateSelfProps = function(){
-      let arr2 = document.getElementsByClassName("io");
+      let arr2 = document.getElementsByClassName("iodiv");
+      for (let i = 0; i < arr2.length; i ++) {
+        arr2[i].style.display="none";
+      }
+      arr2 = document.getElementsByClassName("io");
       for (let i = 0; i < arr2.length; i ++) {
         arr2[i].style.display="none";
       }
@@ -978,7 +999,6 @@ socket.on('addProp', function(data) {
       let boo = false;
       for (let i = 0; i < players.length; i ++) {
         if(players[i].id == player.id) {
-          if(players[i] != self) {
             boo = true;
             for (let j = 0; j < players[i].props.length; j ++) {
               if(prop.id == players[i].props[j].id) {
@@ -999,9 +1019,8 @@ socket.on('addProp', function(data) {
               }
             }
           }
-        }
       }
-      if(!boo) {
+      /*if(!boo) {
         for (let j = 0; j < self.props.length; j ++) {
           if(prop.id == self.props[j].id) {
             self.removeProp(self.props[j]);
@@ -1018,8 +1037,13 @@ socket.on('addProp', function(data) {
               self.services.splice(j, 1);
             }
           }
+        }*/
+        for (let i = 0; i < self.props.length; i ++) {
+          console.log(self.props[i].name);
         }
-      }
+        updateSelfProps();
+
+      updateScroll(str);
     })
 </script>
 

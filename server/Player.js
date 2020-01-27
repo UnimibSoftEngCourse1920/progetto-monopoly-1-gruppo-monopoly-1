@@ -19,7 +19,7 @@ class Player {
 
     updateJailCount(){
       this.jailCount++;
-      return jailCount;
+      return this.jailCount;
     }
 
     addProp(prop) {
@@ -41,15 +41,16 @@ class Player {
     }
 
     updateMoney(delta) {
-        if (delta > 0) {
-            this.money += delta;
+      let delta1 = delta*1;
+        if (delta1 > 0) {
+            this.money += delta1;
             return true;
         }
-        else if (delta <= 0) {
-            if ((this.money + delta) < 0)
+        else if (delta1 <= 0) {
+            if ((this.money + delta1) < 0)
                 return false;
             else {
-                this.money += delta;
+                this.money += delta1;
                 return true;
             }
         }
