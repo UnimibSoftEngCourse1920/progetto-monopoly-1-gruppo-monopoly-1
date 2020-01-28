@@ -320,7 +320,7 @@
         </div>
     </div>
 <script>
-	let socket, id;
+	let socket, id, name;
   let lobbyID;
   let squares = [];
   let houses = [];
@@ -352,15 +352,15 @@
   let yellow;
   let green;
   let darkblue;
-  let xyz=0;;
+  let xyz=0;
+  let myName;
   socket = io();
 
-  socket.emit('getId');
+  socket.emit('getLobby');
 
   socket.on('id', function (data) {
-        id = data.id;
-        let playerName = "Player " + id;
-        socket.emit('getLobby', { name: playerName });
+        id = data[0];
+        myName = data[1];
   });
 
   socket.on('setLobby', function (data) {

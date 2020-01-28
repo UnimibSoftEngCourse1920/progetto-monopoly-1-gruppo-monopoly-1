@@ -4,7 +4,8 @@
 //let Station = require('./Station');
 //let Square = require('./Square');
 class Player {
-    constructor(id, name) {
+    constructor(socketId, id, name) {
+      this.socketId = socketId;
         this.id = id;
         this.name = name;
         this.money = 450;

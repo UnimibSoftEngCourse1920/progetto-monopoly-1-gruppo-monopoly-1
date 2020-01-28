@@ -64,9 +64,9 @@ class Deck {
 	}
 
 	getCard = function () {
-		let temp = cards[this.currentCard];
+		let temp = this.cards[this.currentCard];
 		this.currentCard++;
-		if (currentCard == total) {
+		if (this.currentCard == this.total) {
 			shuffle(this.cards);
 			this.currentCard = 0;
 		}
