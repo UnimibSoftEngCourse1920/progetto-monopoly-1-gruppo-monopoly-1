@@ -7,7 +7,6 @@ class HouseProperty extends Property {
         this.houses = 0;
         this.housePrices = housePrices;
         this.colour = colour;
-        this.numHouses = 0;
     }
 
     addHouse() {

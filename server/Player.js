@@ -4,8 +4,7 @@
 //let Station = require('./Station');
 //let Square = require('./Square');
 class Player {
-    constructor(socketId, id, name) {
-      this.socketId = socketId;
+    constructor(id, name) {
         this.id = id;
         this.name = name;
         this.money = 1500;
@@ -46,14 +45,14 @@ class Player {
         if (delta1 > 0) {
             this.money += delta1;
             return true;
-        } else {
-          let u = this.money + delta1;
-          if (u < 0)
-            return false;
-          else {
-            this.money += delta1;
-            return true;
-          }
+        }
+        else if (delta1 <= 0) {
+            if ((this.money + delta1) < 0)
+                return false;
+            else {
+                this.money += delta1;
+                return true;
+            }
         }
     }
 
@@ -77,11 +76,9 @@ class Player {
       let  sum = this.pos + diceNumber;
         if (sum > 39) {
             this.setPos(sum - 40);
-            return 200;
           }
         else {
             this.setPos(sum);
-            return 0;
         }
     }
  }

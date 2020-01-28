@@ -9,20 +9,28 @@ class GoToCard extends Card{
     execute(player){
       let pack = [];
         let actualPos = player.getPos();
-        if (actualPos != squareIndex){
-            if(actualPos < squareIndex){
+        console.log("actualPos " + actualPos);
+        if(actualPos != 0){
+            if (actualPos != this.squareIndex){
+                if(actualPos < this.squareIndex){
                 //player.setPos(squareIndex);  //non passa dal via
-                pack.push(squareIndex);
-                pack.push(0);
-                return pack;
+                    pack.push(this.squareIndex);
+                    pack.push(0);
+                    return pack;
+                }
+                else{
+                    //player.setPos(squareIndex); //passa dal via
+                    //player.updateMoney(200);
+                    pack.push(this.squareIndex);
+                    pack.push(200);
+                    return pack;
+                }
             }
-            else{
-                //player.setPos(squareIndex); //passa dal via
-                //player.updateMoney(200);
-                pack.push(squareIndex);
-                pack.push(200);
-                return pack;
-            }
+        }else{
+            console.log("eccoci");
+            pack.push(this.squareIndex);
+            pack.push(200);
+            return pack;
         }
         pack.push(actualPos);
         pack.push(0);

@@ -6,7 +6,7 @@ class PayCard extends Card{
     }
 
     execute(){
-        return amount;
+        return this.amount;
     }
 
     printDescription(){

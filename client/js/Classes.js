@@ -9,7 +9,6 @@ class Player {
         this.stations = [];
         this.pedina = pedina;
         this.getOutOfJailFree = false;
-        this.numHouses = 0;
     }
 
     dicePos(diceNumber) {
@@ -73,14 +72,6 @@ class Pedina {
     this.h = 0;
   }
   setDimensions(w,h) {
-    this.w = w;
-    this.h = h;
-  }
-}
-class House {
-  constructor(x, y, w, h) {
-    this.x = x;
-    this.y = y;
     this.w = w;
     this.h = h;
   }

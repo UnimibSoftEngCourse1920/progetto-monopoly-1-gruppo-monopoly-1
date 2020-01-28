@@ -9,8 +9,9 @@ let MoveBackCard = require('./MoveBackCard');
 let CloseStationCard = require('./CloseStationCard');
 let CloseServicesCard = require('./CloseServicesCard');
 class Deck {
+
     constructor(chance) {
-        this.cards = [];
+		this.cards = [];
 		if (!chance) {
 			this.cards[0] = new PayCard("Bank error in your favor - collect $200", 200);
 			this.cards[1] = new PayCard("Doctor's fee - pay $50", -50);
@@ -28,8 +29,7 @@ class Deck {
 			this.cards[13] = new GetOutOfJailCard("Get out of jail free � this card may be kept until needed, or sold");
 			this.cards[14] = new GoToJailCard("Go to jail � go directly to jail � Do not pass Go, do not collect $200 ");
 			this.cards[15] = new GoToCard("Advance to Go, Collect 200$", 0);
-		}
-		else {
+		}else{
 			this.cards[0] = new GetOutOfJailCard("Get out of jail free � this card may be kept until needed, or sold");
 			this.cards[1] = new GoToCard("Advance to Go, Collect 200$", 0);
 			this.cards[2] = new GoToCard("Advance to Illinois Avenue, collect 200 if you pass go", 24);
@@ -47,29 +47,29 @@ class Deck {
 			this.cards[14] = new CloseStationCard("Advance token to the nearest Railroad and pay owner twice the rent if owned, if unowned you may buy it");
 			this.cards[15] = new PayCard("You have won a crossword competition collect 100", 100);
 		}
-		this.shuffle(this.cards);
+		//this.shuffle();
 		this.currentCard = 0;
 		this.total = 16;
 	}
 
-	shuffle = function(a) {
+	shuffle = function() {
 		let j, x, i;
-		for (i = a.length - 1; i > 0; i--) {
+		for (i = this.cards.length - 1; i > 0; i--) {
 			j = Math.floor(Math.random() * (i + 1));
-			x = a[i];
-			a[i] = a[j];
-			a[j] = x;
+			x = this.cards[i];
+			this.cards[i] = this.cards[j];
+			this.cards[j] = x;
 		}
-		return a;
+		return this.cards;
 	}
 
 	getCard = function () {
-		let temp = this.cards[this.currentCard];
-		this.currentCard++;
+		let temp = this.cards[12];
+		/*this.currentCard++;
 		if (this.currentCard == this.total) {
-			shuffle(this.cards);
+			shuffle();
 			this.currentCard = 0;
-		}
+		}*/
 		return temp;
 	}
 }
