@@ -58,6 +58,7 @@ let worker;
 let numPlayer=0;
 let playerDisconnected = null;
 let actualLength = 0;
+let playersDisconnected = [];
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
