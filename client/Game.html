@@ -43,6 +43,18 @@
 	         z-index: 1;
            background-color:white;
         }
+        #buyhouse{
+           display: none;
+	         text-align: center;
+	         position:absolute;
+	         z-index: 5;
+        }
+        #housenumber{
+           display: none;
+	         text-align: center;
+	         position:absolute;
+	         z-index: 6;
+        }
         #tradepage{
            display: none;
 	         text-align: center;
@@ -53,13 +65,13 @@
            display: none;
 	         text-align: center;
 	         position:absolute;
-	         z-index: 5;
+	         z-index: 7;
         }
         #haiperso{
            display: none;
 	         text-align: center;
 	         position:absolute;
-	         z-index: 6;
+	         z-index: 8;
         }
         #offer{
            display: none;
@@ -90,14 +102,21 @@
           border-radius: 10px;
           font-family:verdana, sans-serif;
         }
+        .housebutton{
+          display:none;
+        }
         #scrollBox{
-          background-color: white;
           margin:auto;
           overflow:auto;
           height:100px;
           width:300px;
           border-style: solid;
           border-radius: 5px;
+        }
+        .position{
+          background-color:white;
+          border-radius: 10px;
+          border-style:solid;
         }
         #description{
           border-style: solid;
@@ -162,6 +181,28 @@
     <button id="accept" onclick="offerAccepted()">Accept</button>
     <button id="decline" onclick="offerDeclined()">Decline</button>
   </div>
+  <div id="buyhouse" class="position">
+    <div>seleziona la proprietà in cui vuoi costruire delle case</div><br><br><br>
+    <button onclick="annullaBuild()">annulla</button>
+  </div>
+  <div id="housenumber" class="position">
+    <div>inserisci il numero di case che vuoi comprare nella proprietà</div>
+    <div id="propname"></div>
+    <select id="optionBox">
+      <option id="opt-5" value="-5">rimuovi albergo</option>
+      <option id="opt-4" value="-4">-4</option>
+      <option id="opt-3" value="-3">-3</option>
+      <option id="opt-2" value="-2">-2</option>
+      <option id="opt-1" value="-1">-1</option>
+      <option id="opt1" value="1">1</option>
+      <option id="opt2" value="2">2</option>
+      <option id="opt3" value="3">3</option>
+      <option id="opt4" value="4">4</option>
+      <option id="opt5" value="1">Albergo</option>
+    </select>
+    <button onclick="caseComprate()">conferma</button>
+    <button onclick="showHouseButton()">torna alla pagina precedente</button>
+  </div>
   <div id="tradepage" class='position'>
     <div>seleziona il player con cui vuoi fare un trade cliccando sul player apposito a destra o sinistra</div>
     <input type="text" value="0" id="ourmoney" >
@@ -169,7 +210,9 @@
     <button id="propose" onclick="proposeTrade()">propose trade</button>
     <button id="cancel" onclick="cancelTrade()">cancel trade</button>
   </div>
-  <div id="haiperso" class='position'>Hai perso!</div>
+  <div id="haiperso" class='position'>
+    Hai perso!
+  </div>
   <div id="abbandonagioco" class='position'>
     <div>Are you sure you want to declare bankruptcy?</div><br><br><br>
     <button id="exit" onclick="bankrupt()">Yes</button>
@@ -177,7 +220,7 @@
   </div>
   <div id="gestore" class='position'>
     <div id="endmenu">
-      <button id="build">Build houses</button>
+      <button id="build" onclick="showHouseButton()">Build houses</button>
       <button id="trade" onclick="trade()">Trade</button>
       <button id="end" onclick="endTurn()">End turn</button><br>
     </div>
@@ -203,28 +246,28 @@
             <div id="m2"></div><br><br>
             <div id="us">
               <div>Le tue proprietà</div>
-              <input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div>
-              <input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div>
-              <input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div>
-              <input id="cu8" type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div>
-              <input id="cu9" type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div>
-              <input id="cu11" type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div>
-              <input id="cu13" type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div>
-              <input id="cu14" type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div>
-              <input id="cu16" type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div>
-              <input id="cu18" type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div>
-              <input id="cu19" type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div>
-              <input id="cu21" type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div>
-              <input id="cu23" type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div>
-              <input id="cu24" type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div>
-              <input id="cu26" type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div>
-              <input id="cu27" type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div>
-              <input id="cu29" type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div>
-              <input id="cu31" type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div>
-              <input id="cu32" type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div>
-              <input id="cu34" type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div>
-              <input id="cu37" type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div>
-              <input id="cu39" type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div>
+              <input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button>
+              <input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div><button id="b3" class="housebutton" onclick="buyHouses(3)">seleziona</button>
+              <input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div><button id="b6" class="housebutton" onclick="buyHouses(6)">seleziona</button>
+              <input id="cu8" type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div><button id="b8" class="housebutton" onclick="buyHouses(8)">seleziona</button>
+              <input id="cu9" type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div><button id="b9" class="housebutton" onclick="buyHouses(9)">seleziona</button>
+              <input id="cu11" type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div><button id="b11" class="housebutton" onclick="buyHouses(11)">seleziona</button>
+              <input id="cu13" type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div><button id="b13" class="housebutton" onclick="buyHouses(13)">seleziona</button>
+              <input id="cu14" type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div><button id="b14" class="housebutton" onclick="buyHouses(14)">seleziona</button>
+              <input id="cu16" type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div><button id="b16" class="housebutton" onclick="buyHouses(16)">seleziona</button>
+              <input id="cu18" type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div><button id="b18" class="housebutton" onclick="buyHouses(18)">seleziona</button>
+              <input id="cu19" type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div><button id="b19" class="housebutton" onclick="buyHouses(19)">seleziona</button>
+              <input id="cu21" type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div><button id="b21" class="housebutton" onclick="buyHouses(21)">seleziona</button>
+              <input id="cu23" type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div><button id="b23" class="housebutton" onclick="buyHouses(23)">seleziona</button>
+              <input id="cu24" type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div><button id="b24" class="housebutton" onclick="buyHouses(24)">seleziona</button>
+              <input id="cu26" type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div><button id="b26" class="housebutton" onclick="buyHouses(26)">seleziona</button>
+              <input id="cu27" type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div><button id="b27" class="housebutton" onclick="buyHouses(27)">seleziona</button>
+              <input id="cu29" type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div><button id="b29" class="housebutton" onclick="buyHouses(29)">seleziona</button>
+              <input id="cu31" type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div><button id="b31" class="housebutton" onclick="buyHouses(31)">seleziona</button>
+              <input id="cu32" type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div><button id="b32" class="housebutton" onclick="buyHouses(32)">seleziona</button>
+              <input id="cu34" type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div><button id="b34" class="housebutton" onclick="buyHouses(34)">seleziona</button>
+              <input id="cu37" type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div><button id="b37"class="housebutton" onclick="buyHouses(37)">seleziona</button>
+              <input id="cu39" type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div><button id="b39"class="housebutton" onclick="buyHouses(39)">seleziona</button>
               <input id="cu12" type="checkbox" class="io" value="12"><div id="u12" class = "iodiv">Electric Company</div>
               <input id="cu28" type="checkbox" class="io" value="28"><div id="u28" class = "iodiv">Water Works</div>
               <input id="cu5" type="checkbox" class="io" value="5"><div id="u5" class = "iodiv">Reading Railroad</div>
@@ -300,6 +343,15 @@
   let payedOff = true;
   let moneyOwed = 0;
   let ownerOwed = null;
+  let brown;
+  let lightblue;
+  let pink;
+  let orange;
+  let red;
+  let yellow;
+  let green;
+  let darkblue;
+  let xyz=0;;
   socket = io();
 
   socket.emit('getId');
@@ -1160,7 +1212,216 @@ socket.on('addProp', function(data) {
 
       updateScroll(str);
     })
-</script>
+    let colorSelf=function(){
+      brown=0;
+      lightblue=0;
+      pink=0;
+      orange=0;
+      red=0;
+      yellow=0;
+      green=0;
+      darkblue=0;
+      for(let i=0;i<self.props.length;i++){
+        switch(self.props[i].colour){
+          case "brown":
+            brown++;
+            break;
+          case "lightblue":
+            lightblue++;
+            break;
+          case "pink":
+            pink++;
+            break;
+          case "orange":
+            orange++;
+            break;
+          case "red":
+            red++;
+            break;
+          case "yellow":
+            yellow++;
+            break;
+          case "green":
+            green++;
+            break;
+          case "darkblue":
+            darkblue++;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+      let showHouseButton=function(){
+        document.getElementById("housenumber").style.display="none";
+        let bool=false;
+        colorSelf();
+        document.getElementById("gestore").style.display="none";
+        document.getElementById("buyhouse").style.display="block";
+        for (let i = 0; i < self.props.length; i ++) {
+          switch(self.props[i].colour){
+            case "brown":
+              if(brown==2){
+                bool=true;
+              }
+              break;
+            case "lightblue":
+            if(lightblue==3){
+              bool=true;
+            }
+              break;
+            case "pink":
+            if(pink==3){
+              bool=true;
+            }
+              break;
+            case "orange":
+            if(orange==3){
+              bool=true;
+            }
+            break;
+            case "red":
+              if(red==3){
+                bool=true;
+              }
+              break;
+            case "yellow":
+            if(yellow==3){
+              bool=true;
+            }
+              break;
+            case "green":
+            if(green==3){
+              bool=true;
+            }
+              break;
+            case "darkblue":
+            if(darkblue==2){
+              bool=true;
+            }
+              break;
+            default:
+              break;
+          }
+          if(bool==true){
+            let j = 'b' + self.props[i].id;
+            document.getElementById(j).style.display='block';
+            bool=false;
+          }
+        }
+      }
+      let buyHouses=function(idprop){
+        let arr7 = document.getElementsByClassName("housebutton");
+        for (let i = 0; i < arr7.length; i ++) {
+          arr7[i].style.display="none";
+        }
+        let str8;
+        for(let i=0;i<self.props.length;i++){
+          if(self.props[i].id==idprop){
+            xyz=i;
+            str8=self.props[i].name;
+          }
+        }
 
+          if(self.props[xyz].numHouses==0){
+            $('#opt-5').hide();
+            $('#opt-4').hide();
+            $('#opt-3').hide();
+            $('#opt-2').hide();
+            $('#opt-1').hide();
+            $('#opt1').show();
+            $('#opt2').show();
+            $('#opt3').show();
+            $('#opt4').show();
+            $('#opt5').hide();
+            console.log("case0");
+            document.getElementById('optionBox').value=2;
+          }else if(self.props[xyz].numHouses==1){
+            $('#opt-5').hide();
+            $('#opt-4').hide();
+            $('#opt-3').hide();
+            $('#opt-2').hide();
+            $('#opt-1').show();
+            $('#opt1').show();
+            $('#opt2').show();
+            $('#opt3').show();
+            $('#opt4').hide();
+            $('#opt5').hide();
+            console.log("case1");
+            document.getElementById('optionBox').value=2;
+          }else if(self.props[xyz].numHouses==2){
+            $('#opt-5').hide();
+            $('#opt-4').hide();
+            $('#opt-3').hide();
+            $('#opt-2').show();
+            $('#opt-1').show();
+            $('#opt1').show();
+            $('#opt2').show();
+            $('#opt3').hide();
+            $('#opt4').hide();
+            $('#opt5').hide();
+            console.log("case2");
+            document.getElementById('optionBox').value=2;
+          }else if(self.props[xyz].numHouses==3){
+            $('#opt-5').hide();
+            $('#opt-4').hide();
+            $('#opt-3').show();
+            $('#opt-2').show();
+            $('#opt-1').show();
+            $('#opt1').show();
+            $('#opt2').hide();
+            $('#opt3').hide();
+            $('#opt4').hide();
+            $('#opt5').hide();
+            console.log("case3");
+            document.getElementById('optionBox').value=-1;
+          }else if(self.props[xyz].numHouses==4){
+            $('#opt-5').hide();
+            $('#opt-4').show();
+            $('#opt-3').show();
+            $('#opt-2').show();
+            $('#opt-1').show();
+            $('#opt1').hide();
+            $('#opt2').hide();
+            $('#opt3').hide();
+            $('#opt4').hide();
+            $('#opt5').show();
+            console.log("case4");
+            document.getElementById('optionBox').value=-1;
+         }else if(self.props[xyz].numHouses==5){
+            $('#opt-5').show();
+            $('#opt-4').show();
+            $('#opt-3').show();
+            $('#opt-2').show();
+            $('#opt-1').show();
+            $('#opt1').hide();
+            $('#opt2').hide();
+            $('#opt3').hide();
+            $('#opt4').hide();
+            $('#opt5').hide();
+            console.log("case5");
+            document.getElementById('optionBox').value=-1;
+          }
+          document.getElementById("propname").innerHTML=str8;
+          document.getElementById("buyhouse").style.display="none";
+          document.getElementById("housenumber").style.display="block";
+    }
+      let annullaBuild=function(){
+        document.getElementById("buyhouse").style.display="none";
+        document.getElementById("gestore").style.display="block";
+        let arr7 = document.getElementsByClassName("housebutton");
+        for (let i = 0; i < arr7.length; i ++) {
+          arr7[i].style.display="none";
+        }
+      }
+
+      let caseComprate=function(){
+          let newHouses=($("#optionBox").val()) * 1;
+          self.props[xyz].numHouses+=newHouses;
+          let pack=[self.props[xyz].id, newHouses];
+          //socket.emit('nuoveCase',pack);
+          showHouseButton();
+        }
+</script>
 </body>
 </html>
