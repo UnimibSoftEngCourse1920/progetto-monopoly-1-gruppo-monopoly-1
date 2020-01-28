@@ -2,7 +2,7 @@ class Player {
     constructor(id, name, pedina) {
         this.id = id;
         this.name = name;
-        this.money = 1500;
+        this.money = 450;
         this.pos = 0;
         this.props = [];
         this.services = [];

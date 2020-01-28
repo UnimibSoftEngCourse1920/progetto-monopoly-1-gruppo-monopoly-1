@@ -49,6 +49,18 @@
 	         position:absolute;
 	         z-index: 3;
         }
+        #abbandonagioco{
+           display: none;
+	         text-align: center;
+	         position:absolute;
+	         z-index: 5;
+        }
+        #haiperso{
+           display: none;
+	         text-align: center;
+	         position:absolute;
+	         z-index: 6;
+        }
         #offer{
            display: none;
 	         text-align: center;
@@ -157,6 +169,12 @@
     <button id="propose" onclick="proposeTrade()">propose trade</button>
     <button id="cancel" onclick="cancelTrade()">cancel trade</button>
   </div>
+  <div id="haiperso" class='position'>Hai perso!</div>
+  <div id="abbandonagioco" class='position'>
+    <div>Are you sure you want to declare bankruptcy?</div><br><br><br>
+    <button id="exit" onclick="bankrupt()">Yes</button>
+    <button id="noexit" onclick="noExit()">No</button>
+  </div>
   <div id="gestore" class='position'>
     <div id="endmenu">
       <button id="build">Build houses</button>
@@ -167,6 +185,7 @@
     <div id="scrollBox"></div>
     <button id="payjail" onclick="payJail()">Pay Jail</button>
     <button id="getoutofjailfree" onclick="getOutOfJailFree()">Use "Get out of jail free" card</button>
+    <button id="bankrupt" onclick="declareBankruptcy()">Declare bankruptcy</button>
 	</div>
   <div id="buyProperty" class="position">
     <div id="description"></div><br>
@@ -280,6 +299,7 @@
   let proposer;
   let payedOff = true;
   let moneyOwed = 0;
+  let ownerOwed = null;
   socket = io();
 
   socket.emit('getId');
@@ -459,14 +479,21 @@
     }
   }
 
+  let odd = 0;
   let rolldice = function() {
     dado.style.visibility='hidden';
     document.getElementById("payjail").style.visibility='hidden';
     document.getElementById("getoutofjailfree").style.visibility='hidden';
-    let x = Math.floor(Math.random() * 6) + 1;
-    let y = Math.floor(Math.random() * 6) + 1;
-    //let x = 6;
-    //let y = 5;
+    //let x = Math.floor(Math.random() * 6) + 1;
+    //let y = Math.floor(Math.random() * 6) + 1;
+    let x ;
+    if(odd%2==0) {
+      x = 5;
+    } else {
+      x = 4;
+    }
+    let y = 5;
+    odd++;
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
@@ -553,9 +580,16 @@
           p = players[i];
           let str = 'm' + p.id;
           document.getElementById(str).innerHTML = "money: " + p.money;
+          if(players[i].id == self.id) {
+            if(!payedOff) {
+              if(self.money >= moneyOwed)
+                payedOff = true;
+            }
+          }
         }
       updateScroll(data[2]);
     }
+
     //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
     //Crea una funzione che quando i soldi di un player (incluso self) vengono modificati, viene modificata automaticamente la div.
     //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
@@ -744,28 +778,55 @@ socket.on('addProp', function(data) {
 
   socket.on('endMenu', function(data) {
     endMenu(data);
-  })
+  });
 
+  let done = false;
+  let timeOutFunc;
+  let intervalFunc;
+
+  let setDone = function() {
+  this.done= true;
+  clearTimeout(timeOutFunc);
+  }
+
+  let setPayedOff = function() {
+    payedOff = true;
+    clearInterval(intervalFunc);
+    moneyOwed = 0;
+    ownerOwed = null;
+  }
+  let justPayed = false;
   let endMenu = function(data) {
 
     let boo = data[0];
     let money = data[1];
     let owner = data[2];
-    let done = false;
+      if(justPayed) {
+        justPayed = false;
+        document.getElementById("end").style.display="inline";
+      }
     if(boo) {
       document.getElementById("endmenu").style.visibility="visible";
     }
     else if (!boo) {
+      socket.emit('debt', money);
+      done = false;
+      if(owner != null) {
+        ownerOwed = players[owner.id];
+      }
       updateScroll("You are in debt! you need to find a way to earn " + money + " or declare bankrupt");
       moneyOwed = money;
       payedOff = false;
 
-      setTimeout(function(){ document.getElementById("endmenu").style.visibility="visible"; document.getElementById("end").style.visibility="hidden"; done = true; clearTimeout();}, 2500);
-      setInterval(function() {
+      timeOutFunc = setTimeout(function(){ document.getElementById("endmenu").style.visibility="visible"; document.getElementById("end").style.display="none"; setDone();}, 2500);
+      intervalFunc = setInterval(function() {
         if(payedOff) {
+          //document.getElementById("end").style.visibility="visible";
           let pack = [money, owner]
           socket.emit('payedDebt', pack);
-          clearTimeout();
+          document.getElementById("endmenu").style.visibility="hidden";
+          justPayed = true;
+          setPayedOff();
         }
       }, 300);
     }
@@ -800,9 +861,39 @@ socket.on('addProp', function(data) {
 
   }
 
-  let bankrupt = function() {
-    socket.emit('bankrupt');
+  let declareBankruptcy = function() {
+    document.getElementById("gestore").style.display="none";
+    document.getElementById("abbandonagioco").style.display="block";
   }
+
+  let bankrupt = function() {
+    let pack = [payedOff, ownerOwed];
+    socket.emit('bankrupt', pack);
+    socket.disconnect();
+    document.getElementById("abbandonagioco").style.display="none";
+    document.getElementById("haiperso").style.display="block";
+    setTimeout(function() {
+      socket.disconnect();
+      window.open("http://localhost:1337/client/Menu.html", "_self");
+    }, 3000);
+  }
+
+  let noExit = function() {
+    document.getElementById("abbandonagioco").style.display="none";
+    document.getElementById("gestore").style.display="block";
+  }
+
+
+  socket.on('playerDisconnected', function(data) {
+    let playerDisc = players[data.id];
+    let pId = 'p' + playerDisc.id;
+    let mId = 'm' + playerDisc.id;
+    document.getElementById(pId).style.display="none";
+    document.getElementById(mId).style.display="none";
+    players.delete(playerDisc);
+    updateScroll(playerDisc.name + ' disconnected');
+  });
+
   p0.onclick= function(){
     viewProps(0);
   }

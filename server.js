@@ -56,6 +56,9 @@ let double = false;
 let unownedProp = true;
 let worker;
 let numPlayer=0;
+let playerDisconnected = null;
+let actualLength = 0;
+
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
     contTot++;
@@ -150,6 +153,7 @@ io.sockets.on('connection', function (socket) {
       sendTurn();
     });
 
+
     socket.on('payJail', function(data) {
       let player = playerList2[data.id];
       outcome = player.updateMoney(-50);
@@ -175,6 +179,10 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+  socket.on('debt', function(data) {
+    let str = playerList2[socket.id] + ' is in debt of ' + data;
+    sendGenericUpdate(str);
+  })
   //turn ended, tell next player to start
   socket.on('endTurn', function() {
     diceTotal = 0;
@@ -196,8 +204,25 @@ io.sockets.on('connection', function (socket) {
     //gestisci trade
   });
 
-  socket.on('bankrupt', function() {
+  socket.on('bankrupt', function(data) {
     //gestisci bankrupt
+    let ownerOwed;
+    actualLength = playerList2.length;
+    playerDisconnected = playerList2[socket.id];
+    playerList2.delete(playerDisconnected);
+    playersDisconnected.push(playerDisconnected.id);
+    if (data[1] != null) {
+      ownerOwed = playerList2[data[1].id];
+    } else {
+      ownerOwed = null;
+    }
+    let payedOff = data[0];
+    handleBankruptcy(player, payedOff, ownerOwed);
+  });
+
+  socket.on('disconnect', function() {
+    socketList.delete(socketList[playerDisconnected.id]);
+    handleDisconnect(playerDisconnected);
   });
 
   socket.on('payedDebt', function(data) {
@@ -205,6 +230,7 @@ io.sockets.on('connection', function (socket) {
     let ownerOwed = data[1];
     let playerInDebt = playerList2[socket.id];
     handlePlayerDebt(playerInDebt, moneyOwed, ownerOwed);
+    console.log("payed debt");
   })
   socket.on('proposeTrade', function(data) {
     let proposer = playerList2[socket.id];
@@ -223,8 +249,8 @@ io.sockets.on('connection', function (socket) {
     let receiverMon = data[4];
     let str = proposer.name + ' is trading with ' + receiver.name;
     sendGenericUpdate(str);
-    console.log(proposerProps[0].id);
-    console.log(receiverProps[0].id);
+    //console.log(proposerProps[0].id);
+    //console.log(receiverProps[0].id);
     let pack = [proposer, proposerProps, receiverProps, proposerMon, receiverMon];
     socketList[receiver.id].emit('tradeProposal', pack);
   });
@@ -249,6 +275,56 @@ io.sockets.on('connection', function (socket) {
   })
 });
 
+let handleBankruptcy = function(player, payedOff, ownerOwed) {
+  if (!payedOff) {
+    if(ownerOwed == null) {
+      for(let i = 0; i < player.props.length; i++) {
+        player.props[i].owner = -1;
+      }
+      player.props = [];
+      player.services = [];
+      player.stations = [];
+      player.money = 0;
+      player.pos = 0;
+    } else {
+      for(let i = 0; i < player.props.length; i++) {
+        player.props[i].owner = ownerOwed.id;
+        ownerOwed.props.push(player.props[i]);
+        if(player.props[i] instanceof Station) {
+          ownerOwed.stations.push(player.props[i]);
+        } if (player.props[i] instanceof Services) {
+          ownerOwed.services.push(player.props[i]);
+        }
+        let str = ownerOwed + ' inherits ' + player.props[i].name;
+        sendPropUpdate(player.props[i], ownerOwed, 0, str);
+      }
+      outcome = ownerOwed.updateMoney(player.money);
+      let str2 = ownerOwed.name + ' inherits ' + player.money;
+      sendMoneyUpdate(player.money, ownerOwed, str2);
+    }
+  }
+}
+let handleDisconnect = function(player) {
+  for (let i = 0; i < playerList2.length; i ++) {
+    let player2 = playerList2[i];
+    socketList[player2.id].emit('playerDisconnected', player);
+  }
+  if(player.id == turn) {
+    updateTurn();
+  }
+  /*let bool = false;
+  if(playerDisconnected.id != 0 && playerDisconnected.id != actualLength-1) {
+    for (let i = 0; i < playerList2.length; i ++) {
+      if(bool) {
+        updatePlayerId(playerList2[i]);
+      } else if(playerList2[i].id == playerDisconnected.id+1) {
+        bool = true;
+        updatePlayerId(playerList2[i]);
+      }
+    }
+  }*/
+}
+
 let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
   if (playerInDebt.jail) {
     let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
@@ -257,11 +333,14 @@ let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
     playerInDebt.jailCount = 0;
     sendJailUpdate(playerInDebt, false);
     outcome = playerInDebt.updateMoney(-50);
-    sendMoneyUpdate(-50, player, str2);
+    sendMoneyUpdate(-50, playerInDebt, str2);
     playerInDebt = updatePositionDice(playerInDebt, diceTotal);
     sendPosUpdate(playerInDebt);
   } else if (ownerOwed == null) {
+    console.log("yes");
     outcome = playerInDebt.updateMoney(-moneyOwed);
+    let str = playerInDebt.name + ' pays off debt of ' + moneyOwed;
+    sendMoneyUpdate(-moneyOwed, playerInDebt, str);
     sendEndTurn(playerInDebt, true, 0, null);
   } else {
     outcome = ownerOwed.updateMoney(moneyOwed);
@@ -305,7 +384,7 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
     }
     let str = player1.name + ' sells ' + currentProp.name + ' to ' + player2.name;
     sendPropUpdate(currentProp, player1, 1, str);
-    console.log(currentProp.name)
+    //console.log(currentProp.name)
   }
 
   for (let i = 0; i < receiverProps.length; i++) {
@@ -318,7 +397,7 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
     //if else instance of station, services... per aggiornare tutte le liste
     player2.props.splice( player2.props.indexOf(currentProp), 1 );
     if(player2.props == [])
-    console.log("hey2");
+    //console.log("hey2");
     if(currentProp instanceof Station) {
       player2.stations.splice( player2.stations.indexOf(currentProp), 1 );
     } else if(currentProp instanceof Services) {
@@ -423,6 +502,10 @@ let updateTurn = function() {
     turn = 0;
   else
     turn ++;
+    for (let i = 0; i < playersDisconnected.length; i++) {
+      if (turn == playersDisconnected[i])
+      updateTurn();
+    }
     sendTurn();
 }
 
@@ -644,13 +727,17 @@ let handlePlayer = function(pl){
   }
   else if(square instanceof IncomeTax){
     let tax = square.getTax();
+    console.log('prima ' +player.money);
     outcome = player.updateMoney(-tax);
+    console.log('dopo ' +player.money);
     if(!outcome) {
       sendEndTurn(player, false, tax, null);
+      console.log(outcome);
     } else {
       let str = player.name + ' pays ' + tax + ' in taxes';
       sendMoneyUpdate(-tax, player, str);
       sendEndTurn(player, true, 0, null);
+      console.log(outcome);
     }
   }
   else if(square instanceof Chance || square instanceof CommunityChest){
@@ -721,7 +808,7 @@ let handlePlayer = function(pl){
         } else {
             sendMoneyUpdate(-amount*(playerList2.length-1), player, str);
             for (let i = 0; i < playerList2.length; i++) {
-              if(player.id!= playerList2[i].id]) {
+              if(player.id != playerList2[i].id) {
                 str = playerList2[i].name + ' earns' + amount;
                 playerList2[i].updateMoney(amount);
                 sendMoneyUpdate(amount, playerList2[i], str);
@@ -734,7 +821,7 @@ let handlePlayer = function(pl){
         outcome = player.updateMoney(amount*(playerList2.length-1));
         sendMoneyUpdate(amount*(playerList2.length-1), player, str);
         for (let i = 0; i < playerList2.length; i++) {
-          if(player.id!= playerList2[i].id]) {
+          if(player.id!= playerList2[i].id) {
             str = playerList2[i].name + ' loses' + amount;
             outcome = playerList2[i].updateMoney(-amount);
             if(outcome)
@@ -744,6 +831,7 @@ let handlePlayer = function(pl){
         sendEndTurn(player, true, 0, null);
       }
     }
+  }
     /*else if (card instanceof PayPerBuildingCard) {
       let res = card.execute(player);
       outcome = player.updateMoney(res);

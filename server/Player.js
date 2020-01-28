@@ -7,7 +7,7 @@ class Player {
     constructor(id, name) {
         this.id = id;
         this.name = name;
-        this.money = 1500;
+        this.money = 450;
         this.pos = 0;
         this.props = [];
         this.services = [];
@@ -45,14 +45,14 @@ class Player {
         if (delta1 > 0) {
             this.money += delta1;
             return true;
-        }
-        else if (delta1 <= 0) {
-            if ((this.money + delta1) < 0)
-                return false;
-            else {
-                this.money += delta1;
-                return true;
-            }
+        } else {
+          let u = this.money + delta1;
+          if (u < 0)
+            return false;
+          else {
+            this.money += delta1;
+            return true;
+          }
         }
     }
 
