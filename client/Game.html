@@ -187,7 +187,7 @@
   </div>
   <div id="housenumber" class="position">
     <div>inserisci il numero di case che vuoi comprare nella proprietà</div>
-    <div id="propname"></div>
+    <div id="propname"></div><br>
     <select id="optionBox">
       <option id="opt-5" value="-5">rimuovi albergo</option>
       <option id="opt-4" value="-4">-4</option>
@@ -199,7 +199,7 @@
       <option id="opt3" value="3">3</option>
       <option id="opt4" value="4">4</option>
       <option id="opt5" value="1">Albergo</option>
-    </select>
+    </select><br><br>
     <button onclick="caseComprate()">conferma</button>
     <button onclick="showHouseButton()">torna alla pagina precedente</button>
   </div>
@@ -231,7 +231,7 @@
     <button id="bankrupt" onclick="declareBankruptcy()">Declare bankruptcy</button>
 	</div>
   <div id="buyProperty" class="position">
-    <div id="description"></div><br>
+    <br><div id="description"></div><br>
     <div>vuoi acquistare questa propietà?</div><br>
     <button id="yes" onclick="propertyRisp(true)">yes</button>
     <button id="auction" onclick="propertyRisp(false)">auction</button>
@@ -354,6 +354,12 @@
   let darkblue;
   let xyz=0;
   let myName;
+  let o=[];
+  o[1]= new Image();
+  o[2]= new Image();
+  o[3]= new Image();
+  o[4]= new Image();
+  o[5]= new Image();
   socket = io();
 
   socket.emit('getLobby');
@@ -409,6 +415,11 @@
       paint();
     }
     img.src = "http://localhost:1337/client/img/monopoly.png";
+    o[1].src = "http://localhost:1337/client/img/1.png";
+    o[2].src = "http://localhost:1337/client/img/2.png";
+    o[3].src = "http://localhost:1337/client/img/3.png";
+    o[4].src = "http://localhost:1337/client/img/4.png";
+    o[5].src = "http://localhost:1337/client/img/5.png";
   }
 
   function fix_dpi() {
@@ -432,66 +443,66 @@
 
     squares[0]= new Casella(boardW-calcola(200),boardW-calcola(200),0);
     squares[1]=new Casella(squares[0].x-calcola(123),squares[0].y,1);
-    houses[1] = new House(squares[1].x+calcola(35), squares[1].y-calcola(10));
+    houses[1] = new House(squares[1].x+calcola(35), squares[1].y-calcola(10), calcola(50), calcola(60));
     squares[2]=new Casella(squares[1].x-calcola(122),squares[0].y,1);
     squares[3]=new Casella(squares[2].x-calcola(123),squares[0].y,1);
-    houses[3] = new House(squares[3].x+calcola(35), squares[3].y-calcola(10));
+    houses[3] = new House(squares[3].x+calcola(35), squares[3].y-calcola(10), calcola(50), calcola(60));
     squares[4]= new Casella(squares[3].x-calcola(122),squares[0].y,1);
     squares[5]= new Casella(squares[4].x-calcola(125),squares[0].y,1);
     squares[6]= new Casella(squares[5].x-calcola(123),squares[0].y,1);
-    houses[6] = new House(squares[6].x+calcola(35), squares[6].y-calcola(10));
+    houses[6] = new House(squares[6].x+calcola(35), squares[6].y-calcola(10), calcola(50), calcola(60));
     squares[7]= new Casella(squares[6].x-calcola(122),squares[0].y,1);
     squares[8]= new Casella(squares[7].x-calcola(123),squares[0].y,1);
-    houses[8] = new House(squares[8].x+calcola(35), squares[8].y-calcola(10));
+    houses[8] = new House(squares[8].x+calcola(35), squares[8].y-calcola(10), calcola(50), calcola(60));
     squares[9]= new Casella(squares[8].x-calcola(122),squares[0].y,1);
-    houses[9] = new House(squares[9].x+calcola(35), squares[9].y-calcola(10));
+    houses[9] = new House(squares[9].x+calcola(35), squares[9].y-calcola(10), calcola(50), calcola(60));
     squares[10]= new Casella(0,squares[0].y,0);
     squares[11]= new Casella(0,squares[10].y-calcola(123),2);
-    houses[11] = new House(squares[11].x+calcola(150), squares[11].y+calcola(35));
+    houses[11] = new House(squares[11].x+calcola(150), squares[11].y+calcola(35), calcola(50), calcola(60));
     squares[12]= new Casella(0,squares[11].y-calcola(122),2);
     squares[13]= new Casella(0,squares[12].y-calcola(123),2);
-    houses[13] = new House(squares[13].x+calcola(150), squares[13].y+calcola(35));
+    houses[13] = new House(squares[13].x+calcola(150), squares[13].y+calcola(35), calcola(50), calcola(60));
     squares[14]= new Casella(0,squares[13].y-calcola(122),2);
-    houses[14] = new House(squares[14].x+calcola(150), squares[14].y+calcola(35));
+    houses[14] = new House(squares[14].x+calcola(150), squares[14].y+calcola(35), calcola(50), calcola(60));
     squares[15]= new Casella(0,squares[14].y-calcola(125),2);
     squares[16]= new Casella(0,squares[15].y-calcola(123),2);
-    houses[16] = new House(squares[16].x+calcola(150), squares[16].y+calcola(35));
+    houses[16] = new House(squares[16].x+calcola(150), squares[16].y+calcola(35), calcola(50), calcola(60));
     squares[17]= new Casella(0,squares[16].y-calcola(122),2);
     squares[18]= new Casella(0,squares[17].y-calcola(123),2);
-    houses[18] = new House(squares[18].x+calcola(150), squares[18].y+calcola(35));
+    houses[18] = new House(squares[18].x+calcola(150), squares[18].y+calcola(35), calcola(50), calcola(60));
     squares[19]= new Casella(0,squares[18].y-calcola(122),2);
-    houses[19] = new House(squares[19].x+calcola(150), squares[19].y+calcola(35));
+    houses[19] = new House(squares[19].x+calcola(150), squares[19].y+calcola(35), calcola(50), calcola(60));
     squares[20]= new Casella(0,0,0);
     squares[21]= new Casella(calcola(200),0,3);
-    houses[21] = new House(squares[21].x+calcola(35), squares[21].y+calcola(150));
+    houses[21] = new House(squares[21].x+calcola(35), squares[21].y+calcola(150), calcola(50), calcola(60));
     squares[22]= new Casella(squares[21].x+calcola(122),0,3);
     squares[23]= new Casella(squares[22].x+calcola(123),0,3);
-    houses[23] = new House(squares[23].x+calcola(35), squares[23].y+calcola(150));
+    houses[23] = new House(squares[23].x+calcola(35), squares[23].y+calcola(150), calcola(50), calcola(60));
     squares[24]= new Casella(squares[23].x+calcola(122),0,3);
-    houses[24] = new House(squares[24].x+calcola(35), squares[24].y+calcola(150));
+    houses[24] = new House(squares[24].x+calcola(35), squares[24].y+calcola(150), calcola(50), calcola(60));
     squares[25]= new Casella(squares[24].x+calcola(123),0,3);
     squares[26]= new Casella(squares[25].x+calcola(125),0,3);
-    houses[26] = new House(squares[26].x+calcola(35), squares[26].y+calcola(150));
+    houses[26] = new House(squares[26].x+calcola(35), squares[26].y+calcola(150), calcola(50), calcola(60));
     squares[27]= new Casella(squares[26].x+calcola(122),0,3);
-    houses[27] = new House(squares[27].x+calcola(35), squares[27].y+calcola(150));
+    houses[27] = new House(squares[27].x+calcola(35), squares[27].y+calcola(150), calcola(50), calcola(60));
     squares[28]= new Casella(squares[27].x+calcola(123),0,3);
     squares[29]= new Casella(squares[28].x+calcola(122),0,3);
-    houses[29] = new House(squares[29].x+calcola(35), squares[29].y+calcola(150));
+    houses[29] = new House(squares[29].x+calcola(35), squares[29].y+calcola(150), calcola(50), calcola(60));
     squares[30]= new Casella(boardW-calcola(195),0,0);
     squares[31]= new Casella(squares[30].x, calcola(200), 4);
-    houses[31] = new House(squares[31].x-calcola(10), squares[31].y+calcola(35));
+    houses[31] = new House(squares[31].x-calcola(10), squares[31].y+calcola(35), calcola(50), calcola(60));
     squares[32]= new Casella(squares[30].x, squares[31].y+calcola(123), 4);
-    houses[32] = new House(squares[32].x-calcola(10), squares[32].y+calcola(35));
+    houses[32] = new House(squares[32].x-calcola(10), squares[32].y+calcola(35), calcola(50), calcola(60));
     squares[33]= new Casella(squares[30].x, squares[32].y+calcola(122), 4);
     squares[34]= new Casella(squares[30].x, squares[33].y+calcola(123), 4);
-    houses[34] = new House(squares[34].x-calcola(10), squares[34].y+calcola(35));
+    houses[34] = new House(squares[34].x-calcola(10), squares[34].y+calcola(35), calcola(50), calcola(60));
     squares[35]= new Casella(squares[30].x, squares[34].y+calcola(122), 4);
     squares[36]= new Casella(squares[30].x, squares[35].y+calcola(125), 4);
     squares[37]= new Casella(squares[30].x, squares[36].y+calcola(123), 4);
-    houses[37] = new House(squares[37].x-calcola(10), squares[37].y+calcola(35));
+    houses[37] = new House(squares[37].x-calcola(10), squares[37].y+calcola(35), calcola(50), calcola(60));
     squares[38]= new Casella(squares[30].x, squares[37].y+calcola(122), 4);
     squares[39]= new Casella(squares[30].x, squares[38].y+calcola(123), 4);
-    houses[39] = new House(squares[39].x-calcola(10), squares[39].y+calcola(35));
+    houses[39] = new House(squares[39].x-calcola(10), squares[39].y+calcola(35), calcola(50), calcola(60));
 
     for(let i=0;i<players.length;i++)
       pedinaPos[i] = [];
@@ -839,9 +850,24 @@ socket.on('addProp', function(data) {
       let X = pedinaPos[i][squares[players[i].pos].type].x+squares[players[i].pos].x;
       let Y = pedinaPos[i][squares[players[i].pos].type].y+squares[players[i].pos].y;
       drawPedine(players[i].pedina, X, Y);
+      drawHouses(players[i].props);
     }
   }
-
+  let drawHouses = function(properties){
+    for(let i=0;i<properties.length;i++){
+      if(properties[i].numHouses==1){
+        ctx.drawImage(o[1], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
+      } else if(properties[i].numHouses==2){
+        ctx.drawImage(o[2], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
+      } else if(properties[i].numHouses==3){
+        ctx.drawImage(o[3], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
+      } else if(properties[i].numHouses==4){
+        ctx.drawImage(o[4], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
+      } else if(properties[i].numHouses==5){
+        ctx.drawImage(o[5], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
+      }
+    }
+  }
   let drawPedine = function(pedina, x, y) {
     //alert("hey");
     ctx.fillStyle = pedina.color;
@@ -1342,7 +1368,7 @@ socket.on('addProp', function(data) {
         for(let i=0;i<self.props.length;i++){
           if(self.props[i].id==idprop){
             xyz=i;
-            str8=self.props[i].name;
+            str8=self.props[i].name + " <br> una casa/albergo costa: " + self.props[i].housePrices ;
           }
         }
 
@@ -1357,7 +1383,6 @@ socket.on('addProp', function(data) {
             $('#opt3').show();
             $('#opt4').show();
             $('#opt5').hide();
-            console.log("case0");
             document.getElementById('optionBox').value=2;
           }else if(self.props[xyz].numHouses==1){
             $('#opt-5').hide();
@@ -1370,7 +1395,6 @@ socket.on('addProp', function(data) {
             $('#opt3').show();
             $('#opt4').hide();
             $('#opt5').hide();
-            console.log("case1");
             document.getElementById('optionBox').value=2;
           }else if(self.props[xyz].numHouses==2){
             $('#opt-5').hide();
@@ -1383,7 +1407,6 @@ socket.on('addProp', function(data) {
             $('#opt3').hide();
             $('#opt4').hide();
             $('#opt5').hide();
-            console.log("case2");
             document.getElementById('optionBox').value=2;
           }else if(self.props[xyz].numHouses==3){
             $('#opt-5').hide();
@@ -1396,7 +1419,6 @@ socket.on('addProp', function(data) {
             $('#opt3').hide();
             $('#opt4').hide();
             $('#opt5').hide();
-            console.log("case3");
             document.getElementById('optionBox').value=-1;
           }else if(self.props[xyz].numHouses==4){
             $('#opt-5').hide();
@@ -1409,7 +1431,6 @@ socket.on('addProp', function(data) {
             $('#opt3').hide();
             $('#opt4').hide();
             $('#opt5').show();
-            console.log("case4");
             document.getElementById('optionBox').value=-1;
          }else if(self.props[xyz].numHouses==5){
             $('#opt-5').show();
@@ -1422,7 +1443,6 @@ socket.on('addProp', function(data) {
             $('#opt3').hide();
             $('#opt4').hide();
             $('#opt5').hide();
-            console.log("case5");
             document.getElementById('optionBox').value=-1;
           }
           document.getElementById("propname").innerHTML=str8;
@@ -1456,10 +1476,10 @@ socket.on('addProp', function(data) {
             if(players[i].id == player.id) {
               if(player.id != self.id) {
                 let pl = players[i];
-                for (let i = 0; i < pl.props.length; i ++) {
-                  if (pl.props[i].id == prop.id) {
-                    pl.props[i].numHouses += numHousesDelta;
-                    pl.props[i].rent = prop.rent;
+                for (let l = 0; l < pl.props.length; l ++) {
+                  if (pl.props[l].id == prop.id) {
+                    pl.props[l].numHouses += numHousesDelta;
+                    pl.props[l].rent = prop.rent;
                   }
                 }
                 paint();

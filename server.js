@@ -339,7 +339,7 @@ let getLobby = function(id) {
 }
 let updateHouses = function(player, prop, numHousesDelta) {
   prop.numHouses += numHousesDelta;
-  prop.rent = housePrices[prop.numHouses];
+  prop.rent = prop.housePrices[prop.numHouses];
   let pack = [player, prop, numHousesDelta];
   for (let i = 0; i < playerList.length; i ++) {
     socketList[playerList[i].socketId].emit('updateHouses', pack);

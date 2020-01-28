@@ -8,7 +8,7 @@ class Player {
       this.socketId = socketId;
         this.id = id;
         this.name = name;
-        this.money = 450;
+        this.money = 1500;
         this.pos = 0;
         this.props = [];
         this.services = [];
