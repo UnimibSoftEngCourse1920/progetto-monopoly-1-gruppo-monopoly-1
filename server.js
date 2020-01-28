@@ -256,6 +256,13 @@ io.sockets.on('connection', function (socket) {
     socketList[receiver.id].emit('tradeProposal', pack);
   });
 
+  socket.on('nuoveCase', function(data) {
+    let player = playerList2[socket.id];
+    let prop = squares[data[0]];
+    let numHouses = data[1];
+    updateHouses(player, prop, numHouses);
+  });
+
   socket.on('tradeAnswer', function(data) {
     let proposer = data[0];
     let receiver = playerList2[socket.id];
@@ -275,6 +282,15 @@ io.sockets.on('connection', function (socket) {
     }
   })
 });
+
+let updateHouses(player, prop, numHousesDelta) {
+  prop.numHouses += numHousesDelta;
+  prop.rent = housePrices[prop.numHouses];
+  let pack = [player, prop, numHousesDelta];
+  for (let i = 0; i < playerList2.length; i ++) {
+    socketList[playerList2[i].id].emit('updateHouses', pack);
+  }
+}
 
 let handleBankruptcy = function(player, payedOff, ownerOwed) {
   if (!payedOff) {

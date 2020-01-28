@@ -1442,9 +1442,33 @@ socket.on('addProp', function(data) {
           let newHouses=($("#optionBox").val()) * 1;
           self.props[xyz].numHouses+=newHouses;
           let pack=[self.props[xyz].id, newHouses];
-          //socket.emit('nuoveCase',pack);
+          socket.emit('nuoveCase',pack);
           showHouseButton();
         }
+
+        socket.on('updateHouses', function(data) {
+          let player = data[0];
+          let prop = data[1];
+          let numHousesDelta = data[2];
+          let str = player.name + ' added ' + numHousesDelta + ' to ' + prop.name;
+          updateScroll(str);
+          for (let i = 0; i < players.length; i ++) {
+            if(players[i].id == player.id) {
+              if(player.id != self.id) {
+                let pl = players[i];
+                for (let i = 0; i < pl.props.length; i ++) {
+                  if (pl.props[i].id == prop.id) {
+                    pl.props[i].numHouses += numHousesDelta;
+                    pl.props[i].rent = prop.rent;
+                  }
+                }
+                paint();
+              } else {
+                paint();
+              }
+            }
+          }
+        });
 </script>
 </body>
 </html>
