@@ -77,6 +77,12 @@ class Pedina {
     this.h = h;
   }
 }
+class House {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+}
 class Coordinates {
   constructor(x, y) {
     this.x = x;
