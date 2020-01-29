@@ -1481,6 +1481,19 @@ socket.on('addProp', function(data) {
             }
           }
         });
+
+        socket.on('modifiedConfig', function(data) {
+          let newSquares = data;
+          for(let k = 0; k< newSquares.length; k++) {
+            for(let i = 0; i < players.length; i++) {
+              for(let j = 0; j < players[i].props.length; j++) {
+                if(newSquares[k].id == players[i].props[j].id) {
+                  players[i].props[j] = newSquares[k];
+                }
+              }
+            }
+          }
+        });
 </script>
 </body>
 </html>

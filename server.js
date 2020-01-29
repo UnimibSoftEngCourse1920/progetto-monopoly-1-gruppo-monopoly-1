@@ -711,6 +711,7 @@ let sendJailCountUpdate = function(player) {
 }
 
 let updateTurn = function() {
+  actualGame.totalTurns++;
   actualGame.doubleDice = 0;
   if (actualGame.turn == playerList.length-1)
     actualGame.turn = 0;
@@ -720,8 +721,107 @@ let updateTurn = function() {
       if (actualGame.turn == playersDisconnected[i].id)
       updateTurn();
     }
+    if(actualGame.level != 0){
+      if(actualGame.totalTurns%24 == 0) {
+        disorder();
+      }
+    }
     sendTurn();
 }
+
+let disorder = function(){
+    let percentageChange = Math.random()*0,36;
+    let randomNum = Math.floor(Math.random()*2);
+    let amount;
+    let meno = 0;
+    if(randomNum == 0){
+      meno = 1;
+        for(let y=0; y<chance.cards.length; y++){
+            if(chance.cards[y] instanceof PayCard){
+                amount = Math.floor(chance.cards[y].amount*percentageChange);
+                chance.cards[y].amount += amount;
+            }
+        }
+        for(let x=0; x<communityChest.cards.length; x++){
+            if(communityChest.cards[x] instanceof PayCard){
+                amount = Math.floor(communityChest.cards[x].amount*percentageChange);
+                communityChest.cards[x].amount += amount;
+            }
+        }
+        for(let i=0; i< squares.length; i++){
+            if(squares[i] instanceof HouseProperty){
+                for(let j=0; j<squares[i].housePrices.length; j++){
+                    amount = Math.floor(squares[i].housePrices[j]*percentageChange);
+                    squares[i].housePrices[j] += amount;
+                }
+                amount = Math.floor(squares[i].houseBuildPrice*percentageChange);
+                squares[i].houseBuildPrice += amount;
+                amount = Math.floor(squares[i].cost*percentageChange);
+                squares[i].cost += amount;
+                amount = Math.floor(squares[i].rent*percentageChange);
+                squares[i].rent += amount;
+            }else if(squares[i] instanceof Station){
+                for(let j=0; j<squares[i].housePrices.length; j++){
+                    amount = Math.floor(squares[i].rentPrices[j]*percentageChange);
+                    squares[i].rentPrices[j] += amount;
+                }
+                amount = Math.floor(squares[i].cost*percentageChange);
+                squares[i].cost += amount;
+                amount = Math.floor(squares[i].rent*percentageChange);
+                squares[i].rent += amount;
+            }else if(squares[i] instanceof IncomeTax){
+                amount = Math.floor(squares[i].tax*percentageChange);
+                squares[i].tax += amount;
+            }
+        }
+    }else{
+      meno = -1;
+		for(let y=0; y<chance.cards.length; y++){
+            if(chance.cards[y] instanceof PayCard){
+                amount = Math.floor(chance.cards[y].amount*percentageChange);
+                chance.cards[y].amount -= amount;
+            }
+        }
+        for(let x=0; x<communityChest.cards.length; x++){
+            if(communityChest.cards[x] instanceof PayCard){
+                amount = Math.floor(communityChest.cards[x].amount*percentageChange);
+                communityChest.cards[x].amount -= amount;
+            }
+        }
+        for(let i=0; i< squares.length; i++){
+            if(squares[i] instanceof HouseProperty){
+                for(let j=0; j<squares[i].housePrices.length; j++){
+                    amount = Math.floor(squares[i].housePrices[j]*percentageChange);
+                    squares[i].housePrices[j] -= amount;
+                }
+                amount = Math.floor(squares[i].houseBuildPrice*percentageChange);
+                squares[i].houseBuildPrice -= amount;
+                amount = Math.floor(squares[i].cost*percentageChange);
+                squares[i].cost -= amount;
+                amount = Math.floor(squares[i].rent*percentageChange);
+                squares[i].rent -= amount;
+            }else if(squares[i] instanceof Station){
+                for(let j=0; j<squares[i].housePrices.length; j++){
+                    amount = Math.floor(squares[i].rentPrices[j]*percentageChange);
+                    squares[i].rentPrices[j] -= amount;
+                }
+                amount = Math.floor(squares[i].cost*percentageChange);
+                squares[i].cost -= amount;
+                amount = Math.floor(squares[i].rent*percentageChange);
+                squares[i].rent -= amount;
+            }else if(squares[i] instanceof IncomeTax){
+                amount = Math.floor(squares[i].tax*percentageChange);
+                squares[i].tax -= amount;
+            }
+        }
+    }
+    for (let i = 0; i < playerList.length; i++) {
+        socketList[playerList[i].socketId].emit('modifiedConfig', squares);
+        let str = 'Prices, rents, costs per house, taxes and card prices have been modified by ' + meno*percentageChange;
+        sendGenericUpdate(str);
+    }
+}
+
 
 let startGame = function () {
     let chanceLoc;

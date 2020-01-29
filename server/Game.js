@@ -9,6 +9,7 @@ class Game {
     this.double = false;
     this.playerDisconnected = null;
     this.level = level;
+    this.totalTurns = 0;
   }
 }
 
