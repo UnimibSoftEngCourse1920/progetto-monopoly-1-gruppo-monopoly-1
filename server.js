@@ -730,7 +730,7 @@ let updateTurn = function() {
 }
 
 let disorder = function(){
-    let percentageChange = Math.random()*0,36;
+    let percentageChange = Math.random()*0.36;
     let change = Math.floor(percentageChange*100);
     let randomNum = Math.floor(Math.random()*2);
     let amount;
@@ -762,7 +762,7 @@ let disorder = function(){
                 amount = Math.floor(squares[i].rent*percentageChange);
                 squares[i].rent += amount;
             }else if(squares[i] instanceof Station){
-                for(let j=0; j<squares[i].housePrices.length; j++){
+                for(let j=0; j<squares[i].rentPrices.length; j++){
                     amount = Math.floor(squares[i].rentPrices[j]*percentageChange);
                     squares[i].rentPrices[j] += amount;
                 }
@@ -802,7 +802,7 @@ let disorder = function(){
                 amount = Math.floor(squares[i].rent*percentageChange);
                 squares[i].rent -= amount;
             }else if(squares[i] instanceof Station){
-                for(let j=0; j<squares[i].housePrices.length; j++){
+                for(let j=0; j<squares[i].rentPrices.length; j++){
                     amount = Math.floor(squares[i].rentPrices[j]*percentageChange);
                     squares[i].rentPrices[j] -= amount;
                 }
@@ -1135,12 +1135,12 @@ let handlePlayer = function(pl){
         if(!actualGame.outcome) {
           sendEndTurn(player, false, -amount*(playerList.length-1), null);
         } else {
-            sendMoneyUpdate(-amount*(playerList.length-1), player, str);
+            sendMoneyUpdate(-amount*(playerList.length-1), player, null);
             for (let i = 0; i < playerList.length; i++) {
               if(player.id != playerList[i].id) {
                 str = playerList[i].name + ' earns' + amount;
                 playerList[i].updateMoney(amount);
-                sendMoneyUpdate(amount, playerList[i], str);
+                sendMoneyUpdate(amount, playerList[i], null);
               }
             }
             sendEndTurn(player, true, 0, null);
@@ -1148,13 +1148,13 @@ let handlePlayer = function(pl){
       } else {
         str = card.printDescription();
         actualGame.outcome = player.updateMoney(amount*(playerList.length-1));
-        sendMoneyUpdate(amount*(playerList.length-1), player, str);
+        sendMoneyUpdate(amount*(playerList.length-1), player, null);
         for (let i = 0; i < playerList.length; i++) {
           if(player.id!= playerList[i].id) {
             str = playerList[i].name + ' loses' + amount;
             actualGame.outcome = playerList[i].updateMoney(-amount);
             if(actualGame.outcome)
-              sendMoneyUpdate(-amount, playerList[i], str);
+              sendMoneyUpdate(-amount, playerList[i], null);
           }
         }
         sendEndTurn(player, true, 0, null);

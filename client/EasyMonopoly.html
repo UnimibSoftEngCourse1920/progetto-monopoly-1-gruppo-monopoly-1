@@ -572,6 +572,8 @@
     document.getElementById("getoutofjailfree").style.visibility='hidden';
     let x = Math.floor(Math.random() * 6) + 1;
     let y = Math.floor(Math.random() * 6) + 1;
+    //let x = 2;
+    //let y = 5;
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
@@ -665,7 +667,8 @@
             }
           }
         }
-      updateScroll(data[2]);
+        if(data[2] != null)
+          updateScroll(data[2]);
     }
 
     //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
@@ -888,7 +891,9 @@ socket.on('addProp', function(data) {
     moneyOwed = 0;
     ownerOwed = null;
   }
+
   let justPayed = false;
+
   let endMenu = function(data) {
 
     let boo = data[0];

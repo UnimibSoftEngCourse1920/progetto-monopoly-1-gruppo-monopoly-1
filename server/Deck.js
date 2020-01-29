@@ -47,27 +47,27 @@ class Deck {
 			this.cards[14] = new CloseStationCard("Advance token to the nearest Railroad and pay owner twice the rent if owned, if unowned you may buy it");
 			this.cards[15] = new PayCard("You have won a crossword competition collect 100", 100);
 		}
-		this.shuffle(this.cards);
+		this.shuffle();
 		this.currentCard = 0;
 		this.total = 16;
 	}
 
-	shuffle = function(a) {
+	shuffle = function() {
 		let j, x, i;
-		for (i = a.length - 1; i > 0; i--) {
+		for (i = this.cards.length - 1; i > 0; i--) {
 			j = Math.floor(Math.random() * (i + 1));
-			x = a[i];
-			a[i] = a[j];
-			a[j] = x;
+			x = this.cards[i];
+			this.cards[i] = this.cards[j];
+			this.cards[j] = x;
 		}
-		return a;
+		return this.cards;
 	}
 
 	getCard = function () {
 		let temp = this.cards[this.currentCard];
 		this.currentCard++;
 		if (this.currentCard == this.total) {
-			shuffle(this.cards);
+			this.shuffle();
 			this.currentCard = 0;
 		}
 		return temp;
