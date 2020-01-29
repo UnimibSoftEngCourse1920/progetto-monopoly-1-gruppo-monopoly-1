@@ -16,6 +16,7 @@ class Player {
         this.jail = false;
         this.jailCount = 0;
         this.getOutOfJailFree = false;
+        this.bidding = false;
     }
 
     updateJailCount(){

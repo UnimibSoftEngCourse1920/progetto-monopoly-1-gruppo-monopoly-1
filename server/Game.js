@@ -10,6 +10,10 @@ class Game {
     this.playerDisconnected = null;
     this.level = level;
     this.totalTurns = 0;
+    this.propAuction = null;
+    this.highestBid = 0;
+    this.bidder = null;
+    this.bid = 0;
   }
 }
 

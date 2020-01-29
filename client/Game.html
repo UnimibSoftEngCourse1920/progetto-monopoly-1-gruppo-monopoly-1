@@ -180,6 +180,13 @@
           position:absolute;
           font-size: 40px;
         }
+        #auctiondiv{
+           display: none;
+           text-align: center;
+           position:absolute;
+           z-index: 10;
+           width:60%;
+        }
     </style>
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
@@ -235,6 +242,15 @@
   </div>
   <div id="haiperso" class='position'>
     Hai perso!
+  </div>
+  <div id="auctiondiv" class="position"><br>
+    <div>auction for:</div>
+    <div id="auctionproperty"></div><br>
+    <div>highest bid:</div>
+    <div id="auctionprice"></div><br>
+    <input type="text" id="textboxauction"><br><br>
+    <button id="bid" onclick="newBid()">bid</button>
+    <button id="exitbid" onclick="exitBid()">exit</button>
   </div>
   <div id = "haivinto" class='position'><br><br><br>Hai vinto!<br><br><br></div>
   <div id="abbandonagioco" class='position'>
@@ -380,6 +396,7 @@
   let xyz=0;
   let myName;
   let o=[];
+  let maxBid=0;
   o[1]= new Image();
   o[2]= new Image();
   o[3]= new Image();
@@ -1797,7 +1814,41 @@ socket.on('addProp', function(data) {
               }
             }
           }
-        })
+        });
+
+        socket.on('newHighestBid', function(data){
+          //aggiorna la div con la puntata più alta
+          console.log(data);
+            maxBid=data;
+            document.getElementById("auctionprice").innerHTML=data;
+        });
+
+        socket.on('startAuction', function(data){
+          document.getElementById("auctionprice").innerHTML=maxBid;
+          document.getElementById("auctionproperty").innerHTML=data.name;
+          document.getElementById("auctiondiv").style.display="block";
+        });
+
+        let newBid = function(){
+          //invia al server la nuova bid più alta
+          let bid = ($("#textboxauction").val()) * 1;
+          if(bid>maxBid){
+            socket.emit('bid', bid);
+          }else{
+            alert("devi fare una puntata superiore a quella massima");
+          }
+        }
+
+        let exitBid = function(){
+          document.getElementById("auctiondiv").style.display="none";
+          maxBid=0;
+          socket.emit('closeBid');
+        }
+
+        socket.on('endAuction', function() {
+          document.getElementById("auctiondiv").style.display="none";
+          maxBid = 0;
+        });
 </script>
 </body>
 </html>

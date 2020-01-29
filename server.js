@@ -321,7 +321,7 @@ io.sockets.on('connection', function (socket) {
     if (str == 'buy') {
       handleBuy(player);
     } else {
-      //auction
+      handleAuction(player);
     }
   });
 
@@ -443,9 +443,77 @@ io.sockets.on('connection', function (socket) {
     let propId = data;
     let prop = squares[propId];
     handleMortgage(player, prop);
+  });
+
+  socket.on('bid', function(data) {
+    getLobby(socket.id);
+    console.log(data);
+    if(data > actualGame.bid) {
+      actualGame.bid = data;
+      actualGame.bidder = playerTotList[socket.id];
+      updateBid();
+    }
+  });
+
+  socket.on('closeBid', function(){
+    let player = playerTotList[socket.id];
+    player.bidding = false;
+    let numBidders = 0;
+    let numBidder;
+    for(let i = 0; i < playerList.length; i ++) {
+      if(playerList[i] != null) {
+        if(playerList[i].bidding == true) {
+          numBidders ++;
+          numBidder = i;
+        }
+      }
+    }
+    if(numBidders == 0) {
+      sendToWinner();
+    } else if (numBidders == 1) {
+      if(actualGame.bidder.id == numBidder) {
+        actualGame.bidder.bidding = false;
+        sendToWinner();
+      }
+    }
   })
 });
 
+let sendToWinner = function() {
+  let esci = false;
+  if (actualGame.bidder == null) {
+    for(let i = 0; !esci, i < playerList.length; i ++) {
+      if(playerList[i]!= null) {
+        actualGame.bidder = playerList[i];
+        esci = true;
+      }
+    }
+  }
+  let winner = actualGame.bidder;
+  let winPrice = actualGame.bid;
+  actualGame.outcome = winner.updateMoney(-winPrice);
+  let str = winner.name + ' wins auction for ' + actualGame.propAuction.name;
+  sendMoneyUpdate(-winPrice, winner, str);
+  winner.addProp(actualGame.propAuction);
+  let str2 = winner.name + ' buys ' + actualGame.propAuction.name;
+  sendPropUpdate(actualGame.propAuction, winner, 0, str2);
+  for (let i = 0; i < playerList.length; i++) {
+    if(playerList[i] != null) {
+      socketList[playerList[i].socketId].emit('endAuction');
+    }
+  }
+  sendEndTurn(playerList[actualGame.turn], true, 0, null);
+}
+
+let updateBid = function() {
+  console.log('in updateBid');
+  for (let i = 0; i < playerList.length; i++) {
+    if(playerList[i] != null) {
+      console.log('sending ' + actualGame.bid);
+      socketList[playerList[i].socketId].emit('newHighestBid', actualGame.bid);
+    }
+  }
+}
 
 let handleMortgage  = function(player, prop) {
   let state = prop.state;
@@ -463,6 +531,17 @@ let handleMortgage  = function(player, prop) {
     prop.unmortgaged();
     let str = player.name + ' unmortgages ' + prop.name + ' and pays ' + mon;
     sendMortgageUpdate(prop, player, str);
+  }
+}
+
+let handleAuction = function(player) {
+  let prop = squares[player.pos];
+  actualGame.propAuction = prop;
+  for (let i = 0; i < playerList.length; i ++) {
+    if(playerList[i] != null) {
+      playerList[i].bidding = true;
+      socketList[playerList[i].socketId].emit('startAuction', prop);
+    }
   }
 }
 
