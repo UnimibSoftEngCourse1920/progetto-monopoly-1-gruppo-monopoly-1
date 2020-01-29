@@ -353,6 +353,9 @@ let getLobby = function(id) {
 let updateHouses = function(player, prop, numHousesDelta) {
   prop.numHouses += numHousesDelta;
   prop.rent = prop.housePrices[prop.numHouses];
+  actualLobby.outcome = player.updateMoney(-prop.houseBuildPrice*numHousesDelta);
+  let str = player.name + ' pays ' + (-prop.houseBuildPrice*numHousesDelta);
+  sendMoneyUpdate(-prop.houseBuildPrice*numHousesDelta, player, str);
   let pack = [player, prop, numHousesDelta];
   for (let i = 0; i < playerList.length; i ++) {
     socketList[playerList[i].socketId].emit('updateHouses', pack);
@@ -588,7 +591,7 @@ let updateTurn = function() {
   else
     actualGame.turn ++;
     for (let i = 0; i < playersDisconnected.length; i++) {
-      if (actualGame.turn == playersDisconnected[i])
+      if (actualGame.turn == playersDisconnected[i].id)
       updateTurn();
     }
     sendTurn();
