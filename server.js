@@ -731,6 +731,7 @@ let updateTurn = function() {
 
 let disorder = function(){
     let percentageChange = Math.random()*0,36;
+    let change = Math.floor(percentageChange*100);
     let randomNum = Math.floor(Math.random()*2);
     let amount;
     let meno = 0;
@@ -817,7 +818,7 @@ let disorder = function(){
     }
     for (let i = 0; i < playerList.length; i++) {
         socketList[playerList[i].socketId].emit('modifiedConfig', squares);
-        let str = 'Prices, rents, costs per house, taxes and card prices have been modified by ' + meno*percentageChange;
+        let str = 'Prices, rents, costs per house, taxes and card prices have been modified by ' + meno*change + ' percent.';
         sendGenericUpdate(str);
     }
 }
