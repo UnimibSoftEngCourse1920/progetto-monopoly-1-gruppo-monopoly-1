@@ -196,7 +196,7 @@
     <button id="decline" onclick="offerDeclined()">Decline</button>
   </div>
   <div id="buyhouse" class="position">
-    <div>seleziona la proprietà in cui vuoi costruire delle case</div><br><br><br>
+    <div>seleziona a sinistra la proprietà in cui vuoi costruire delle case</div><br><br><br>
     <button onclick="annullaBuild()">annulla</button>
   </div>
   <div id="housenumber" class="position">
@@ -218,8 +218,12 @@
     <button onclick="showHouseButton()">torna alla pagina precedente</button>
   </div>
   <div id="mortgage" class="position">
-    <select id="mortgageOptionBox"></select><br><br>
-    <button onclick="sendMortgageProperty()">conferma</button>
+    <div>select the property to mortgage</div>
+    <select id="mortgageOptionBox"></select>
+    <button onclick="sendMortgageProperty()">conferma</button><br><br><br>
+    <div>select the property to unmortgage</div>
+    <select id="unmortgageOptionBox"></select>
+    <button onclick="sendUnmortgageProperty()">conferma</button><br><br><br>
     <button onclick="cancelMortgage()">torna alla pagina precedente</button>
   </div>
   <div id="tradepage" class='position'>
@@ -1604,8 +1608,10 @@ socket.on('addProp', function(data) {
             let dar=0;
             let str4="";
             $('#mortgageOptionBox').empty();
+            $('#unmortgageOptionBox').empty();
             colorSelf();
             for (let i = 0; i < self.props.length; i ++) {
+              if(self.props[i].state=="active"){
               switch(self.props[i].colour){
                 case "brown":
                   if(brown==2){
@@ -1683,7 +1689,13 @@ socket.on('addProp', function(data) {
                   appendSelection(self.props[i]);
                   break;
               }
+            }else{
+              if(self.money>=self.props[i].unmortgagePrice){
+                let str10="<option value='" + self.props[i].id + "'>" + self.props[i].name + "</option>";
+                $('#unmortgageOptionBox').append(str10);
+              }
             }
+          }
             if(bro==2){
               let idSelectProp = getPropertyPosition(1);
               let idSelectProp2 = getPropertyPosition(3);
@@ -1757,6 +1769,11 @@ socket.on('addProp', function(data) {
 
         let sendMortgageProperty=function(){
           let mortgageProperty=($("#mortgageOptionBox").val()) * 1;
+          socket.emit('sendMortage',mortgageProperty);
+          cancelMortgage();
+        }
+        let sendUnmortgageProperty=function(){
+          let mortgageProperty=($("#unmortgageOptionBox").val()) * 1;
           socket.emit('sendMortage',mortgageProperty);
           cancelMortgage();
         }

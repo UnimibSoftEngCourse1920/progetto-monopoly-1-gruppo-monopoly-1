@@ -466,7 +466,7 @@ let handleMortgage  = function(player, prop) {
   }
 }
 
-sendMortgageUpdate(prop, player, str) {
+let sendMortgageUpdate=function(prop, player, str) {
   let pack = [player, prop, str];
   for(let i = 0; i < playerList.length; i ++) {
     if(playerList[i] != null) {
