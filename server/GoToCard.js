@@ -28,7 +28,9 @@ class GoToCard extends Card{
         pack.push(0);
         return pack;
     }
-
+    printDescription() {
+      return this.description;
+    }
 }
 
 module.exports = GoToCard;

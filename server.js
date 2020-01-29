@@ -350,6 +350,7 @@ let getLobby = function(id) {
     }
   }
 }
+
 let updateHouses = function(player, prop, numHousesDelta) {
   prop.numHouses += numHousesDelta;
   prop.rent = prop.housePrices[prop.numHouses];
@@ -891,11 +892,13 @@ let handlePlayer = function(pl){
     else if (card instanceof GetOutOfJailCard) {
       player.getOutOfJailFree = true;
       getOutOfJailFreeUpdate(player);
+      sendEndTurn(player, true, 0, null);
     }
     else if (card instanceof MoveBackCard) {
       let res = card.execute(player);
       let desc = card.printDescription();
       sendPosUpdate(player, desc);
+      sendEndTurn(player, true, 0, null);
     }
     else if (card instanceof PayPlayerCard) {
       let amount = card.execute;

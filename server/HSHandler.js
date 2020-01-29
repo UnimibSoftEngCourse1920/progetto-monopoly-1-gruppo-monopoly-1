@@ -10,8 +10,8 @@ class HSHandler extends PlayerHandler{
     }
 
     handle(player1){
-        let owner = this.square.getOwner();
         let playerId = this.player.getId();
+        let owner = this.square.getOwner();  
 
         if(owner != -1){
             if(owner != playerId){

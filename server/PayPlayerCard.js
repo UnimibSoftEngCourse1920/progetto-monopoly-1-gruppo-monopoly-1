@@ -7,7 +7,7 @@ class PayPlayerCard extends Card{
     }
 
     execute = function(){
-      return amount;
+      return this.amount;
     }
 
     printDescription = function(){

@@ -9,7 +9,6 @@ class StationHandler extends PlayerHandler {
   }
   handle(owner) {
     let mult = 0;
-
     if(owner != null){ //controlla l'array services di player: se ne ha una, ritorna 4, altrimenti 10;
         if(owner.id != this.player.id){
             mult = this.checkStations(owner);
