@@ -435,8 +435,45 @@ io.sockets.on('connection', function (socket) {
       sendGenericUpdate(str);
       sortOutProps(proposer, receiver, proposerProps, receiverProps, proposerMon, receiverMon);
     }
+  });
+
+  socket.on('sendMortage', function(data) {
+    getLobby(socket.id);
+    let player = playerTotList[socket.id];
+    let propId = data;
+    let prop = squares[propId];
+    handleMortgage(player, prop);
   })
 });
+
+
+let handleMortgage  = function(player, prop) {
+  let state = prop.state;
+  let mon;
+  if(state == 'active') {
+    mon = prop.mortgaged();
+    actualGame.outcome = player.updateMoney(mon);
+    sendMoneyUpdate(mon, player, null);
+    let str = player.name + ' mortgages ' + prop.name + ' and earns ' + mon;
+    sendMortgageUpdate(prop, player, str);
+  } else {
+    mon = prop.unmortgagePrice;
+    actualGame.outcome = player.updateMoney(-mon);
+    sendMoneyUpdate(-mon, player, null);
+    prop.unmortgaged();
+    let str = player.name + ' unmortgages ' + prop.name + ' and pays ' + mon;
+    sendMortgageUpdate(prop, player, str);
+  }
+}
+
+sendMortgageUpdate(prop, player, str) {
+  let pack = [player, prop, str];
+  for(let i = 0; i < playerList.length; i ++) {
+    if(playerList[i] != null) {
+      socketList[playerList[i].socketId].emit('mortgageUpdate', pack);
+    }
+  }
+}
 
 let getLobby = function(id) {
   let bool = false;
@@ -534,7 +571,7 @@ let handleBankruptcy = function(payedOff, ownerOwed) {
 let handleDisconnect = function(player) {
   if (actualGame.playerDisconnected == null) {
     actualGame.playerDisconnected = player;
-    if(actualGame.playerDisconnected.props != []) 
+    if(actualGame.playerDisconnected.props != [])
     for(let i = 0; i < actualGame.playerDisconnected.props.length; i++) {
       actualGame.playerDisconnected.props[i].owner = -1;
     }

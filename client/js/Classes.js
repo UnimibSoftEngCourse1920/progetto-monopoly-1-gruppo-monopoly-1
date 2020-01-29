@@ -104,7 +104,7 @@ class Property extends Square {
         this.cost = cost;
         this.mortgage = cost / 2;
         this.mortgagePercent = 0.1 * this.mortgage;
-        this.unmortagePrice = this.mortgage + this.mortgagePercent;
+        this.unmortgagePrice = this.mortgage + this.mortgagePercent;
         this.rent = rent;
         this.state = 'active';
         this.owner = null;

@@ -1757,14 +1757,30 @@ socket.on('addProp', function(data) {
 
         let sendMortgageProperty=function(){
           let mortgageProperty=($("#mortgageOptionBox").val()) * 1;
-          let pack=[id, mortgageProperty];
-          //socket.emit('sendMortage',pack);
+          socket.emit('sendMortage',mortgageProperty);
           cancelMortgage();
         }
         let cancelMortgage=function(){
           document.getElementById("mortgage").style.display="none";
           document.getElementById("gestore").style.display="block";
         }
+
+        socket.on('mortgageUpdate', function(data) {
+          let player = data[0];
+          let prop = data[1];
+          updateScroll(data[2]);
+          for(let i = 0; i < players.length; i ++) {
+            if(players[i] != null) {
+              if(players[i].id == player.id) {
+                for(let j = 0; j < players[i].props.length; j ++) {
+                  if(prop.id == players[i].props[j].id) {
+                    players[i].props[j].state = prop.state;
+                  }
+                }
+              }
+            }
+          }
+        })
 </script>
 </body>
 </html>
