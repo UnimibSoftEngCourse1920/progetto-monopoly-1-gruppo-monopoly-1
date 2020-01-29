@@ -28,6 +28,7 @@ let PlayerHandler = require('./server/PlayerHandler');
 let ServicesHandler = require('./server/ServicesHandler');
 let StationHandler = require('./server/StationHandler');
 let Card = require('./server/Card');
+let Game = require('./server/Game');
 
 
 app.get('/', function (req, res) {
@@ -43,10 +44,10 @@ let playerList = [];
 let io = require('socket.io')(serv, {});
 let contTot = 0, contLocale = 0;
 let persone = 0;
-let turn;
 let squares = [];
 let chance;
 let communityChest;
+let turn;
 let diceTotal = 0;
 let dice1 = 0;
 let dice2 = 0;
@@ -54,7 +55,6 @@ let doubleDice = 0;
 let outcome = true;
 let double = false;
 let unownedProp = true;
-let worker;
 let numPlayer=0;
 let playerDisconnected = null;
 let actualLength = 0;
@@ -63,6 +63,7 @@ let classicLobbies = [];
 let classicLobbyPointer = 0;
 let playerTotList = [];
 let actualLobby = [];
+let actualGame = null;
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
     contTot++;
@@ -94,12 +95,15 @@ io.sockets.on('connection', function (socket) {
       persone++;
       console.log(playerList[numPlayer-1].name);
       if (numPlayer == 6) {
+        let game = new Game();
+        actualGame = game;
         numPlayer = 0;
         classicLobbyPointer++;
         actualLobby[1] = [];
         actualLobby[2] = [];
         actualLobby[3] = [];
         actualLobby[4] = [];
+        actualLobby[5] = game;
         startGame();
         sendPlayers();
         generateTurn();
@@ -110,34 +114,34 @@ io.sockets.on('connection', function (socket) {
     socket.on('dice', function(data) {
       getLobby(socket.id);
       let player = playerTotList[socket.id];
-      dice1 = data[0];
-      dice2 = data[1];
-      diceTotal = dice1 + dice2;
-      if (dice1 == dice2) {
-        doubleDice++;
-        double = true;
+      actualGame.dice1 = data[0];
+      actualGame.dice2 = data[1];
+      actualGame.diceTotal = actualGame.dice1 + actualGame.dice2;
+      if (actualGame.dice1 == actualGame.dice2) {
+        actualGame.doubleDice++;
+        actualGame.double = true;
       } else {
-        doubleDice = 0;
+        actualGame.doubleDice = 0;
       }
-      let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
+      let str = 'rolled the dice: ' + actualGame.dice1 + ' ' + actualGame.dice2;
       //checkDoubles(player, doubles);
-      if (doubleDice == 3) {
+      if (actualGame.doubleDice == 3) {
         sendToJail(player);
       } else if (!player.jail) {
         player = updatePositionDice(player, data[0]+data[1]);
         sendPosUpdate(player, str);
-      } else if (player.jail && doubleDice==0 && player.jailCount != 3) {
+      } else if (player.jail && actualGame.doubleDice==0 && player.jailCount != 3) {
         sendGenericUpdate(str + ' and stays in jail');
         sendEndTurn(player, true, 0, null);
-      } else if (player.jail && doubleDice>0) {
+      } else if (player.jail && actualGame.doubleDice>0) {
         player.jail = false;
         player.jailCount = 0;
         sendJailUpdate(player, true);
         player = updatePositionDice(player, data[0]+data[1]);
         sendPosUpdate(player, str);
-      } else if (player.jail && doubleDice == 0 && player.jailCount == 3) {
-        outcome = player.updateMoney(-50);
-        if(!outcome) {
+      } else if (player.jail && actualGame.doubleDice == 0 && player.jailCount == 3) {
+        actualGame.outcome = player.updateMoney(-50);
+        if(!actualGame.outcome) {
           sendEndTurn(player, false, 50, null);
         } else {
           let str2 = player.name + ' pays 50';
@@ -184,8 +188,8 @@ io.sockets.on('connection', function (socket) {
     socket.on('payJail', function(data) {
       getLobby(socket.id);
       let player = playerList[data.id];
-      outcome = player.updateMoney(-50);
-      if (!outcome)  {
+      actualGame.outcome = player.updateMoney(-50);
+      if (!actualGame.outcome)  {
         sendEndTurn(player, false, 50, null);
       } else {
         let str = player.name + ' pays 50 to get out of jail';
@@ -216,11 +220,11 @@ io.sockets.on('connection', function (socket) {
   //turn ended, tell next player to start
   socket.on('endTurn', function() {
     getLobby(socket.id);
-    diceTotal = 0;
-    dice2 = 0;
-    dice1 = 0;
-    double = false;
-    if (doubleDice == 0 || playerTotList[socket.id].jail) {
+    actualGame.diceTotal = 0;
+    actualGame.dice2 = 0;
+    actualGame.dice1 = 0;
+    actualGame.double = false;
+    if (actualGame.doubleDice == 0 || playerTotList[socket.id].jail) {
       updateTurn();
     } else {
       sendTurn();
@@ -242,22 +246,22 @@ io.sockets.on('connection', function (socket) {
     //gestisci bankrupt
     let ownerOwed;
     actualLength = playerList.length;
-    playerDisconnected = playerTotList[socket.id];
-    playerList.delete(playerDisconnected);
-    playersDisconnected.push(playerDisconnected.id);
+    actualGame.playerDisconnected = playerTotList[socket.id];
+    //playerList.delete(actualGame.playerDisconnected);
+    playersDisconnected.push(actualGame.playerDisconnected.id);
     if (data[1] != null) {
       ownerOwed = playerList[data[1].id];
     } else {
       ownerOwed = null;
     }
     let payedOff = data[0];
-    handleBankruptcy(player, payedOff, ownerOwed);
+    handleBankruptcy(actualGame.playerDisconnected, payedOff, ownerOwed);
   });
 
   socket.on('disconnect', function() {
     getLobby(socket.id);
-    socketList.delete(socketList[playerDisconnected.socketId]);
-    handleDisconnect(playerDisconnected);
+    //socketList.delete(socketList[actualGame.playerDisconnected.socketId]);
+    handleDisconnect();
   });
 
   socket.on('payedDebt', function(data) {
@@ -328,11 +332,20 @@ let getLobby = function(id) {
       if (classicLobbies[i][0][j].socketId == id) {
         bool = true;
         actualLobby = classicLobbies[i];
+        actualGame = actualLobby[5];
         playerList = actualLobby[0];
         squares = actualLobby[1];
         chance = actualLobby[2];
         communityChest = actualLobby[3];
         playersDisconnected = actualLobby[4];
+        turn = actualGame.turn;
+        diceTotal = actualGame.diceTotal;
+        dice1 = actualGame.dice1;
+        dice2 = actualGame.dice2;
+        doubleDice = actualGame.doubleDice;
+        outcome = actualGame.outcome;
+        double = actualGame.double;
+        playerDisconnected = actualGame.playerDisconnected;
       }
     }
   }
@@ -346,49 +359,50 @@ let updateHouses = function(player, prop, numHousesDelta) {
   }
 }
 
-let handleBankruptcy = function(player, payedOff, ownerOwed) {
+let handleBankruptcy = function(payedOff, ownerOwed) {
+  playerList.splice(actualGame.playerDisconnected.id, 1);
   if (!payedOff) {
     if(ownerOwed == null) {
-      for(let i = 0; i < player.props.length; i++) {
-        player.props[i].owner = -1;
+      for(let i = 0; i < actualGame.playerDisconnected.props.length; i++) {
+        actualGame.playerDisconnected.props[i].owner = -1;
       }
-      player.props = [];
-      player.services = [];
-      player.stations = [];
-      player.money = 0;
-      player.pos = 0;
+      actualGame.playerDisconnected.props = [];
+      actualGame.playerDisconnected.services = [];
+      actualGame.playerDisconnected.stations = [];
+      actualGame.playerDisconnected.money = 0;
+      actualGame.playerDisconnected.pos = 0;
     } else {
-      for(let i = 0; i < player.props.length; i++) {
-        player.props[i].owner = ownerOwed.id;
+      for(let i = 0; i < actualGame.playerDisconnected.props.length; i++) {
+        actualGame.playerDisconnected.props[i].owner = ownerOwed.id;
         ownerOwed.props.push(player.props[i]);
-        if(player.props[i] instanceof Station) {
+        if(actualGame.playerDisconnected.props[i] instanceof Station) {
           ownerOwed.stations.push(player.props[i]);
-        } if (player.props[i] instanceof Services) {
+        } if (actualGame.playerDisconnected.props[i] instanceof Services) {
           ownerOwed.services.push(player.props[i]);
         }
-        let str = ownerOwed + ' inherits ' + player.props[i].name;
-        sendPropUpdate(player.props[i], ownerOwed, 0, str);
+        let str = ownerOwed + ' inherits ' + actualGame.playerDisconnected.props[i].name;
+        sendPropUpdate(actualGame.playerDisconnected.props[i], ownerOwed, 0, str);
       }
-      outcome = ownerOwed.updateMoney(player.money);
-      let str2 = ownerOwed.name + ' inherits ' + player.money;
-      sendMoneyUpdate(player.money, ownerOwed, str2);
+      actualGame.outcome = ownerOwed.updateMoney(actualGame.playerDisconnected.money);
+      let str2 = ownerOwed.name + ' inherits ' + actualGame.playerDisconnected.money;
+      sendMoneyUpdate(actualGame.playerDisconnected.money, ownerOwed, str2);
     }
   }
 }
-let handleDisconnect = function(player) {
+let handleDisconnect = function() {
   for (let i = 0; i < playerList.length; i ++) {
     let player2 = playerList[i];
-    socketList[player2.socketId].emit('playerDisconnected', player);
+    socketList[player2.socketId].emit('playerDisconnected', actualGame.playerDisconnected);
   }
-  if(player.id == turn) {
-    updateTurn();
+  if(actualGame.playerDisconnected.id == actualGame.turn) {
+    sendTurn();
   }
   /*let bool = false;
-  if(playerDisconnected.id != 0 && playerDisconnected.id != actualLength-1) {
+  if(actualGame.playerDisconnected.id != 0 && actualGame.playerDisconnected.id != actualLength-1) {
     for (let i = 0; i < playerList.length; i ++) {
       if(bool) {
         updatePlayerId(playerList[i]);
-      } else if(playerList[i].id == playerDisconnected.id+1) {
+      } else if(playerList[i].id == actualGame.playerDisconnected.id+1) {
         bool = true;
         updatePlayerId(playerList[i]);
       }
@@ -403,19 +417,19 @@ let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
     playerInDebt.jail = false;
     playerInDebt.jailCount = 0;
     sendJailUpdate(playerInDebt, false);
-    outcome = playerInDebt.updateMoney(-50);
+    actualGame.outcome = playerInDebt.updateMoney(-50);
     sendMoneyUpdate(-50, playerInDebt, str2);
     playerInDebt = updatePositionDice(playerInDebt, diceTotal);
     sendPosUpdate(playerInDebt);
   } else if (ownerOwed == null) {
     console.log("yes");
-    outcome = playerInDebt.updateMoney(-moneyOwed);
+    actualGame.outcome = playerInDebt.updateMoney(-moneyOwed);
     let str = playerInDebt.name + ' pays off debt of ' + moneyOwed;
     sendMoneyUpdate(-moneyOwed, playerInDebt, str);
     sendEndTurn(playerInDebt, true, 0, null);
   } else {
-    outcome = ownerOwed.updateMoney(moneyOwed);
-    outcome = playerInDebt.updateMoney(-moneyOwed);
+    actualGame.outcome = ownerOwed.updateMoney(moneyOwed);
+    actualGame.outcome = playerInDebt.updateMoney(-moneyOwed);
     let str = ownerOwed.name + ' earns ' + moneyOwed;
     let str2 = playerInDebt.name + ' pays off debt of ' + moneyOwed;
     sendMoneyUpdate(moneyOwed, ownerOwed, str);
@@ -425,10 +439,10 @@ let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
 }
 
 let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, proposerMon, receiverMon) {
-  outcome = playerList[receiver.id].updateMoney(proposerMon);
-  outcome = playerList[proposer.id].updateMoney(receiverMon);
-  outcome = playerList[receiver.id].updateMoney(-receiverMon);
-  outcome = playerList[proposer.id].updateMoney(-proposerMon);
+  actualGame.outcome = playerList[receiver.id].updateMoney(proposerMon);
+  actualGame.outcome = playerList[proposer.id].updateMoney(receiverMon);
+  actualGame.outcome = playerList[receiver.id].updateMoney(-receiverMon);
+  actualGame.outcome = playerList[proposer.id].updateMoney(-proposerMon);
   let str = proposer.name + ' and ' + receiver.name + ' exchange money';
   let str2 = receiver.name + ' and ' + proposer.name + ' exchange money';
   sendMoneyUpdate(proposerMon, receiver, str);
@@ -509,7 +523,7 @@ let handleBuy = function(player) {
   console.log("prop: " + prop.id);
   let str = player.name + ' spends ' + prop.cost;
   let str2 = player.name + ' buys ' + prop.name;
-  outcome = player.updateMoney(-prop.cost);
+  actualGame.outcome = player.updateMoney(-prop.cost);
   sendMoneyUpdate(-prop.cost, player, str);
   player.props.push(prop);
   if (prop instanceof Station) {
@@ -568,13 +582,13 @@ let sendJailCountUpdate = function(player) {
 }
 
 let updateTurn = function() {
-  doubleDice = 0;
-  if (turn == playerList.length-1)
-    turn = 0;
+  actualGame.doubleDice = 0;
+  if (actualGame.turn == playerList.length-1)
+    actualGame.turn = 0;
   else
-    turn ++;
+    actualGame.turn ++;
     for (let i = 0; i < playersDisconnected.length; i++) {
-      if (turn == playersDisconnected[i])
+      if (actualGame.turn == playersDisconnected[i])
       updateTurn();
     }
     sendTurn();
@@ -645,12 +659,13 @@ let sendPlayers = function () {
 
 let generateTurn = function() {
   turn = Math.floor(Math.random()*6);
-    sendTurn();
+  actualGame.turn = turn;
+  sendTurn();
 }
 
 let sendTurn = function() {
   for (let i = 0; i < playerList.length; i++) {
-      socketList[playerList[i].socketId].emit('turn', turn);
+      socketList[playerList[i].socketId].emit('turn', actualGame.turn);
   }
 }
 
@@ -810,16 +825,16 @@ let handlePlayer = function(pl){
   else if(square instanceof IncomeTax){
     let tax = square.getTax();
     console.log('prima ' +player.money);
-    outcome = player.updateMoney(-tax);
+    actualGame.outcome = player.updateMoney(-tax);
     console.log('dopo ' +player.money);
-    if(!outcome) {
+    if(!actualGame.outcome) {
       sendEndTurn(player, false, tax, null);
-      console.log(outcome);
+      console.log(actualGame.outcome);
     } else {
       let str = player.name + ' pays ' + tax + ' in taxes';
       sendMoneyUpdate(-tax, player, str);
       sendEndTurn(player, true, 0, null);
-      console.log(outcome);
+      console.log(actualGame.outcome);
     }
   }
   else if(square instanceof Chance || square instanceof CommunityChest){
@@ -830,8 +845,8 @@ let handlePlayer = function(pl){
 
     if(card instanceof PayCard){
       let res = card.execute();
-      outcome = player.updateMoney(res);
-      if (!outcome) {
+      actualGame.outcome = player.updateMoney(res);
+      if (!actualGame.outcome) {
         sendEndTurn(player, false, tax, null);
       } else {
         sendMoneyUpdate(res, player, card.description);
@@ -846,7 +861,7 @@ let handlePlayer = function(pl){
 
       if(pack[1] == 200) {
         let str = player.name + ' receives 200 by passing go';
-        outcome = player.updateMoney(pack[1]);
+        actualGame.outcome = player.updateMoney(pack[1]);
         sendMoneyUpdate(pack[1], player, str);
       }
       sendPosUpdate(player, dsc);
@@ -861,7 +876,7 @@ let handlePlayer = function(pl){
       let pack = card.execute(player);
       let dsc = card.printDescription();
       sendPosUpdate(player, dsc);
-      outcome = player.updateMoney(pack[1]);
+      actualGame.outcome = player.updateMoney(pack[1]);
       let str;
       if (pack[1] == 200) {
         str = player.name + ' passes go and collects 200';
@@ -884,8 +899,8 @@ let handlePlayer = function(pl){
       let str;
       if (card.boo) {
         str = card.printDescription();
-        outcome = player.updateMoney(-amount*(playerList.length-1));
-        if(!outcome) {
+        actualGame.outcome = player.updateMoney(-amount*(playerList.length-1));
+        if(!actualGame.outcome) {
           sendEndTurn(player, false, -amount*(playerList.length-1), null);
         } else {
             sendMoneyUpdate(-amount*(playerList.length-1), player, str);
@@ -900,13 +915,13 @@ let handlePlayer = function(pl){
           }
       } else {
         str = card.printDescription();
-        outcome = player.updateMoney(amount*(playerList.length-1));
+        actualGame.outcome = player.updateMoney(amount*(playerList.length-1));
         sendMoneyUpdate(amount*(playerList.length-1), player, str);
         for (let i = 0; i < playerList.length; i++) {
           if(player.id!= playerList[i].id) {
             str = playerList[i].name + ' loses' + amount;
-            outcome = playerList[i].updateMoney(-amount);
-            if(outcome)
+            actualGame.outcome = playerList[i].updateMoney(-amount);
+            if(actualGame.outcome)
               sendMoneyUpdate(-amount, playerList[i], str);
           }
         }
@@ -916,13 +931,13 @@ let handlePlayer = function(pl){
   }
     /*else if (card instanceof PayPerBuildingCard) {
       let res = card.execute(player);
-      outcome = player.updateMoney(res);
+      actualGame.outcome = player.updateMoney(res);
       sendMoneyUpdate(res, player, card.description);
     }
   }*/
   else if(square.id == 0){
     //let str = player.name + ' passes go and collects 200'
-    //outcome = player.updateMoney(200);
+    //actualGame.outcome = player.updateMoney(200);
     //sendMoneyUpdate(200, player, str);
     sendEndTurn(player, true, 0, null);
     //comunica a clients e setta su giocatore;
@@ -938,8 +953,9 @@ let handlePlayer = function(pl){
 
 let payRent = function(rent, player, owner){
   //console.log("you must pay him " + rent);
-  outcome = player.updateMoney(-rent);
-  if(!outcome) {
+  console.log(owner.name+ ' is payed');
+  actualGame.outcome = player.updateMoney(-rent);
+  if(!actualGame.outcome) {
     sendEndTurn(player, false, rent, owner);
   } else {
       let outcome2 = playerList[owner].updateMoney(rent);
