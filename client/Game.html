@@ -1017,12 +1017,11 @@ socket.on('addProp', function(data) {
 
   let bankrupt = function() {
     let pack = [payedOff, ownerOwed];
-    socket.emit('bankrupt', pack);
-    socket.disconnect();
+    //socket.emit('bankrupt', pack);
+    socket.disconnect(pack);
     document.getElementById("abbandonagioco").style.display="none";
     document.getElementById("haiperso").style.display="block";
     setTimeout(function() {
-      socket.disconnect();
       window.open("http://localhost:1337/client/Menu.html", "_self");
     }, 3000);
   }

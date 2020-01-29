@@ -354,7 +354,7 @@ io.sockets.on('connection', function (socket) {
     //gestisci trade
   });
 
-  socket.on('bankrupt', function(data) {
+  /*socket.on('bankrupt', function(data) {
     getLobby(socket.id);
     //gestisci bankrupt
     let ownerOwed;
@@ -368,13 +368,18 @@ io.sockets.on('connection', function (socket) {
       ownerOwed = null;
     }
     let payedOff = data[0];
-    handleBankruptcy(actualGame.playerDisconnected, payedOff, ownerOwed);
-  });
+    handleBankruptcy(payedOff, ownerOwed);
+  });*/
 
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function(data) {
     getLobby(socket.id);
+    let payedOff = data[0];
+    let ownerOwed = playerList[data[1].id];
+    actualGame.playerDisconnected = playerTotList[socket.id];
+    playersDisconnected.push(actualGame.playerDisconnected.id);
     //socketList.delete(socketList[actualGame.playerDisconnected.socketId]);
-    handleDisconnect(socketList[socket.id]);
+    handleBankruptcy(payedOff, ownerOwed);
+    handleDisconnect(actualGame.playerDisconnected);
   });
 
   socket.on('payedDebt', function(data) {
@@ -623,11 +628,11 @@ let handleBankruptcy = function(payedOff, ownerOwed) {
     } else {
       for(let i = 0; i < actualGame.playerDisconnected.props.length; i++) {
         actualGame.playerDisconnected.props[i].owner = ownerOwed.id;
-        ownerOwed.props.push(player.props[i]);
+        ownerOwed.props.push(actualGame.playerDisconnected.props[i]);
         if(actualGame.playerDisconnected.props[i] instanceof Station) {
-          ownerOwed.stations.push(player.props[i]);
+          ownerOwed.stations.push(actualGame.playerDisconnected.props[i]);
         } if (actualGame.playerDisconnected.props[i] instanceof Services) {
-          ownerOwed.services.push(player.props[i]);
+          ownerOwed.services.push(actualGame.playerDisconnected.props[i]);
         }
         let str = ownerOwed + ' inherits ' + actualGame.playerDisconnected.props[i].name;
         sendPropUpdate(actualGame.playerDisconnected.props[i], ownerOwed, 0, str);
@@ -647,40 +652,19 @@ let handleBankruptcy = function(payedOff, ownerOwed) {
     actualGame.playerDisconnected.pos = 0;
   }
 }
-let handleDisconnect = function(player) {
-  if (actualGame.playerDisconnected == null) {
-    actualGame.playerDisconnected = player;
-    if(actualGame.playerDisconnected.props != [])
-    for(let i = 0; i < actualGame.playerDisconnected.props.length; i++) {
-      actualGame.playerDisconnected.props[i].owner = -1;
-    }
-    actualGame.playerDisconnected.props = [];
-    actualGame.playerDisconnected.services = [];
-    actualGame.playerDisconnected.stations = [];
-    actualGame.playerDisconnected.money = 0;
-    actualGame.playerDisconnected.pos = 0;
-  }
+let handleDisconnect = function() {
   for (let i = 0; i < playerList.length; i ++) {
     if(playerList[i]!=null){
-    let player2 = playerList[i];
-    socketList[player2.socketId].emit('playerDisconnected', actualGame.playerDisconnected);
-  }
+      let player2 = playerList[i];
+      socketList[player2.socketId].emit('playerDisconnected', actualGame.playerDisconnected);
+    }
   }
   checkWon();
-  if(actualGame.playerDisconnected.id == actualGame.turn) {
+  if(actualGame.ended == true) {
+    actualLobby = [];
+  } else if(actualGame.playerDisconnected.id == actualGame.turn) {
     updateTurn();
   }
-  /*let bool = false;
-  if(actualGame.playerDisconnected.id != 0 && actualGame.playerDisconnected.id != actualLength-1) {
-    for (let i = 0; i < playerList.length; i ++) {
-      if(bool) {
-        updatePlayerId(playerList[i]);
-      } else if(playerList[i].id == actualGame.playerDisconnected.id+1) {
-        bool = true;
-        updatePlayerId(playerList[i]);
-      }
-    }
-  }*/
 }
 
 let checkWon = function() {
@@ -694,6 +678,9 @@ let checkWon = function() {
   }
   if (num == 1) {
     socketList[player.socketId].emit('youHaveWon');
+    actualGame.ended = true;
+  } else if (num == 0) {
+    actualGame.ended = true;
   }
 }
 let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
@@ -714,12 +701,7 @@ let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
     sendMoneyUpdate(-moneyOwed, playerInDebt, str);
     sendEndTurn(playerInDebt, true, 0, null);
   } else {
-    actualGame.outcome = ownerOwed.updateMoney(moneyOwed);
-    actualGame.outcome = playerInDebt.updateMoney(-moneyOwed);
-    let str = ownerOwed.name + ' earns ' + moneyOwed;
-    let str2 = playerInDebt.name + ' pays off debt of ' + moneyOwed;
-    sendMoneyUpdate(moneyOwed, ownerOwed, str);
-    sendMoneyUpdate(-moneyOwed, playerInDebt, str2);
+    payRent(moneyOwed, playerInDebt, ownerOwed);
     sendEndTurn(playerInDebt, true, 0, null);
   }
 }
