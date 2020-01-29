@@ -73,6 +73,12 @@
 	         position:absolute;
 	         z-index: 8;
         }
+        #mortgage{
+           display: none;
+           text-align: center;
+           position:absolute;
+           z-index: 9;
+        }
         #offer{
            display: none;
 	         text-align: center;
@@ -211,6 +217,11 @@
     <button onclick="caseComprate()">conferma</button>
     <button onclick="showHouseButton()">torna alla pagina precedente</button>
   </div>
+  <div id="mortgage" class="position">
+    <select id="mortgageOptionBox"></select><br><br>
+    <button onclick="sendMortgageProperty()">conferma</button>
+    <button onclick="cancelMortgage()">torna alla pagina precedente</button>
+  </div>
   <div id="tradepage" class='position'>
     <div>seleziona il player con cui vuoi fare un trade cliccando sul player apposito a destra o sinistra</div>
     <input type="text" value="0" id="ourmoney" >
@@ -229,6 +240,7 @@
   </div>
   <div id="gestore" class='position'>
     <div id="endmenu">
+      <button id="ipotecaproprietà" onclick="showMortageMenu()">ipoteca propietà</button>
       <button id="build" onclick="showHouseButton()">Build houses</button>
       <button id="trade" onclick="trade()">Trade</button>
       <button id="end" onclick="endTurn()">End turn</button><br>
@@ -1571,6 +1583,188 @@ socket.on('addProp', function(data) {
             }
           }
         });
+        let getPropertyPosition = function(valore){
+          for(let i=0;i<self.props.length;i++){
+            if(self.props[i].id==valore){
+              return i;
+            }
+          }
+        }
+        let showMortageMenu = function(){
+          if(self.props.length==0){
+            alert("non hai nessuna proprietà");
+          }else{
+            let bro=0;
+            let lig=0;
+            let pin=0;
+            let ora=0;
+            let re=0;
+            let yel=0;
+            let gre=0;
+            let dar=0;
+            let str4="";
+            $('#mortgageOptionBox').empty();
+            colorSelf();
+            for (let i = 0; i < self.props.length; i ++) {
+              switch(self.props[i].colour){
+                case "brown":
+                  if(brown==2){
+                    if(self.props[i].numHouses==0){
+                      bro++;
+                    }
+                  }else{
+                    appendSelection(self.props[i]);
+                  }
+                  break;
+                case "lightblue":
+                if(lightblue==3){
+                  if(self.props[i].numHouses==0){
+                    lig++;
+                  }
+                }else{
+                  appendSelection(self.props[i]);
+                }
+                  break;
+                case "pink":
+                if(pink==3){
+                  if(self.props[i].numHouses==0){
+                    pin++;
+                  }
+                }else{
+                  appendSelection(self.props[i]);
+                }
+                  break;
+                case "orange":
+                if(orange==3){
+                  if(self.props[i].numHouses==0){
+                    ora++;
+                  }
+                }else{
+                  appendSelection(self.props[i]);
+                }
+                break;
+                case "red":
+                  if(red==3){
+                    if(self.props[i].numHouses==0){
+                      re++;
+                    }
+                  }else{
+                    appendSelection(self.props[i]);
+                  }
+                  break;
+                case "yellow":
+                if(yellow==3){
+                  if(self.props[i].numHouses==0){
+                    yel++;
+                  }
+                }else{
+                  appendSelection(self.props[i]);
+                }
+                  break;
+                case "green":
+                if(green==3){
+                  if(self.props[i].numHouses==0){
+                    gre++;
+                  }
+                }else{
+                  appendSelection(self.props[i]);
+                }
+                  break;
+                case "darkblue":
+                if(darkblue==2){
+                  if(self.props[i].numHouses==0){
+                    dar++;
+                  }
+                }else{
+                  appendSelection(self.props[i]);
+                }
+                  break;
+                default:
+                  appendSelection(self.props[i]);
+                  break;
+              }
+            }
+            if(bro==2){
+              let idSelectProp = getPropertyPosition(1);
+              let idSelectProp2 = getPropertyPosition(3);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+            }
+            if(lig==3){
+              let idSelectProp = getPropertyPosition(6);
+              let idSelectProp2 = getPropertyPosition(8);
+              let idSelectProp3 = getPropertyPosition(9);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+              appendSelection(self.props[idSelectProp3]);
+            }
+            if(pin==3){
+              let idSelectProp = getPropertyPosition(11);
+              let idSelectProp2 = getPropertyPosition(13);
+              let idSelectProp3 = getPropertyPosition(14);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+              appendSelection(self.props[idSelectProp3]);
+            }
+            if(ora==3){
+              let idSelectProp = getPropertyPosition(16);
+              let idSelectProp2 = getPropertyPosition(18);
+              let idSelectProp3 = getPropertyPosition(19);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+              appendSelection(self.props[idSelectProp3]);
+            }
+            if(re==3){
+              let idSelectProp = getPropertyPosition(21);
+              let idSelectProp2 = getPropertyPosition(23);
+              let idSelectProp3 = getPropertyPosition(24);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+              appendSelection(self.props[idSelectProp3]);
+            }
+            if(yel==3){
+              let idSelectProp = getPropertyPosition(26);
+              let idSelectProp2 = getPropertyPosition(27);
+              let idSelectProp3 = getPropertyPosition(29);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+              appendSelection(self.props[idSelectProp3]);
+            }
+            if(gre==3){
+              let idSelectProp = getPropertyPosition(31);
+              let idSelectProp2 = getPropertyPosition(32);
+              let idSelectProp3 = getPropertyPosition(34);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+              appendSelection(self.props[idSelectProp3]);
+            }
+            if(dar==2){
+              let idSelectProp = getPropertyPosition(37);
+              let idSelectProp2 = getPropertyPosition(39);
+              appendSelection(self.props[idSelectProp]);
+              appendSelection(self.props[idSelectProp2]);
+            }
+            document.getElementById("mortgage").style.display="block";
+            document.getElementById("gestore").style.display="none";
+          }
+
+        }
+
+        let appendSelection = function(myProp){
+          let str4="<option value='" + myProp.id + "'>" + myProp.name + "</option>";
+          $('#mortgageOptionBox').append(str4);
+        }
+
+        let sendMortgageProperty=function(){
+          let mortgageProperty=($("#mortgageOptionBox").val()) * 1;
+          let pack=[id, mortgageProperty];
+          //socket.emit('sendMortage',pack);
+          cancelMortgage();
+        }
+        let cancelMortgage=function(){
+          document.getElementById("mortgage").style.display="none";
+          document.getElementById("gestore").style.display="block";
+        }
 </script>
 </body>
 </html>
