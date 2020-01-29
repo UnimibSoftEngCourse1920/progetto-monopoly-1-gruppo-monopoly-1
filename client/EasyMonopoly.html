@@ -362,7 +362,7 @@
   o[5]= new Image();
   socket = io();
 
-  socket.emit('getLobby');
+  socket.emit('getEasyLobby');
 
   socket.on('id', function (data) {
         id = data[0];

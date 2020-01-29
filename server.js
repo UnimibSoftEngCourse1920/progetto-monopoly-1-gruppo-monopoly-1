@@ -13,7 +13,6 @@ let Chance = require('./server/Chance');
 let CommunityChest = require('./server/CommunityChest');
 let IncomeTax = require('./server/IncomeTax');
 let Deck = require('./server/Deck');
-let CardHandler = require('./server/CardHandler');
 let CloseServicesCard = require('./server/CloseServicesCard');
 let CloseStationCard = require('./server/CloseStationCard');
 let GetOutOfJailCard = require('./server/GetOutOfJailCard');
@@ -55,15 +54,25 @@ let doubleDice = 0;
 let outcome = true;
 let double = false;
 let unownedProp = true;
-let numPlayer=0;
 let playerDisconnected = null;
 let actualLength = 0;
 let playersDisconnected = [];
 let classicLobbies = [];
 let classicLobbyPointer = 0;
+let numPlayerC=0;
+let easyLobbies = [];
+let easyLobbyPointer = 0;
+let numPlayerE=0;
+let mediumLobbies = [];
+let mediumLobbyPointer = 0;
+let numPlayerM = 0;
+let hardLobbies = [];
+let hardLobbyPointer = 0;
+let numPlayerH = 0;
 let playerTotList = [];
 let actualLobby = [];
 let actualGame = null;
+let level = -1;
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
     contTot++;
@@ -76,28 +85,28 @@ io.sockets.on('connection', function (socket) {
         socket.emit('id', { id: socket.id });
     });
 
-    socket.on('getLobby', function () {
-      if(numPlayer == 0) {
+    socket.on('getLobby', function() {
+      if(numPlayerC == 0) {
         classicLobbies[classicLobbyPointer] = [];
         classicLobbies[classicLobbyPointer][0] = [];
       }
       actualLobby = classicLobbies[classicLobbyPointer];
       playerList = actualLobby[0];
-      let str = 'Player ' + (numPlayer + 1)*1;
-      let player = new Player(socket.id, numPlayer, str);
+      let str = 'Player ' + (numPlayerC + 1)*1;
+      let player = new Player(socket.id, numPlayerC, str);
       playerTotList[socket.id] = player;
       //mettilo in classic lobby
       playerList.push(player);
-      let pack = [numPlayer, player.name];
+      let pack = [numPlayerC, player.name];
       socket.emit('id', pack);
-      numPlayer++;
+      numPlayerC++;
       //socket.emit('setLobby', { lobbyID: 0 });
       persone++;
-      console.log(playerList[numPlayer-1].name);
-      if (numPlayer == 6) {
-        let game = new Game();
+      console.log(playerList[numPlayerC-1].name);
+      if (numPlayerC == 6) {
+        let game = new Game(0);
         actualGame = game;
-        numPlayer = 0;
+        numPlayerC = 0;
         classicLobbyPointer++;
         actualLobby[1] = [];
         actualLobby[2] = [];
@@ -108,7 +117,109 @@ io.sockets.on('connection', function (socket) {
         sendPlayers();
         generateTurn();
       }
+    })
+
+    socket.on('getEasyLobby', function () {
+      if(numPlayerE == 0) {
+        easyLobbies[easyLobbyPointer] = [];
+        easyLobbies[easyLobbyPointer][0] = [];
+      }
+      actualLobby = easyLobbies[easyLobbyPointer];
+      playerList = actualLobby[0];
+      let str = 'Player ' + (numPlayerE + 1)*1;
+      let player = new Player(socket.id, numPlayerE, str);
+      playerTotList[socket.id] = player;
+      //mettilo in classic lobby
+      playerList.push(player);
+      let pack = [numPlayerE, player.name];
+      socket.emit('id', pack);
+      numPlayerE++;
+      //socket.emit('setLobby', { lobbyID: 0 });
+      persone++;
+      console.log(playerList[numPlayerE-1].name);
+      if (numPlayerE == 6) {
+        let game = new Game(1);
+        actualGame = game;
+        numPlayerE = 0;
+        easyLobbyPointer++;
+        actualLobby[1] = [];
+        actualLobby[2] = [];
+        actualLobby[3] = [];
+        actualLobby[4] = [];
+        actualLobby[5] = game;
+        startGame();
+        sendPlayers();
+        generateTurn();
+      }
     });
+
+    socket.on('getMediumLobby', function() {
+      if(numPlayerM == 0) {
+        mediumLobbies[mediumLobbyPointer] = [];
+        mediumLobbies[mediumLobbyPointer][0] = [];
+      }
+      actualLobby = mediumLobbies[mediumLobbyPointer];
+      playerList = actualLobby[0];
+      let str = 'Player ' + (numPlayerM + 1)*1;
+      let player = new Player(socket.id, numPlayerM, str);
+      playerTotList[socket.id] = player;
+      //mettilo in classic lobby
+      playerList.push(player);
+      let pack = [numPlayerM, player.name];
+      socket.emit('id', pack);
+      numPlayerM++;
+      //socket.emit('setLobby', { lobbyID: 0 });
+      persone++;
+      console.log(playerList[numPlayerM-1].name);
+      if (numPlayerM == 6) {
+        let game = new Game(2);
+        actualGame = game;
+        numPlayerM = 0;
+        mediumLobbyPointer++;
+        actualLobby[1] = [];
+        actualLobby[2] = [];
+        actualLobby[3] = [];
+        actualLobby[4] = [];
+        actualLobby[5] = game;
+        startGame();
+        sendPlayers();
+        generateTurn();
+      }
+    })
+
+    socket.on('getHardLobby', function() {
+      if(numPlayerH == 0) {
+        hardLobbies[hardLobbyPointer] = [];
+        hardLobbies[hardLobbyPointer][0] = [];
+      }
+      actualLobby = hardLobbies[hardLobbyPointer];
+      playerList = actualLobby[0];
+      let str = 'Player ' + (numPlayerH + 1)*1;
+      let player = new Player(socket.id, numPlayerH, str);
+      playerTotList[socket.id] = player;
+      //mettilo in classic lobby
+      playerList.push(player);
+      let pack = [numPlayerH, player.name];
+      socket.emit('id', pack);
+      numPlayerH++;
+      //socket.emit('setLobby', { lobbyID: 0 });
+      persone++;
+      console.log(playerList[numPlayerH-1].name);
+      if (numPlayerH == 6) {
+        let game = new Game(3);
+        actualGame = game;
+        numPlayerH = 0;
+        hardLobbyPointer++;
+        actualLobby[1] = [];
+        actualLobby[2] = [];
+        actualLobby[3] = [];
+        actualLobby[4] = [];
+        actualLobby[5] = game;
+        startGame();
+        sendPlayers();
+        generateTurn();
+      }
+    })
 
     //turn started, dice received
     socket.on('dice', function(data) {
@@ -327,12 +438,25 @@ io.sockets.on('connection', function (socket) {
 
 let getLobby = function(id) {
   let bool = false;
-  for (let i = 0; !bool, i < classicLobbies.length; i ++) {
-    for(let j = 0; !bool, j < classicLobbies[i][0].length; j ++) {
-      if (classicLobbies[i][0][j].socketId == id) {
+  bool = getLobbyLoop(id, classicLobbies);
+  if(!bool) {
+    bool = getLobbyLoop(id, easyLobbies);
+  } if(!bool) {
+    bool = getLobbyLoop(id, mediumLobbies);
+  } if (!bool) {
+    bool = getLobbyLoop(id, hardLobbies);
+  }
+}
+
+let getLobbyLoop = function(id, lobbies) {
+  let bool = false;
+  for (let i = 0; !bool, i < lobbies.length; i ++) {
+    for(let j = 0; !bool, j < lobbies[i][0].length; j ++) {
+      if (lobbies[i][0][j].socketId == id) {
         bool = true;
-        actualLobby = classicLobbies[i];
+        actualLobby = lobbies[i];
         actualGame = actualLobby[5];
+        level = actualGame.level;
         playerList = actualLobby[0];
         squares = actualLobby[1];
         chance = actualLobby[2];
@@ -349,6 +473,7 @@ let getLobby = function(id) {
       }
     }
   }
+  return bool;
 }
 
 let updateHouses = function(player, prop, numHousesDelta) {

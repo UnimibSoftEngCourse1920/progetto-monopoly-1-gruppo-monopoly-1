@@ -144,20 +144,17 @@
 
 		let startEasyNewMonopoly = function () {
 			newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'block'; //loads the gameDiv
-			socket.emit('getLobby', { id: id, game: "newEasy" });
+      window.open("http://localhost:1337/client/EasyMonopoly.html", "_self");
 		}
 
 		let startMediumNewMonopoly = function () {
 			newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'block'; //loads the gameDiv
-			socket.emit('getLobby', { id: id, game: "newMedium" });
+			window.open("http://localhost:1337/client/MediumMonopoly.html", "_self");
 		}
 
 		let startHardNewMonopoly = function () {
 			newMonopolyOptionsDiv.style.display = 'none';
-			gameDiv.style.display = 'block'; //loads the gameDiv
-			socket.emit('getLobby', { id: id, game: "newHard" });
+			window.open("http://localhost:1337/client/HardMonopoly.html", "_self");
 		}
 
 
