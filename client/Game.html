@@ -1352,65 +1352,113 @@ socket.on('addProp', function(data) {
         }
       }
       let buyHouses=function(idprop){
-        let arr7 = document.getElementsByClassName("housebutton");
-        for (let i = 0; i < arr7.length; i ++) {
-          arr7[i].style.display="none";
-        }
+
         let str8;
         for(let i=0;i<self.props.length;i++){
           if(self.props[i].id==idprop){
             xyz=i;
-            str8=self.props[i].name + " <br> una casa/albergo costa: " + self.props[i].housePrices ;
+            str8=self.props[i].name + " <br> una casa/albergo costa: " + self.props[i].houseBuildPrice ;
+
           }
         }
-
+        let prezzocase=self.props[xyz].houseBuildPrice;
+        let controll=true;
           if(self.props[xyz].numHouses==0){
             $('#opt-5').hide();
             $('#opt-4').hide();
             $('#opt-3').hide();
             $('#opt-2').hide();
             $('#opt-1').hide();
-            $('#opt1').show();
-            $('#opt2').show();
-            $('#opt3').show();
-            $('#opt4').show();
             $('#opt5').hide();
-            document.getElementById('optionBox').value=2;
+            if(self.money>=(prezzocase*4)){
+              $('#opt1').show();
+              $('#opt2').show();
+              $('#opt3').show();
+              $('#opt4').show();
+              document.getElementById('optionBox').value=4;
+            }else if(self.money>=(prezzocase*3)){
+              $('#opt1').show();
+              $('#opt2').show();
+              $('#opt3').show();
+              $('#opt4').hide();
+              document.getElementById('optionBox').value=3;
+            }else if(self.money>=(prezzocase*2)){
+              $('#opt1').show();
+              $('#opt2').show();
+              $('#opt3').hide();
+              $('#opt4').hide();
+              document.getElementById('optionBox').value=2;
+            }else if(self.money>=(prezzocase)){
+              $('#opt1').show();
+              $('#opt2').hide();
+              $('#opt3').hide();
+              $('#opt4').hide();
+              document.getElementById('optionBox').value=1;
+            }else{
+              alert("non hai abbastanza soldi per costruire una casa");
+              controll=false;
+            }
           }else if(self.props[xyz].numHouses==1){
             $('#opt-5').hide();
             $('#opt-4').hide();
             $('#opt-3').hide();
             $('#opt-2').hide();
             $('#opt-1').show();
-            $('#opt1').show();
-            $('#opt2').show();
-            $('#opt3').show();
             $('#opt4').hide();
             $('#opt5').hide();
-            document.getElementById('optionBox').value=2;
+            if(self.money>=(prezzocase*3)){
+              $('#opt1').show();
+              $('#opt2').show();
+              $('#opt3').show();
+            }else if(self.money>=(prezzocase*2)){
+              $('#opt1').show();
+              $('#opt2').show();
+              $('#opt3').hide();
+            }else if(self.money>=(prezzocase)){
+              $('#opt1').show();
+              $('#opt2').hide();
+              $('#opt3').hide();
+            }else{
+              $('#opt1').hide();
+              $('#opt2').hide();
+              $('#opt3').hide();
+            }
+            document.getElementById('optionBox').value=-1;
           }else if(self.props[xyz].numHouses==2){
             $('#opt-5').hide();
             $('#opt-4').hide();
             $('#opt-3').hide();
             $('#opt-2').show();
             $('#opt-1').show();
-            $('#opt1').show();
-            $('#opt2').show();
             $('#opt3').hide();
             $('#opt4').hide();
             $('#opt5').hide();
-            document.getElementById('optionBox').value=2;
+            if(self.money>=(prezzocase*2)){
+              $('#opt1').show();
+              $('#opt2').show();
+            }else if(self.money>=(prezzocase)){
+              $('#opt1').show();
+              $('#opt2').hide();
+            }else{
+              $('#opt1').hide();
+              $('#opt2').hide();
+            }
+            document.getElementById('optionBox').value=-1;
           }else if(self.props[xyz].numHouses==3){
             $('#opt-5').hide();
             $('#opt-4').hide();
             $('#opt-3').show();
             $('#opt-2').show();
             $('#opt-1').show();
-            $('#opt1').show();
             $('#opt2').hide();
             $('#opt3').hide();
             $('#opt4').hide();
             $('#opt5').hide();
+            if(self.money>=(prezzocase)){
+              $('#opt1').show();
+            }else{
+              $('#opt1').hide();
+            }
             document.getElementById('optionBox').value=-1;
           }else if(self.props[xyz].numHouses==4){
             $('#opt-5').hide();
@@ -1422,7 +1470,11 @@ socket.on('addProp', function(data) {
             $('#opt2').hide();
             $('#opt3').hide();
             $('#opt4').hide();
-            $('#opt5').show();
+            if(self.money>=(prezzocase)){
+              $('#opt5').show();
+            }else{
+              $('#opt5').hide();
+            }
             document.getElementById('optionBox').value=-1;
          }else if(self.props[xyz].numHouses==5){
             $('#opt-5').show();
@@ -1437,9 +1489,15 @@ socket.on('addProp', function(data) {
             $('#opt5').hide();
             document.getElementById('optionBox').value=-1;
           }
-          document.getElementById("propname").innerHTML=str8;
-          document.getElementById("buyhouse").style.display="none";
-          document.getElementById("housenumber").style.display="block";
+          if(controll){
+            let arr6 = document.getElementsByClassName("housebutton");
+            for (let i = 0; i < arr6.length; i ++) {
+              arr6[i].style.display="none";
+            }
+            document.getElementById("propname").innerHTML=str8;
+            document.getElementById("buyhouse").style.display="none";
+            document.getElementById("housenumber").style.display="block";
+          }
     }
       let annullaBuild=function(){
         document.getElementById("buyhouse").style.display="none";
