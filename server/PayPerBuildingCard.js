@@ -19,9 +19,9 @@ class PayPerBuildingCard extends Card{
         for(let i=0; i<props.length; i++){
             if(props[i] instanceof HouseProperty)
                 if(props[i].getHouses() == 5)
-                    total += amountPerHotel;
+                    total += this.amountPerHotel;
                 else
-                    total += amountPerHouse*props[i].getHouses();
+                    total += this.amountPerHouse*props[i].getHouses();
         }
         //player.updateMoney(-total);
         return -total;

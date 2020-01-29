@@ -166,6 +166,14 @@
         #payjail,#getoutofjailfree{
           visibility:hidden;
         }
+        #haivinto{
+          height:50%;
+          z-index: 15;
+          display:none;
+          text-align: center;
+          position:absolute;
+          font-size: 40px;
+        }
     </style>
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
@@ -213,6 +221,7 @@
   <div id="haiperso" class='position'>
     Hai perso!
   </div>
+  <div id = "haivinto" class='position'><br><br><br>Hai vinto!<br><br><br></div>
   <div id="abbandonagioco" class='position'>
     <div>Are you sure you want to declare bankruptcy?</div><br><br><br>
     <button id="exit" onclick="bankrupt()">Yes</button>
@@ -380,6 +389,7 @@
       playersTemp = data;
       let colors = ["#FF0000", "#0000E6", "#FFFF00", "#FF80FF", "#FFA64D", "#A31AFF"];
       for (let i = 0; i < playersTemp.length; i ++) {
+        if(playersTemp[i]!=null) {
           let pedina = new Pedina(colors[i]);
           players[i] = new Player(playersTemp[i].id, playersTemp[i].name, pedina);
           let p = "p" + i;
@@ -394,6 +404,7 @@
           }
           document.getElementById(m).innerHTML =  "money: " + players[i].money;
           document.getElementById(p).style.background=colors[i];
+        }
       }
       createCanvas();
   });
@@ -438,6 +449,7 @@
     }
     let width = calcola(35);
     for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
       players[i].pedina.setDimensions(width, width);
     }
 
@@ -572,6 +584,8 @@
     document.getElementById("getoutofjailfree").style.visibility='hidden';
     let x = Math.floor(Math.random() * 6) + 1;
     let y = Math.floor(Math.random() * 6) + 1;
+    //let x = 5;
+    //let y = 2;
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
@@ -593,6 +607,7 @@
   socket.on('getOutOfJailFreeUpdate', function(data) {
     let player = data;
     for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
       if(players[i].id == player.id) {
         if (player.getOutOfJailFree) {
           players[i].getOutOfJailFree = player.getOutOfJailFree;
@@ -626,6 +641,7 @@
     let newPos = player.pos;
     let oldPos;
     for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
         if (players[i].id == player.id) {
           oldPos = players[i].pos;
           updatePosPlayer(players[i], oldPos, newPos, desc);
@@ -653,6 +669,7 @@
     let p;
     if(data[0] != 0) {
       for (let i = 0; i < players.length; i ++)
+      if(players[i]!=null)
         if (players[i].id == data[1].id) {
           players[i].updateMoney(data[0]);
           p = players[i];
@@ -685,6 +702,7 @@
     let double = data[1];
     let str;
     for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
       if (players[i].id == player.id) {
         players[i].jail = player.jail;
         if (player.id != self.id) {
@@ -713,6 +731,7 @@
     let player = data;
     let str;
     for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
       if (players[i].id == player.id) {
         if (player.id != self.id) {
           players[i].jailCount = player.jailCount;
@@ -801,6 +820,7 @@ socket.on('addProp', function(data) {
   let str = data[2];
   let tipoProp = data[3];
   for (let i = 0; i < players.length; i ++) {
+    if(players[i]!=null)
     if(players[i].id == player.id) {
       if (players[i].id != self.id) {
         players[i].addProp(prop);
@@ -840,10 +860,12 @@ socket.on('addProp', function(data) {
     ctx.clearRect(0, 0, canvas.width, canvas.width);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
     for (let i = 0; i < players.length; i ++) {
-      let X = pedinaPos[i][squares[players[i].pos].type].x+squares[players[i].pos].x;
-      let Y = pedinaPos[i][squares[players[i].pos].type].y+squares[players[i].pos].y;
-      drawPedine(players[i].pedina, X, Y);
-      drawHouses(players[i].props);
+      if(players[i]!=null) {
+        let X = pedinaPos[i][squares[players[i].pos].type].x+squares[players[i].pos].x;
+        let Y = pedinaPos[i][squares[players[i].pos].type].y+squares[players[i].pos].y;
+        drawPedine(players[i].pedina, X, Y);
+        drawHouses(players[i].props);
+      }
     }
   }
   let drawHouses = function(properties){
@@ -984,10 +1006,17 @@ socket.on('addProp', function(data) {
     let mId = 'm' + playerDisc.id;
     document.getElementById(pId).style.display="none";
     document.getElementById(mId).style.display="none";
-    players.delete(playerDisc);
-    updateScroll(playerDisc.name + ' disconnected');
+    players[data.id] = null;
+    updateScroll(data.name + ' disconnected');
   });
 
+  socket.on('youHaveWon', function() {
+    document.getElementById("haivinto").style.display="block";
+    setTimeout(function() {
+      socket.disconnect();
+      window.open("http://localhost:1337/client/Menu.html", "_self");
+    }, 3000);
+  })
   p0.onclick= function(){
     viewProps(0);
   }
@@ -1207,6 +1236,7 @@ socket.on('addProp', function(data) {
       let tipoProp = data[3];
       let boo = false;
       for (let i = 0; i < players.length; i ++) {
+        if(players[i]!=null)
         if(players[i].id == player.id) {
             boo = true;
             for (let j = 0; j < players[i].props.length; j ++) {
@@ -1524,6 +1554,7 @@ socket.on('addProp', function(data) {
           let str = player.name + ' added ' + numHousesDelta + ' to ' + prop.name;
           updateScroll(str);
           for (let i = 0; i < players.length; i ++) {
+            if(players[i]!=null)
             if(players[i].id == player.id) {
               if(player.id != self.id) {
                 let pl = players[i];
