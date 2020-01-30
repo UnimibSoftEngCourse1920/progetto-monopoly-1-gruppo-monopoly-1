@@ -73,6 +73,7 @@ let playerTotList = [];
 let actualLobby = [];
 let actualGame = null;
 let level = -1;
+let lobbyFinished = false;
 
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
@@ -96,12 +97,10 @@ io.sockets.on('connection', function (socket) {
       let player = new Player(socket.id, numPlayerC, str);
       playerTotList[socket.id] = player;
       playerList.push(player);
-      let pack = [numPlayerC, player.name];
-      socket.emit('id', pack);
       numPlayerC++;
       persone++;
-      console.log(playerList[numPlayerC-1].name);
-      if (numPlayerC == 6) {
+      //console.log(playerList[numPlayerC-1].name);
+      if (playerList.length == 6) {
         let game = new Game(0);
         actualGame = game;
         numPlayerC = 0;
@@ -111,6 +110,12 @@ io.sockets.on('connection', function (socket) {
         actualLobby[3] = [];
         actualLobby[4] = [];
         actualLobby[5] = game;
+        for(let i = 0; i < playerList.length; i++) {
+          playerList[i].id = i;
+          playerList[i].name = 'Player ' + (i +1)*1;
+          let pack = [playerList[i].id, playerList[i].name];
+          socketList[playerList[i].socketId].emit('id', pack);
+        }
         startGame();
         sendPlayers();
         generateTurn();
@@ -128,12 +133,10 @@ io.sockets.on('connection', function (socket) {
       let player = new Player(socket.id, numPlayerE, str);
       playerTotList[socket.id] = player;
       playerList.push(player);
-      let pack = [numPlayerE, player.name];
-      socket.emit('id', pack);
       numPlayerE++;
       persone++;
       console.log(playerList[numPlayerE-1].name);
-      if (numPlayerE == 6) {
+      if (playerList.length == 6) {
         let game = new Game(1);
         actualGame = game;
         numPlayerE = 0;
@@ -143,6 +146,12 @@ io.sockets.on('connection', function (socket) {
         actualLobby[3] = [];
         actualLobby[4] = [];
         actualLobby[5] = game;
+        for(let i = 0; i < playerList.length; i++) {
+          playerList[i].id = i;
+          playerList[i].name = 'Player ' + (i +1)*1;
+          let pack = [playerList[i].id, playerList[i].name];
+          socketList[playerList[i].socketId].emit('id', pack);
+        }
         startGame();
         sendPlayers();
         generateTurn();
@@ -160,12 +169,10 @@ io.sockets.on('connection', function (socket) {
       let player = new Player(socket.id, numPlayerM, str);
       playerTotList[socket.id] = player;
       playerList.push(player);
-      let pack = [numPlayerM, player.name];
-      socket.emit('id', pack);
       numPlayerM++;
       persone++;
-      console.log(playerList[numPlayerM-1].name);
-      if (numPlayerM == 6) {
+      //console.log(playerList[numPlayerM-1].name);
+      if (playerList.length == 6) {
         let game = new Game(2);
         actualGame = game;
         numPlayerM = 0;
@@ -175,6 +182,12 @@ io.sockets.on('connection', function (socket) {
         actualLobby[3] = [];
         actualLobby[4] = [];
         actualLobby[5] = game;
+        for(let i = 0; i < playerList.length; i++) {
+          playerList[i].id = i;
+          playerList[i].name = 'Player ' + (i +1)*1;
+          let pack = [playerList[i].id, playerList[i].name];
+          socketList[playerList[i].socketId].emit('id', pack);
+        }
         startGame();
         sendPlayers();
         generateTurn();
@@ -194,12 +207,10 @@ io.sockets.on('connection', function (socket) {
         let player = new Player(socket.id, numPlayerH, str);
         playerTotList[socket.id] = player;
         playerList.push(player);
-        let pack = [numPlayerH, player.name];
-        socket.emit('id', pack);
         numPlayerH++;
         persone++;
-        console.log(playerList[numPlayerH-1].name);
-        if (numPlayerH == 6) {
+        //console.log(playerList[numPlayerH-1].name);
+        if (playerList.length == 6) {
           let game = new Game(3);
           actualGame = game;
           numPlayerH = 0;
@@ -209,6 +220,12 @@ io.sockets.on('connection', function (socket) {
           actualLobby[3] = [];
           actualLobby[4] = [];
           actualLobby[5] = game;
+          for(let i = 0; i < playerList.length; i++) {
+            playerList[i].id = i;
+            playerList[i].name = 'Player ' + (i +1)*1;
+            let pack = [playerList[i].id, playerList[i].name];
+            socketList[playerList[i].socketId].emit('id', pack);
+          }
           startGame();
           sendPlayers();
           generateTurn();
@@ -345,13 +362,25 @@ io.sockets.on('connection', function (socket) {
   });
 
   socket.on('disconnect', function(data) {
-    getLobby(socket.id);
-    let payedOff = data[0];
-    let ownerOwed = playerList[data[1].id];
-    actualGame.playerDisconnected = playerTotList[socket.id];
-    playersDisconnected.push(actualGame.playerDisconnected.id);
-    handleBankruptcy(payedOff, ownerOwed);
-    handleDisconnect(actualGame.playerDisconnected);
+    let bool = checkForLobby(socket.id);
+    if(bool == 2) {
+      getLobby(socket.id);
+      let payedOff = data[0];
+      let ownerOwed = playerList[data[1].id];
+      actualGame.playerDisconnected = playerTotList[socket.id];
+      playersDisconnected.push(actualGame.playerDisconnected.id);
+      handleBankruptcy(payedOff, ownerOwed);
+      handleDisconnect(actualGame.playerDisconnected);
+    } else {
+      if(bool == 1) {
+        for (let i = 0; i < actualLobby[0].length; i ++) {
+          if(actualLobby[0][i].socketId == socket.id) {
+            actualLobby[0].splice(i, 1);
+            playerTotList[socket.id] = null;
+          }
+        }
+      }
+    }
   });
 
   socket.on('payedDebt', function(data) {
@@ -589,9 +618,41 @@ let getLobby = function(id) {
   }
 }
 
+let checkForLobby = function(id) {
+  let bool = 0;
+  bool = checkForLobbyLoop(id, classicLobbies);
+  if(bool == 0) {
+    bool = checkForLobbyLoop(id, easyLobbies);
+  } if(bool == 0) {
+    bool = checkForLobbyLoop(id, mediumLobbies);
+  } if (bool == 0) {
+    bool = checkForLobbyLoop(id, hardLobbies);
+  }
+  return bool;
+}
+
+let checkForLobbyLoop = function(id, lobbies) {
+  for (let i = 0; i < lobbies.length; i ++) {
+    if(lobbies[i] != null)
+    for(let j = 0; j < lobbies[i][0].length; j ++) {
+      if(lobbies[i][0][j] != null)
+      if (lobbies[i][0][j].socketId == id) {
+        if(lobbies[i][5] != null) {
+          return 2;
+        } else {
+          actualLobby = lobbies[i];
+          return 1;
+        }
+      }
+    }
+  }
+  return 0;
+}
+
 let getLobbyLoop = function(id, lobbies) {
   let bool = false;
   for (let i = 0; !bool, i < lobbies.length; i ++) {
+    if(lobbies[i] != null)
     for(let j = 0; !bool, j < lobbies[i][0].length; j ++) {
       if (lobbies[i][0][j] != null)
       if (lobbies[i][0][j].socketId == id) {
