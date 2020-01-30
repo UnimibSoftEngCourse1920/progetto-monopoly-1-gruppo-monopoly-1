@@ -31,7 +31,7 @@ class HouseProperty extends Property {
     }
 
     getHouses(){
-        return this.houses;
+        return this.numHouses;
     }
 
     getBuildPrice(){

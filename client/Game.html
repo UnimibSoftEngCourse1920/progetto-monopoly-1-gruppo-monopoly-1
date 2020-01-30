@@ -1142,7 +1142,7 @@ socket.on('addProp', function(data) {
       if (idDiv != id) {
 
         document.getElementById("playername").style.display="block";
-        document.getElementById("playername").innerHTML="Player " + idDiv;
+        document.getElementById("playername").innerHTML=players[idDiv].name;
         let arr = document.getElementsByClassName("lorodiv");
         for (let i = 0; i < arr.length; i ++) {
           arr[i].style.display="none";
@@ -1414,8 +1414,8 @@ socket.on('addProp', function(data) {
           }
         }
       }
-      let buyHouses=function(idprop){
 
+      let buyHouses=function(idprop){
         let str8;
         for(let i=0;i<self.props.length;i++){
           if(self.props[i].id==idprop){

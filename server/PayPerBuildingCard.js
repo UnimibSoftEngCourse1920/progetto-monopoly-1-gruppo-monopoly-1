@@ -14,7 +14,7 @@ class PayPerBuildingCard extends Card{
 
     execute = function(player){
         let total = 0;
-        let props = player.getProps();
+        let props = player.props;
 
         for(let i=0; i<props.length; i++){
             if(props[i] instanceof HouseProperty)

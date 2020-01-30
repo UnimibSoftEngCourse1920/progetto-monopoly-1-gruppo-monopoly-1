@@ -15,6 +15,7 @@ class Game {
     this.bidder = null;
     this.bid = 0;
     this.ended = false;
+    this.started = false;
   }
 }
 
