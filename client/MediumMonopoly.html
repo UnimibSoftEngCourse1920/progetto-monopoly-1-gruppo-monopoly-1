@@ -221,7 +221,8 @@
       <option id="opt4" value="4">4</option>
       <option id="opt5" value="1">Albergo</option>
     </select><br><br>
-    <button onclick="caseComprate()">conferma</button>
+    <button onclick="caseComprate()">buy with money</button>
+    <button onclick="buyWithCoin()">buy with second coin</button>
     <button onclick="showHouseButton()">torna alla pagina precedente</button>
   </div>
   <div id="mortgage" class="position">
@@ -280,11 +281,11 @@
     <div id="row">
         <div class="column" id="div1">
             <div id="p0" class="infoPlayer"></div>
-            <div id="m0"></div><br>
+            <div id="m0"></div><div id="k0"></div><br>
             <div id="p1" class="infoPlayer"></div>
-            <div id="m1"></div><br>
+            <div id="m1"></div><div id="k1"></div><br>
             <div id="p2" class="infoPlayer"></div>
-            <div id="m2"></div><br><br>
+            <div id="m2"></div><div id="k2"></div><br><br>
             <div id="us">
               <div>Le tue proprietà</div>
               <input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button>
@@ -322,11 +323,11 @@
         </div>
         <div class="column" id="div2">
             <div id="p3" class="infoPlayer"></div>
-            <div id="m3"></div><br>
+            <div id="m3"></div><div id="k3"></div><br>
             <div id="p4" class="infoPlayer"></div>
-            <div id="m4"></div><br>
+            <div id="m4"></div><div id="k4"></div><br>
             <div id="p5" class="infoPlayer"></div>
-            <div id="m5"></div><br><br>
+            <div id="m5"></div><div id="k5"></div><br><br>
             <div id="them">
               <div id="playername"></div>
               <input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div>
@@ -1846,6 +1847,14 @@ socket.on('addProp', function(data) {
             }
           }
         });
+        let buyWithCoin=function(){
+          let newHouses=($("#optionBox").val()) * 1;
+          self.props[xyz].numHouses+=newHouses;
+          let pack=[self.props[xyz].id, newHouses];
+          socket.emit('nuoveCase',pack);
+          showHouseButton();
+          
+        }
 </script>
 </body>
 </html>

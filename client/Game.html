@@ -17,6 +17,8 @@
 
         #div2 {
             margin-right: -100;
+            text-align:center;
+            display:none;
         }
 
         #row {
@@ -29,6 +31,7 @@
 
         #board {
             border-style: solid;
+            display: none;
         }
         #buyProperty{
           display: none;
@@ -88,25 +91,52 @@
         #dado{
           visibility:hidden;
         	font-size: 30px;
-        	border-radius: 10px;
-        	background-color: black;
-        	border-color:black;
-        	border-style:solid;
-        	transition-duration: 0.3s;
-        	color:white;
-        	font-family: verdana, sans-serif;
+          box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.19);
         }
         #dado:hover{
-        	color:black;
-        	background-color: white;
+          box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        }
+        .endbutton{
+          border-radius: 0;
+          float:left;
+          border-top-style:none;
+          border-left-style:none;
+        }
+        #ipotecaproprietà{
+          border-bottom-left-radius: 8px;
+          border-left-style:solid;
+        }
+        #bankrupt{
+          border-bottom-right-radius: 8px;
+          border-right-style:solid;
+        }
+        button{
+          border-width:2px;
+          font-family:verdana;
+          font-size: 15px;
+          border-radius: 8px;
+          border-color:black;
+          border-style:solid;
+          transition-duration: 0.3s;
+          font-family: verdana, sans-serif;
+          color:black;
+          background-color: white;
+
+        }
+        button:hover{
+          color:white;
+          background-color: black;
+
         }
         .infoPlayer{
           cursor: pointer;
           font-size: 23px;
-          border-style: solid;
-          border-color:black;
-          border-radius: 10px;
           font-family:verdana, sans-serif;
+          border-top-style: solid;
+          border-left-style: solid;
+          border-right-style: solid;
+          border-top-left-radius: 10px;
+          border-top-right-radius: 10px;
         }
         .housebutton{
           display:none;
@@ -132,6 +162,7 @@
         }
         #endmenu{
           visibility:hidden;
+          display:inline-block;
         }
         #u1,#u3,#l1,#l3{
           color:brown;
@@ -163,8 +194,13 @@
         #u5,#u15,#u25,#u35,#l5,#l15,#l25,#l35{
           color:black;
         }
-        .io,.loro,.iodiv,.lorodiv,#playername{
+        .io,.loro,.iodiv,.lorodiv{
           display:none;
+        }
+        #playername{
+          display:none;
+          font-size:25px;
+          font-family:verdana;
         }
         #them{
           visibility:visible;
@@ -186,6 +222,46 @@
            position:absolute;
            z-index: 10;
            width:60%;
+        }
+        .divblock{
+          display:none;
+        }
+        #myproperty{
+          font-size:25px;
+          font-family:verdana;
+          border-bottom-style: solid;
+          border-bottom-width:1px;
+          background-color: #07dfd0;
+          border-top-right-radius:10px;
+          border-top-left-radius:10px;
+        }
+        #theirproperty{
+          border-bottom-style: solid;
+          border-bottom-width:1px;
+          background-color: #07dfd0;
+          border-top-right-radius:10px;
+          border-top-left-radius:10px;
+        }
+        #divprop1{
+          display:inline;
+          font-size:25px;
+          font-family:verdana;
+        }
+        .divmoney{
+          background-color: #07dfd0;
+          font-size: 20px;
+          border-bottom-left-radius: 10px;
+          border-bottom-right-radius: 10px;
+          border-bottom-style: solid;
+          border-left-style: solid;
+          border-right-style: solid;
+          border-top-style: solid;
+          border-top-width:1px;
+          font-family: verdana;
+        }
+        #us,#them{
+          border-style:solid;
+          border-radius: 10px;
         }
     </style>
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
@@ -235,8 +311,9 @@
   </div>
   <div id="tradepage" class='position'>
     <div>seleziona il player con cui vuoi fare un trade cliccando sul player apposito a destra o sinistra</div>
+    <div>inserisci a sinistra la tua offerta e a destra i soldi che vorresti</div><br><br>
     <input type="text" value="0" id="ourmoney" >
-    <input type="text" value="0" id="theirmoney" >
+    <input type="text" value="0" id="theirmoney" ><br><br>
     <button id="propose" onclick="proposeTrade()">propose trade</button>
     <button id="cancel" onclick="cancelTrade()">cancel trade</button>
   </div>
@@ -260,103 +337,109 @@
   </div>
   <div id="gestore" class='position'>
     <div id="endmenu">
-      <button id="ipotecaproprietà" onclick="showMortageMenu()">ipoteca propietà</button>
-      <button id="build" onclick="showHouseButton()">Build houses</button>
-      <button id="trade" onclick="trade()">Trade</button>
-      <button id="end" onclick="endTurn()">End turn</button><br>
-    </div>
+      <button class="endbutton" id="ipotecaproprietà" onclick="showMortageMenu()">handle mortgage</button>
+      <button class="endbutton" id="build" onclick="showHouseButton()">Build houses</button>
+      <button class="endbutton" id="trade" onclick="trade()">Trade</button>
+      <button  class="endbutton" id="end" onclick="endTurn()">End turn</button>
+      <button class="endbutton" id="bankrupt" onclick="declareBankruptcy()">quit</button>
+    </div><br>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
     <div id="scrollBox"></div>
     <button id="payjail" onclick="payJail()">Pay Jail</button>
     <button id="getoutofjailfree" onclick="getOutOfJailFree()">Use "Get out of jail free" card</button>
-    <button id="bankrupt" onclick="declareBankruptcy()">Declare bankruptcy</button>
+    <br>
+    <div></div>
 	</div>
   <div id="buyProperty" class="position">
     <br><div id="description"></div><br>
-    <div>vuoi acquistare questa propietà?</div><br>
+    <div>vuoi acquistare questa proprietà?</div><br>
     <button id="yes" onclick="propertyRisp(true)">yes</button>
     <button id="auction" onclick="propertyRisp(false)">auction</button>
   </div>
     <div id="row">
         <div class="column" id="div1">
+          <div id="topleft">
             <div id="p0" class="infoPlayer"></div>
-            <div id="m0"></div><br>
+            <div id="m0" class="divmoney"></div><br>
             <div id="p1" class="infoPlayer"></div>
-            <div id="m1"></div><br>
+            <div id="m1" class="divmoney"></div><br>
             <div id="p2" class="infoPlayer"></div>
-            <div id="m2"></div><br><br>
+            <div id="m2" class="divmoney"></div><br>
+          </div>
             <div id="us">
-              <div>Le tue proprietà</div>
-              <input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button>
-              <input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div><button id="b3" class="housebutton" onclick="buyHouses(3)">seleziona</button>
-              <input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div><button id="b6" class="housebutton" onclick="buyHouses(6)">seleziona</button>
-              <input id="cu8" type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div><button id="b8" class="housebutton" onclick="buyHouses(8)">seleziona</button>
-              <input id="cu9" type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div><button id="b9" class="housebutton" onclick="buyHouses(9)">seleziona</button>
-              <input id="cu11" type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div><button id="b11" class="housebutton" onclick="buyHouses(11)">seleziona</button>
-              <input id="cu13" type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div><button id="b13" class="housebutton" onclick="buyHouses(13)">seleziona</button>
-              <input id="cu14" type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div><button id="b14" class="housebutton" onclick="buyHouses(14)">seleziona</button>
-              <input id="cu16" type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div><button id="b16" class="housebutton" onclick="buyHouses(16)">seleziona</button>
-              <input id="cu18" type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div><button id="b18" class="housebutton" onclick="buyHouses(18)">seleziona</button>
-              <input id="cu19" type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div><button id="b19" class="housebutton" onclick="buyHouses(19)">seleziona</button>
-              <input id="cu21" type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div><button id="b21" class="housebutton" onclick="buyHouses(21)">seleziona</button>
-              <input id="cu23" type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div><button id="b23" class="housebutton" onclick="buyHouses(23)">seleziona</button>
-              <input id="cu24" type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div><button id="b24" class="housebutton" onclick="buyHouses(24)">seleziona</button>
-              <input id="cu26" type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div><button id="b26" class="housebutton" onclick="buyHouses(26)">seleziona</button>
-              <input id="cu27" type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div><button id="b27" class="housebutton" onclick="buyHouses(27)">seleziona</button>
-              <input id="cu29" type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div><button id="b29" class="housebutton" onclick="buyHouses(29)">seleziona</button>
-              <input id="cu31" type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div><button id="b31" class="housebutton" onclick="buyHouses(31)">seleziona</button>
-              <input id="cu32" type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div><button id="b32" class="housebutton" onclick="buyHouses(32)">seleziona</button>
-              <input id="cu34" type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div><button id="b34" class="housebutton" onclick="buyHouses(34)">seleziona</button>
-              <input id="cu37" type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div><button id="b37"class="housebutton" onclick="buyHouses(37)">seleziona</button>
-              <input id="cu39" type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div><button id="b39"class="housebutton" onclick="buyHouses(39)">seleziona</button>
-              <input id="cu12" type="checkbox" class="io" value="12"><div id="u12" class = "iodiv">Electric Company</div>
-              <input id="cu28" type="checkbox" class="io" value="28"><div id="u28" class = "iodiv">Water Works</div>
-              <input id="cu5" type="checkbox" class="io" value="5"><div id="u5" class = "iodiv">Reading Railroad</div>
-              <input id="cu15" type="checkbox" class="io" value="15"><div id="u15" class = "iodiv">Pennsylvania Railroad</div>
-              <input id="cu25" type="checkbox" class="io" value="25"><div id="u25" class = "iodiv">B. & O. Railroad</div>
-              <input id="cu35" type="checkbox" class="io" value="35"><div id="u35" class = "iodiv">Short Line</div>
+              <div id="myproperty">Your properties</div><br>
+              <div class="divBlock"><input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button></div>
+              <div class="divBlock"><input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div><button id="b3" class="housebutton" onclick="buyHouses(3)">seleziona</button></div>
+              <div class="divBlock"><input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div><button id="b6" class="housebutton" onclick="buyHouses(6)">seleziona</button></div>
+              <div class="divBlock"><input id="cu8" type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div><button id="b8" class="housebutton" onclick="buyHouses(8)">seleziona</button></div>
+              <div class="divBlock"><input id="cu9" type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div><button id="b9" class="housebutton" onclick="buyHouses(9)">seleziona</button></div>
+              <div class="divBlock"><input id="cu11" type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div><button id="b11" class="housebutton" onclick="buyHouses(11)">seleziona</button></div>
+              <div class="divBlock"><input id="cu13" type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div><button id="b13" class="housebutton" onclick="buyHouses(13)">seleziona</button></div>
+              <div class="divBlock"><input id="cu14" type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div><button id="b14" class="housebutton" onclick="buyHouses(14)">seleziona</button></div>
+              <div class="divBlock"><input id="cu16" type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div><button id="b16" class="housebutton" onclick="buyHouses(16)">seleziona</button></div>
+              <div class="divBlock"><input id="cu18" type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div><button id="b18" class="housebutton" onclick="buyHouses(18)">seleziona</button></div>
+              <div class="divBlock"><input id="cu19" type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div><button id="b19" class="housebutton" onclick="buyHouses(19)">seleziona</button></div>
+              <div class="divBlock"><input id="cu21" type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div><button id="b21" class="housebutton" onclick="buyHouses(21)">seleziona</button></div>
+              <div class="divBlock"><input id="cu23" type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div><button id="b23" class="housebutton" onclick="buyHouses(23)">seleziona</button></div>
+              <div class="divBlock"><input id="cu24" type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div><button id="b24" class="housebutton" onclick="buyHouses(24)">seleziona</button></div>
+              <div class="divBlock"><input id="cu26" type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div><button id="b26" class="housebutton" onclick="buyHouses(26)">seleziona</button></div>
+              <div class="divBlock"><input id="cu27" type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div><button id="b27" class="housebutton" onclick="buyHouses(27)">seleziona</button></div>
+              <div class="divBlock"><input id="cu29" type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div><button id="b29" class="housebutton" onclick="buyHouses(29)">seleziona</button></div>
+              <div class="divBlock"><input id="cu31" type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div><button id="b31" class="housebutton" onclick="buyHouses(31)">seleziona</button></div>
+              <div class="divBlock"><input id="cu32" type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div><button id="b32" class="housebutton" onclick="buyHouses(32)">seleziona</button></div>
+              <div class="divBlock"><input id="cu34" type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div><button id="b34" class="housebutton" onclick="buyHouses(34)">seleziona</button></div>
+              <div class="divBlock"><input id="cu37" type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div><button id="b37"class="housebutton" onclick="buyHouses(37)">seleziona</button></div>
+              <div class="divBlock"><input id="cu39" type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div><button id="b39"class="housebutton" onclick="buyHouses(39)">seleziona</button></div>
+              <div class="divBlock"><input id="cu12" type="checkbox" class="io" value="12"><div id="u12" class = "iodiv">Electric Company</div></div>
+              <div class="divBlock"><input id="cu28" type="checkbox" class="io" value="28"><div id="u28" class = "iodiv">Water Works</div></div>
+              <div class="divBlock"><input id="cu5" type="checkbox" class="io" value="5"><div id="u5" class = "iodiv">Reading Railroad</div></div>
+              <div class="divBlock"><input id="cu15" type="checkbox" class="io" value="15"><div id="u15" class = "iodiv">Pennsylvania Railroad</div></div>
+              <div class="divBlock"><input id="cu25" type="checkbox" class="io" value="25"><div id="u25" class = "iodiv">B. & O. Railroad</div></div>
+              <div class="divBlock"><input id="cu35" type="checkbox" class="io" value="35"><div id="u35" class = "iodiv">Short Line</div></div>
             </div>
         </div>
         <div id="centro">
             <canvas id="board"></canvas>
         </div>
         <div class="column" id="div2">
+          <div id="topright">
             <div id="p3" class="infoPlayer"></div>
-            <div id="m3"></div><br>
+            <div id="m3" class="divmoney"></div><br>
             <div id="p4" class="infoPlayer"></div>
-            <div id="m4"></div><br>
+            <div id="m4" class="divmoney"></div><br>
             <div id="p5" class="infoPlayer"></div>
-            <div id="m5"></div><br><br>
+            <div id="m5" class="divmoney"></div><br>
+          </div>
             <div id="them">
-              <div id="playername"></div>
-              <input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div>
-              <input id="cl3" type="checkbox" class="loro" value="3"><div id="l3" class="lorodiv" >Baltic Avenue</div>
-              <input id="cl6" type="checkbox" class="loro" value="6"><div id="l6" class="lorodiv" >Oriental Avenue</div>
-              <input id="cl8" type="checkbox" class="loro" value="8"><div id="l8" class="lorodiv" >Vermont Avenue</div>
-              <input id="cl9" type="checkbox" class="loro" value="9"><div id="l9" class="lorodiv" >Connecticut Avenue</div>
-              <input id="cl11" type="checkbox" class="loro" value="11"><div id="l11" class="lorodiv" >St. Charles Place</div>
-              <input id="cl13" type="checkbox" class="loro" value="13"><div id="l13" class="lorodiv" >States Avenue</div>
-              <input id="cl14" type="checkbox" class="loro" value="14"><div id="l14" class="lorodiv" >Viriginia Avenue</div>
-              <input id="cl16" type="checkbox" class="loro" value="16"><div id="l16" class="lorodiv" >St. James Place</div>
-              <input id="cl18" type="checkbox" class="loro" value="18"><div id="l18" class="lorodiv" >Tennessee Avenue</div>
-              <input id="cl19" type="checkbox" class="loro" value="19"><div id="l19" class="lorodiv" >New York Avenue</div>
-              <input id="cl21" type="checkbox" class="loro" value="21"><div id="l21" class="lorodiv" >Kentucky Avenue</div>
-              <input id="cl23" type="checkbox" class="loro" value="23"><div id="l23" class="lorodiv" >Indiana Avenue</div>
-              <input id="cl24" type="checkbox" class="loro" value="24"><div id="l24" class="lorodiv" >Illinois Avenue</div>
-              <input id="cl26" type="checkbox" class="loro" value="26"><div id="l26" class="lorodiv" >Atlantic Avenue</div>
-              <input id="cl27" type="checkbox" class="loro" value="27"><div id="l27" class="lorodiv" >Ventnor Avenue</div>
-              <input id="cl29" type="checkbox" class="loro" value="29"><div id="l29" class="lorodiv" >Marvin Gardens</div>
-              <input id="cl31" type="checkbox" class="loro" value="31"><div id="l31" class="lorodiv" >Pacific Avenue</div>
-              <input id="cl32" type="checkbox" class="loro" value="32"><div id="l32" class="lorodiv" >North Carolina Avenue</div>
-              <input id="cl34" type="checkbox" class="loro" value="34"><div id="l34" class="lorodiv" >Pennsylvania Avenue</div>
-              <input id="cl37" type="checkbox" class="loro" value="37"><div id="l37" class="lorodiv" >Park Place</div>
-              <input id="cl39" type="checkbox" class="loro" value="39"><div id="l39" class="lorodiv" >Boardwalk</div>
-              <input id="cl12" type="checkbox" class="loro" value="12"><div id="l12" class="lorodiv" >Electric Company</div>
-              <input id="cl28" type="checkbox" class="loro" value="28"><div id="l28" class="lorodiv" >Water Works</div>
-              <input id="cl5" type="checkbox" class="loro" value="5"><div id="l5" class="lorodiv" >Reading Railroad</div>
-              <input id="cl15" type="checkbox" class="loro" value="15"><div id="l15" class="lorodiv" >Pennsylvania Railroad</div>
-              <input id="cl25" type="checkbox" class="loro" value="25"><div id="l25" class="lorodiv" >B. & O. Railroad</div>
-              <input id="cl35" type="checkbox" class="loro" value="35"><div id="l35" class="lorodiv" >Short Line</div>
+              <div id="theirproperty" class="divBlock"><div id="divprop1">Properties of </div><div id="playername"></div></div><br>
+              <div class="divBlock"><input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div></div>
+              <div class="divBlock"><input id="cl3" type="checkbox" class="loro" value="3"><div id="l3" class="lorodiv" >Baltic Avenue</div></div>
+              <div class="divBlock"><input id="cl6" type="checkbox" class="loro" value="6"><div id="l6" class="lorodiv" >Oriental Avenue</div></div>
+              <div class="divBlock"><input id="cl8" type="checkbox" class="loro" value="8"><div id="l8" class="lorodiv" >Vermont Avenue</div></div>
+              <div class="divBlock"><input id="cl9" type="checkbox" class="loro" value="9"><div id="l9" class="lorodiv" >Connecticut Avenue</div></div>
+              <div class="divBlock"><input id="cl11" type="checkbox" class="loro" value="11"><div id="l11" class="lorodiv" >St. Charles Place</div></div>
+              <div class="divBlock"><input id="cl13" type="checkbox" class="loro" value="13"><div id="l13" class="lorodiv" >States Avenue</div></div>
+              <div class="divBlock"><input id="cl14" type="checkbox" class="loro" value="14"><div id="l14" class="lorodiv" >Viriginia Avenue</div></div>
+              <div class="divBlock"><input id="cl16" type="checkbox" class="loro" value="16"><div id="l16" class="lorodiv" >St. James Place</div></div>
+              <div class="divBlock"><input id="cl18" type="checkbox" class="loro" value="18"><div id="l18" class="lorodiv" >Tennessee Avenue</div></div>
+              <div class="divBlock"><input id="cl19" type="checkbox" class="loro" value="19"><div id="l19" class="lorodiv" >New York Avenue</div></div>
+              <div class="divBlock"><input id="cl21" type="checkbox" class="loro" value="21"><div id="l21" class="lorodiv" >Kentucky Avenue</div></div>
+              <div class="divBlock"><input id="cl23" type="checkbox" class="loro" value="23"><div id="l23" class="lorodiv" >Indiana Avenue</div></div>
+              <div class="divBlock"><input id="cl24" type="checkbox" class="loro" value="24"><div id="l24" class="lorodiv" >Illinois Avenue</div></div>
+              <div class="divBlock"><input id="cl26" type="checkbox" class="loro" value="26"><div id="l26" class="lorodiv" >Atlantic Avenue</div></div>
+              <div class="divBlock"><input id="cl27" type="checkbox" class="loro" value="27"><div id="l27" class="lorodiv" >Ventnor Avenue</div></div>
+              <div class="divBlock"><input id="cl29" type="checkbox" class="loro" value="29"><div id="l29" class="lorodiv" >Marvin Gardens</div></div>
+              <div class="divBlock"><input id="cl31" type="checkbox" class="loro" value="31"><div id="l31" class="lorodiv" >Pacific Avenue</div></div>
+              <div class="divBlock"><input id="cl32" type="checkbox" class="loro" value="32"><div id="l32" class="lorodiv" >North Carolina Avenue</div></div>
+              <div class="divBlock"><input id="cl34" type="checkbox" class="loro" value="34"><div id="l34" class="lorodiv" >Pennsylvania Avenue</div></div>
+              <div class="divBlock"><input id="cl37" type="checkbox" class="loro" value="37"><div id="l37" class="lorodiv" >Park Place</div></div>
+              <div class="divBlock"><input id="cl39" type="checkbox" class="loro" value="39"><div id="l39" class="lorodiv" >Boardwalk</div></div>
+              <div class="divBlock"><input id="cl12" type="checkbox" class="loro" value="12"><div id="l12" class="lorodiv" >Electric Company</div></div>
+              <div class="divBlock"><input id="cl28" type="checkbox" class="loro" value="28"><div id="l28" class="lorodiv" >Water Works</div></div>
+              <div class="divBlock"><input id="cl5" type="checkbox" class="loro" value="5"><div id="l5" class="lorodiv" >Reading Railroad</div></div>
+              <div class="divBlock"><input id="cl15" type="checkbox" class="loro" value="15"><div id="l15" class="lorodiv" >Pennsylvania Railroad</div></div>
+              <div class="divBlock"><input id="cl25" type="checkbox" class="loro" value="25"><div id="l25" class="lorodiv" >B. & O. Railroad</div></div>
+              <div class="divBlock"><input id="cl35" type="checkbox" class="loro" value="35"><div id="l35" class="lorodiv" >Short Line</div></div>
             </div>
         </div>
     </div>
@@ -418,6 +501,7 @@
   socket.on('startGame', function (data) {
       waitingDiv.style.display = 'none';
       row.style.display = 'block';
+      document.getElementById("div2").style.display="block";
       gestore.style.display = 'block';
       playersTemp = data;
       let colors = ["#FF0000", "#0000E6", "#FFFF00", "#FF80FF", "#FFA64D", "#A31AFF"];
@@ -439,10 +523,16 @@
           document.getElementById(p).style.background=colors[i];
         }
       }
+      let array2=document.getElementsByClassName("divblock");
+      for(let k=0;k<array2.length;k++){
+        array2[k].style.display="block";
+      }
+
       createCanvas();
   });
 
   let createCanvas = function () {
+    document.getElementById("board").style.display="block";
     let H = $(window).height();
     let W = $(window).width();
     let a = (W - H) / 2;
@@ -453,6 +543,8 @@
     $(".column").width(a);
     $(".position").width(boardW-(cas*3));
     $(".position").offset({ top: cas+100,left:(cas*1.5) + $(".column").width() });
+    $("#us").height(H-($("#topleft").height())-10);
+    $("#them").height(H-($("#topright").height())-10);
     fix_dpi();
     createSquares();
     img.onload = function () {
@@ -598,9 +690,10 @@
   });
 
   let startTurn = function() {
-    if (!self.jail)
+    if (!self.jail){
       dado.style.visibility = 'visible';
-    else {
+      $('#dado').prop('disabled', false);
+    }else {
       socket.emit('stillInJail', self);
       dado.style.visibility = 'visible';
       document.getElementById("payjail").style.visibility='visible';
@@ -612,6 +705,7 @@
 
   let odd = 0;
   let rolldice = function() {
+    $('#dado').prop('disabled', true);
     dado.style.visibility='hidden';
     document.getElementById("payjail").style.visibility='hidden';
     document.getElementById("getoutofjailfree").style.visibility='hidden';
@@ -967,7 +1061,7 @@ socket.on('addProp', function(data) {
       moneyOwed = money;
       payedOff = false;
 
-      timeOutFunc = setTimeout(function(){ document.getElementById("endmenu").style.visibility="visible"; document.getElementById("end").style.display="none"; setDone();}, 2500);
+      timeOutFunc = setTimeout(function(){ document.getElementById("endmenu").style.display="visible"; document.getElementById("end").style.display="none"; setDone();}, 2500);
       intervalFunc = setInterval(function() {
         if(payedOff) {
           //document.getElementById("end").style.visibility="visible";
@@ -1113,7 +1207,7 @@ socket.on('addProp', function(data) {
           if(self.props[i] != null) {
             let j = 'u' + self.props[i].id;
             //mostra la div della proprieta
-            document.getElementById(j).style.display='block';
+            document.getElementById(j).style.display='inline';
           } else {
             let j = 'u' + self.props[i].id;
             document.getElementById(j).style.display='none';
@@ -1125,7 +1219,7 @@ socket.on('addProp', function(data) {
           if(self.props[i] != null) {
             let j = 'cu' + self.props[i].id;
             //mostra la div della proprieta
-            document.getElementById(j).style.display='block';
+            document.getElementById(j).style.display='inline';
           } else {
             let j = 'cu' + self.props[i].id;
             document.getElementById(j).style.display='none';
@@ -1141,7 +1235,7 @@ socket.on('addProp', function(data) {
 
       if (idDiv != id) {
 
-        document.getElementById("playername").style.display="block";
+        document.getElementById("playername").style.display="inline";
         document.getElementById("playername").innerHTML=players[idDiv].name;
         let arr = document.getElementsByClassName("lorodiv");
         for (let i = 0; i < arr.length; i ++) {
@@ -1157,7 +1251,7 @@ socket.on('addProp', function(data) {
             if(player.props[i] != null) {
               let j = 'l' + player.props[i].id;
               //mostra la div della proprieta
-              document.getElementById(j).style.display='block';
+              document.getElementById(j).style.display='inline';
             } else {
               let j = 'l' + player.props[i].id;
               document.getElementById(j).style.display='none';
@@ -1174,7 +1268,7 @@ socket.on('addProp', function(data) {
             if(player.props[i] != null) {
               let j = 'cl' + player.props[i].id;
               //mostra la div della proprieta
-              document.getElementById(j).style.display='block';
+              document.getElementById(j).style.display='inline';
             } else {
               let j = 'cl' + player.props[i].id;
               document.getElementById(j).style.display='none';
@@ -1409,7 +1503,7 @@ socket.on('addProp', function(data) {
           }
           if(bool==true){
             let j = 'b' + self.props[i].id;
-            document.getElementById(j).style.display='block';
+            document.getElementById(j).style.display='inline';
             bool=false;
           }
         }
@@ -1831,10 +1925,14 @@ socket.on('addProp', function(data) {
         let newBid = function(){
           //invia al server la nuova bid più alta
           let bid = ($("#textboxauction").val()) * 1;
-          if(bid>maxBid){
-            socket.emit('bid', bid);
+          if(self.money>=bid){
+            if(bid>maxBid){
+              socket.emit('bid', bid);
+            }else{
+              alert("devi fare una puntata superiore a quella massima");
+            }
           }else{
-            alert("devi fare una puntata superiore a quella massima");
+            alert("non puoi puntare più soldi di quanti ne possiedi");
           }
         }
 
