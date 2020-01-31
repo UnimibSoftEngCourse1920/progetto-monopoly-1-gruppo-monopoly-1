@@ -302,6 +302,221 @@ o[5]= new Image();
       window.open("http://localhost:1337/client/Menu.html", "_self");
     }, 3000);
   })
+  socket.on('newHighestBid', function(data){
+    //aggiorna la div con la puntata più alta
+      maxBid=data;
+      document.getElementById("auctionprice").innerHTML=data;
+  });
+
+  socket.on('startAuction', function(data){
+    //fa apparire al player la pagina dell'asta
+    document.getElementById("auctionprice").innerHTML=maxBid;
+    document.getElementById("auctionproperty").innerHTML=data.name;
+    document.getElementById("auctiondiv").style.display="block";
+  });
+
+  socket.on('turn', function(data) {
+    //fa iniziare il turno a un giocatore
+    turn = data;
+    if (turn == self.id)
+      startTurn();
+  });
+
+  socket.on('getOutOfJailFreeUpdate', function(data) {
+    //aggiorna l'attributo del player relativo alla carta per l'uscita dalla prigione
+    let player = data;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if (player.getOutOfJailFree) {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' now has a GetOutOfJailCard');
+        } else {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' used his GetOutOfJailCard');
+        }
+      }
+    }
+  })
+
+  socket.on('updatePosPlayer', function(data){
+    //aggiorna la posizione di un player
+    let player = data[0];
+    let desc = data[1];
+    let newPos = player.pos;
+    let oldPos;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+        if (players[i].id == player.id) {
+          oldPos = players[i].pos;
+          updatePosPlayer(players[i], oldPos, newPos, desc);
+        }
+    }
+    if (player.id == id && !player.jail)
+      socket.emit('handlePlayer', self);
+  });
+
+  socket.on('genericUpdate', function(data) {
+    //chiama la funzione per mandare una stringa a tutti i player
+    updateScroll(data);
+  });
+
+  socket.on('updateMoneyPlayer', function(data) {
+    //aggiorna i money di un player
+    let p;
+    if(data[0] != 0) {
+      for (let i = 0; i < players.length; i ++)
+      if(players[i]!=null)
+        if (players[i].id == data[1].id) {
+          players[i].updateMoney(data[0]);
+          p = players[i];
+          let str = 'm' + p.id;
+          document.getElementById(str).innerHTML = "money: " + p.money;
+          if(players[i].id == self.id) {
+            if(!payedOff) {
+              if(self.money >= moneyOwed)
+                payedOff = true;
+            }
+          }
+        }
+        if(data[2] != null)
+          updateScroll(data[2]);
+    }
+  });
+
+  socket.on('jailUpdate', function(data) {
+    //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
+    //puo essere cambiato il suo jail count, ovvero quanti turni è in prigione
+    let player = data[0];
+    let double = data[1];
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if (players[i].id == player.id) {
+        players[i].jail = player.jail;
+        if (player.id != self.id) {
+          if (player.jail == false) {
+            str = player.name + ' is out of jail';
+            players[i].jailCount = 0;
+            updateScroll(str);
+          } else {
+            str = player.name + ' is in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          if (player.jail == true) {
+            //socket.emit('endturn');
+          } else {
+            self.jailCount = 0;
+          }
+        }
+      }
+    }
+
+  });
+
+  socket.on('jailCountUpdate', function(data) {
+    //tiene conto di quanti turni è stato in prigione un player e aggiorna in base a quel numero
+    let player = data;
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if (players[i].id == player.id) {
+        if (player.id != self.id) {
+          players[i].jailCount = player.jailCount;
+          if (player.jailCount != 0) {
+            str = player.name + ' is still in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          players[i].jailCount = player.jailCount;
+        }
+      }
+    }
+  });
+
+  socket.on('unownedProperty', function(data) {
+    //data è un oggetto di tipo Property
+    //questo viene ricevuto solo dal client interessato, non da tutti
+    //mostra la descrizione di una proprietà(se non posseduta da nessuno) quando il player ci finisce sopra
+    gestore.style.display="none";
+   buyProperty.style.display="block";
+   let propTemp=data[1];
+   let type = data[2];
+   let frase;
+          if (type == 'HouseProperty') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0= "rendita: " + propTemp.housePrices[0];
+             let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
+             let r2= "rendita con 2 case: " + propTemp.housePrices[2];
+             let r3= "rendita con 3 case: " + propTemp.housePrices[3];
+             let r4= "rendita con 4 case: " + propTemp.housePrices[4];
+             let r5= "rendita con albergo: " + propTemp.housePrices[5];
+             let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
+             frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
+           } else if (type == 'Station') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r1= "rendita con 1 stazione: " + propTemp.rentPrices[0];
+             let r2= "rendita con 2 stazioni: " + propTemp.rentPrices[1];
+             let r3= "rendita con 3 stazioni: " + propTemp.rentPrices[2];
+             let r4= "rendita con 4 stazioni: " + propTemp.rentPrices[3];
+             frase= n + "<br>" + c + "<br>" + r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4;
+           } else if (type == 'Services') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0 = "Se si possiede una proprieta di tipo Services, la rendita è: 4 x il numero dei dadi tirati";
+             let r1 = "Se si possiedono entrambe le proprieta di tipo Services, la rendita è: 10 x il numero dei dadi tirati";
+             frase = n + "<br>" + c + "<br>" + r0 + "<br>"+ r1;
+           }
+           document.getElementById("description").innerHTML=frase;
+           if(propTemp.cost>self.money){
+             boolProp=false;
+           }else{
+             boolProp=true;
+           }
+  });
+
+  socket.on('addProp', function(data) {
+    //aggiorna una proprietà a un player
+    let playerArrived = data[1];
+    let prop = data[0];
+    let player = players[playerArrived.id];
+    let str = data[2];
+    let tipoProp = data[3];
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if (players[i].id != self.id) {
+          players[i].addProp(prop);
+          if(tipoProp == 1) {
+            players[i].stations.push(prop);
+          }
+          else if(tipoProp == 2) {
+            players[i].services.push(prop);
+          }
+        } else {
+          self.addProp(prop);
+          if(tipoProp == 1) {
+            players[i].stations.push(prop);
+          }
+          else if(tipoProp == 2) {
+            players[i].services.push(prop);
+          }
+          updateSelfProps();
+        }
+      }
+    }
+    updateScroll(str);
+  })
+
+  socket.on('endMenu', function(data) {
+    //fa apparire il menu per la trade,buildhouse,ecc dopo aver girato i dadi
+    endMenu(data);
+  });
 
   socket.on('tradeProposal', function(data) {
     //si attiva quando un player vuole fare una trade con me
