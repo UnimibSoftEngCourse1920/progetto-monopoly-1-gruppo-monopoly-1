@@ -1126,17 +1126,17 @@ let startGame = function () {
     squaresLoc[2] = new CommunityChest(2);
     squaresLoc[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown", 2);
     squaresLoc[4] = new IncomeTax(4, 200);
-    squaresLoc[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200]);
+    squaresLoc[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200], 3);
     squaresLoc[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue", 2);
     squaresLoc[7] = new Chance(7);
     squaresLoc[8] = new HouseProperty(8, "Vermont Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue", 2);
     squaresLoc[9] = new HouseProperty(9, "Connecticut Avenue", 120, [8, 40, 100, 300, 450, 600], 50, "lightblue", 2);
     squaresLoc[10] = new Square(10); //jail
     squaresLoc[11] = new HouseProperty(11, "St. Charles Place", 140, [10, 50, 150, 450, 625, 750], 100, "pink", 4);
-    squaresLoc[12] = new Services(12, "Electric Company", 150);
+    squaresLoc[12] = new Services(12, "Electric Company", 150, 3);
     squaresLoc[13] = new HouseProperty(13, "States Avenue", 140, [10, 50, 150, 450, 625, 750], 100, "pink", 4);
     squaresLoc[14] = new HouseProperty(14, "Viriginia Avenue", 160, [12, 60, 180, 500, 700, 900], 100, "pink", 4);
-    squaresLoc[15] = new Station(15, "Pennsylvania Railroad", 200, [25, 50, 100, 200]);
+    squaresLoc[15] = new Station(15, "Pennsylvania Railroad", 200, [25, 50, 100, 200], 3);
     squaresLoc[16] = new HouseProperty(16, "St. James Place", 180, [14, 70, 200, 550, 750, 950], 100, "orange", 4);
     squaresLoc[17] = new CommunityChest(17);
     squaresLoc[18] = new HouseProperty(18, "Tennessee Avenue", 180, [14, 70, 200, 550, 750, 950], 100, "orange", 4);
@@ -1146,17 +1146,17 @@ let startGame = function () {
     squaresLoc[22] = new Chance(22);
     squaresLoc[23] = new HouseProperty(23, "Indiana Avenue", 220, [18, 90, 250, 700, 875, 1050], 150, "red", 6);
     squaresLoc[24] = new HouseProperty(24, "Illinois Avenue", 240, [20, 100, 300, 750, 925, 1100], 150, "red", 6);
-    squaresLoc[25] = new Station(25, "B. & O. Railroad", 200, [25, 50, 100, 200]);
+    squaresLoc[25] = new Station(25, "B. & O. Railroad", 200, [25, 50, 100, 200], 3);
     squaresLoc[26] = new HouseProperty(26, "Atlantic Avenue", 260, [22, 110, 330, 800, 975, 1150], 150, "yellow", 6);
     squaresLoc[27] = new HouseProperty(27, "Ventnor Avenue", 260, [22, 110, 330, 800, 975, 1150], 150, "yellow", 6);
-    squaresLoc[28] = new Services(28, "Water Works", 150);
+    squaresLoc[28] = new Services(28, "Water Works", 150, 3);
     squaresLoc[29] = new HouseProperty(29, "Marvin Gardens", 280, [24, 120, 360, 850, 1025, 1200], 150, "yellow", 6);
     squaresLoc[30] = new Square(30); //go to jail
     squaresLoc[31] = new HouseProperty(31, "Pacific Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green", 8);
     squaresLoc[32] = new HouseProperty(32, "North Carolina Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green", 8);
     squaresLoc[33] = new CommunityChest(33);
     squaresLoc[34] = new HouseProperty(34, "Pennsylvania Avenue", 320, [28, 150, 450, 1000, 1200, 1400], 200, "green", 8);
-    squaresLoc[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200]);
+    squaresLoc[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200], 3);
     squaresLoc[36] = new Chance(36);
     squaresLoc[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "darkblue", 8);
     squaresLoc[38] = new IncomeTax(38, 100);
@@ -1578,6 +1578,7 @@ let sendCoinsUpdate = function(cashBackCoins, player, description){
    pack.push(player);
    pack.push(description);
    for(let i=0; i < playerList.length; i++) {
+     if(playerList[i]!= null)
      socketList[playerList[i].socketId].emit('updateCoinsPlayer', pack);
    }
  }
