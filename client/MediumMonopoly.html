@@ -4,197 +4,15 @@
   <title>
     Game
   </title>
-    <style>
-
-        .column, #centro {
-            float: left;
-            margin-top: -6;
-        }
-
-        #div1 {
-            margin-left: -6;
-        }
-
-        #div2 {
-            margin-right: -100;
-        }
-
-        #row {
-            display: none;
-            margin-top: 0;
-            padding: 0;
-            text-align: center;
-            z-index: 0;
-        }
-
-        #board {
-            border-style: solid;
-        }
-        #buyProperty{
-          display: none;
-          text-align: center;
-          position:absolute;
-          z-index: 2;
-        }
-        #gestore{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 1;
-           background-color:white;
-        }
-        #buyhouse{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 5;
-        }
-        #housenumber{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 6;
-        }
-        #tradepage{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 3;
-        }
-        #abbandonagioco{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 7;
-        }
-        #haiperso{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 8;
-        }
-        #mortgage{
-           display: none;
-           text-align: center;
-           position:absolute;
-           z-index: 9;
-        }
-        #offer{
-           display: none;
-	         text-align: center;
-	         position:absolute;
-	         z-index: 4;
-        }
-        #dado{
-          visibility:hidden;
-        	font-size: 30px;
-        	border-radius: 10px;
-        	background-color: black;
-        	border-color:black;
-        	border-style:solid;
-        	transition-duration: 0.3s;
-        	color:white;
-        	font-family: verdana, sans-serif;
-        }
-        #dado:hover{
-        	color:black;
-        	background-color: white;
-        }
-        .infoPlayer{
-          cursor: pointer;
-          font-size: 23px;
-          border-style: solid;
-          border-color:black;
-          border-radius: 10px;
-          font-family:verdana, sans-serif;
-        }
-        .housebutton{
-          display:none;
-        }
-        #scrollBox{
-          margin:auto;
-          overflow:auto;
-          height:100px;
-          width:300px;
-          border-style: solid;
-          border-radius: 5px;
-        }
-        .position{
-          background-color:white;
-          border-radius: 10px;
-          border-style:solid;
-        }
-        #description{
-          border-style: solid;
-          width:300px;
-          margin:auto;
-          font-size: 20px;
-        }
-        #endmenu{
-          visibility:hidden;
-        }
-        #u1,#u3,#l1,#l3{
-          color:brown;
-        }
-        #u6,#u8,#u9,#l6,#l8,#l9{
-          color:lightblue;
-        }
-        #u11,#u13,#u14,#l11,#l13,#l14{
-          color:pink;
-        }
-        #u16,#u18,#u19,#l16,#l18,#l19{
-          color:orange;
-        }
-        #u21,#u23,#u24,#l21,#l23,#l24{
-          color:red;
-        }
-        #u26,#u27,#u29,#l26,#l27,#l29{
-          color:yellow;
-        }
-        #u31,#u32,#u34,#l31,#l32,#l34{
-          color:green;
-        }
-        #u37,#u39,#l37,#l39{
-          color:darkblue;
-        }
-        #u12,#u28,#l12,#l28{
-          color:gray;
-        }
-        #u5,#u15,#u25,#u35,#l5,#l15,#l25,#l35{
-          color:black;
-        }
-        .io,.loro,.iodiv,.lorodiv,#playername{
-          display:none;
-        }
-        #them{
-          visibility:visible;
-        }
-        #payjail,#getoutofjailfree{
-          visibility:hidden;
-        }
-        #haivinto{
-          height:50%;
-          z-index: 15;
-          display:none;
-          text-align: center;
-          position:absolute;
-          font-size: 40px;
-        }
-        #auctiondiv{
-           display: none;
-           text-align: center;
-           position:absolute;
-           z-index: 10;
-           width:60%;
-        }
-    </style>
+    <link rel="stylesheet" type="text/css" href="http://localhost:1337/client/medium_hard.css">
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
     <script src="http://localhost:1337/client/js/jquery-3.4.1.min.js"></script>
 </head>
 <body style="background-color:#06C3B6;">
-	<div id="waitingDiv">
-		waiting...
+  <div id="waitingDiv">
+    <br><br>Waiting for other players<br><br>
+  <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
 	</div>
   <div id="offer" class="position">
     <div id="offerreceiver"></div>
@@ -236,8 +54,9 @@
   </div>
   <div id="tradepage" class='position'>
     <div>seleziona il player con cui vuoi fare un trade cliccando sul player apposito a destra o sinistra</div>
+    <div>inserisci a sinistra la tua offerta e a destra i soldi che vorresti</div><br><br>
     <input type="text" value="0" id="ourmoney" >
-    <input type="text" value="0" id="theirmoney" >
+    <input type="text" value="0" id="theirmoney" ><br><br>
     <button id="propose" onclick="proposeTrade()">propose trade</button>
     <button id="cancel" onclick="cancelTrade()">cancel trade</button>
   </div>
@@ -261,150 +80,162 @@
   </div>
   <div id="gestore" class='position'>
     <div id="endmenu">
-      <button id="ipotecaproprietà" onclick="showMortageMenu()">ipoteca propietà</button>
-      <button id="build" onclick="showHouseButton()">Build houses</button>
-      <button id="trade" onclick="trade()">Trade</button>
-      <button id="end" onclick="endTurn()">End turn</button><br>
-    </div>
+      <button class="endbutton" id="ipotecaproprietà" onclick="showMortageMenu()">handle mortgage</button>
+      <button class="endbutton" id="build" onclick="showHouseButton()">Build houses</button>
+      <button class="endbutton" id="trade" onclick="trade()">Trade</button>
+      <button  class="endbutton" id="end" onclick="endTurn()">End turn</button>
+      <button class="endbutton" id="bankrupt" onclick="declareBankruptcy()">quit</button>
+    </div><br>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
-    <div id="scrollBox"></div>
+    <div id="dadodiv">
+      <div id="leftdivdice"><img id="leftdice" alt="."></div>
+      <div id="scrollBox">Game started!!</div>
+      <div id="rightdivdice"><img id="rightdice" alt="."></div>
+   </div>
     <button id="payjail" onclick="payJail()">Pay Jail</button>
     <button id="getoutofjailfree" onclick="getOutOfJailFree()">Use "Get out of jail free" card</button>
-    <button id="bankrupt" onclick="declareBankruptcy()">Declare bankruptcy</button>
 	</div>
   <div id="buyProperty" class="position">
     <br><div id="description"></div><br>
-    <div>vuoi acquistare questa propietà?</div><br>
+    <div>vuoi acquistare questa proprietà?</div><br>
     <button id="yes" onclick="propertyRisp(true)">yes</button>
     <button id="auction" onclick="propertyRisp(false)">auction</button>
   </div>
     <div id="row">
         <div class="column" id="div1">
+          <div id="topleft">
             <div id="p0" class="infoPlayer"></div>
-            <div id="m0"></div><div id="k0"></div><br>
+            <div class="divcoin" id="k0"></div><div id="m0" class="divmoney"></div>
             <div id="p1" class="infoPlayer"></div>
-            <div id="m1"></div><div id="k1"></div><br>
+            <div class="divcoin" id="k1"></div><div id="m1" class="divmoney"></div>
             <div id="p2" class="infoPlayer"></div>
-            <div id="m2"></div><div id="k2"></div><br><br>
+            <div class="divcoin" id="k2"></div><div id="m2" class="divmoney"></div><br>
+          </div>
             <div id="us">
-              <div>Le tue proprietà</div>
-              <input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button>
-              <input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div><button id="b3" class="housebutton" onclick="buyHouses(3)">seleziona</button>
-              <input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div><button id="b6" class="housebutton" onclick="buyHouses(6)">seleziona</button>
-              <input id="cu8" type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div><button id="b8" class="housebutton" onclick="buyHouses(8)">seleziona</button>
-              <input id="cu9" type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div><button id="b9" class="housebutton" onclick="buyHouses(9)">seleziona</button>
-              <input id="cu11" type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div><button id="b11" class="housebutton" onclick="buyHouses(11)">seleziona</button>
-              <input id="cu13" type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div><button id="b13" class="housebutton" onclick="buyHouses(13)">seleziona</button>
-              <input id="cu14" type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div><button id="b14" class="housebutton" onclick="buyHouses(14)">seleziona</button>
-              <input id="cu16" type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div><button id="b16" class="housebutton" onclick="buyHouses(16)">seleziona</button>
-              <input id="cu18" type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div><button id="b18" class="housebutton" onclick="buyHouses(18)">seleziona</button>
-              <input id="cu19" type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div><button id="b19" class="housebutton" onclick="buyHouses(19)">seleziona</button>
-              <input id="cu21" type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div><button id="b21" class="housebutton" onclick="buyHouses(21)">seleziona</button>
-              <input id="cu23" type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div><button id="b23" class="housebutton" onclick="buyHouses(23)">seleziona</button>
-              <input id="cu24" type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div><button id="b24" class="housebutton" onclick="buyHouses(24)">seleziona</button>
-              <input id="cu26" type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div><button id="b26" class="housebutton" onclick="buyHouses(26)">seleziona</button>
-              <input id="cu27" type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div><button id="b27" class="housebutton" onclick="buyHouses(27)">seleziona</button>
-              <input id="cu29" type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div><button id="b29" class="housebutton" onclick="buyHouses(29)">seleziona</button>
-              <input id="cu31" type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div><button id="b31" class="housebutton" onclick="buyHouses(31)">seleziona</button>
-              <input id="cu32" type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div><button id="b32" class="housebutton" onclick="buyHouses(32)">seleziona</button>
-              <input id="cu34" type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div><button id="b34" class="housebutton" onclick="buyHouses(34)">seleziona</button>
-              <input id="cu37" type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div><button id="b37"class="housebutton" onclick="buyHouses(37)">seleziona</button>
-              <input id="cu39" type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div><button id="b39"class="housebutton" onclick="buyHouses(39)">seleziona</button>
-              <input id="cu12" type="checkbox" class="io" value="12"><div id="u12" class = "iodiv">Electric Company</div>
-              <input id="cu28" type="checkbox" class="io" value="28"><div id="u28" class = "iodiv">Water Works</div>
-              <input id="cu5" type="checkbox" class="io" value="5"><div id="u5" class = "iodiv">Reading Railroad</div>
-              <input id="cu15" type="checkbox" class="io" value="15"><div id="u15" class = "iodiv">Pennsylvania Railroad</div>
-              <input id="cu25" type="checkbox" class="io" value="25"><div id="u25" class = "iodiv">B. & O. Railroad</div>
-              <input id="cu35" type="checkbox" class="io" value="35"><div id="u35" class = "iodiv">Short Line</div>
+              <div id="myproperty">Your properties</div>
+              <div class="divBlock"><input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button></div>
+              <div class="divBlock"><input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div><button id="b3" class="housebutton" onclick="buyHouses(3)">seleziona</button></div>
+              <div class="divBlock"><input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div><button id="b6" class="housebutton" onclick="buyHouses(6)">seleziona</button></div>
+              <div class="divBlock"><input id="cu8" type="checkbox" class="io" value="8"><div id="u8" class = "iodiv">Vermont Avenue</div><button id="b8" class="housebutton" onclick="buyHouses(8)">seleziona</button></div>
+              <div class="divBlock"><input id="cu9" type="checkbox" class="io" value="9"><div id="u9" class = "iodiv">Connecticut Avenue</div><button id="b9" class="housebutton" onclick="buyHouses(9)">seleziona</button></div>
+              <div class="divBlock"><input id="cu11" type="checkbox" class="io" value="11"><div id="u11" class = "iodiv">St. Charles Place</div><button id="b11" class="housebutton" onclick="buyHouses(11)">seleziona</button></div>
+              <div class="divBlock"><input id="cu13" type="checkbox" class="io" value="13"><div id="u13" class = "iodiv">States Avenue</div><button id="b13" class="housebutton" onclick="buyHouses(13)">seleziona</button></div>
+              <div class="divBlock"><input id="cu14" type="checkbox" class="io" value="14"><div id="u14" class = "iodiv">Viriginia Avenue</div><button id="b14" class="housebutton" onclick="buyHouses(14)">seleziona</button></div>
+              <div class="divBlock"><input id="cu16" type="checkbox" class="io" value="16"><div id="u16" class = "iodiv">St. James Place</div><button id="b16" class="housebutton" onclick="buyHouses(16)">seleziona</button></div>
+              <div class="divBlock"><input id="cu18" type="checkbox" class="io" value="18"><div id="u18" class = "iodiv">Tennessee Avenue</div><button id="b18" class="housebutton" onclick="buyHouses(18)">seleziona</button></div>
+              <div class="divBlock"><input id="cu19" type="checkbox" class="io" value="19"><div id="u19" class = "iodiv">New York Avenue</div><button id="b19" class="housebutton" onclick="buyHouses(19)">seleziona</button></div>
+              <div class="divBlock"><input id="cu21" type="checkbox" class="io" value="21"><div id="u21" class = "iodiv">Kentucky Avenue</div><button id="b21" class="housebutton" onclick="buyHouses(21)">seleziona</button></div>
+              <div class="divBlock"><input id="cu23" type="checkbox" class="io" value="23"><div id="u23" class = "iodiv">Indiana Avenue</div><button id="b23" class="housebutton" onclick="buyHouses(23)">seleziona</button></div>
+              <div class="divBlock"><input id="cu24" type="checkbox" class="io" value="24"><div id="u24" class = "iodiv">Illinois Avenue</div><button id="b24" class="housebutton" onclick="buyHouses(24)">seleziona</button></div>
+              <div class="divBlock"><input id="cu26" type="checkbox" class="io" value="26"><div id="u26" class = "iodiv">Atlantic Avenue</div><button id="b26" class="housebutton" onclick="buyHouses(26)">seleziona</button></div>
+              <div class="divBlock"><input id="cu27" type="checkbox" class="io" value="27"><div id="u27" class = "iodiv">Ventnor Avenue</div><button id="b27" class="housebutton" onclick="buyHouses(27)">seleziona</button></div>
+              <div class="divBlock"><input id="cu29" type="checkbox" class="io" value="29"><div id="u29" class = "iodiv">Marvin Gardens</div><button id="b29" class="housebutton" onclick="buyHouses(29)">seleziona</button></div>
+              <div class="divBlock"><input id="cu31" type="checkbox" class="io" value="31"><div id="u31" class = "iodiv">Pacific Avenue</div><button id="b31" class="housebutton" onclick="buyHouses(31)">seleziona</button></div>
+              <div class="divBlock"><input id="cu32" type="checkbox" class="io" value="32"><div id="u32" class = "iodiv">North Carolina Avenue</div><button id="b32" class="housebutton" onclick="buyHouses(32)">seleziona</button></div>
+              <div class="divBlock"><input id="cu34" type="checkbox" class="io" value="34"><div id="u34" class = "iodiv">Pennsylvania Avenue</div><button id="b34" class="housebutton" onclick="buyHouses(34)">seleziona</button></div>
+              <div class="divBlock"><input id="cu37" type="checkbox" class="io" value="37"><div id="u37" class = "iodiv">Park Place</div><button id="b37"class="housebutton" onclick="buyHouses(37)">seleziona</button></div>
+              <div class="divBlock"><input id="cu39" type="checkbox" class="io" value="39"><div id="u39" class = "iodiv">Boardwalk</div><button id="b39"class="housebutton" onclick="buyHouses(39)">seleziona</button></div>
+              <div class="divBlock"><input id="cu12" type="checkbox" class="io" value="12"><div id="u12" class = "iodiv">Electric Company</div></div>
+              <div class="divBlock"><input id="cu28" type="checkbox" class="io" value="28"><div id="u28" class = "iodiv">Water Works</div></div>
+              <div class="divBlock"><input id="cu5" type="checkbox" class="io" value="5"><div id="u5" class = "iodiv">Reading Railroad</div></div>
+              <div class="divBlock"><input id="cu15" type="checkbox" class="io" value="15"><div id="u15" class = "iodiv">Pennsylvania Railroad</div></div>
+              <div class="divBlock"><input id="cu25" type="checkbox" class="io" value="25"><div id="u25" class = "iodiv">B. & O. Railroad</div></div>
+              <div class="divBlock"><input id="cu35" type="checkbox" class="io" value="35"><div id="u35" class = "iodiv">Short Line</div></div>
             </div>
         </div>
         <div id="centro">
             <canvas id="board"></canvas>
         </div>
         <div class="column" id="div2">
+          <div id="topright">
             <div id="p3" class="infoPlayer"></div>
-            <div id="m3"></div><div id="k3"></div><br>
+            <div class="divcoin" id="k3"></div><div id="m3" class="divmoney"></div>
             <div id="p4" class="infoPlayer"></div>
-            <div id="m4"></div><div id="k4"></div><br>
+            <div class="divcoin" id="k4"></div><div id="m4" class="divmoney"></div>
             <div id="p5" class="infoPlayer"></div>
-            <div id="m5"></div><div id="k5"></div><br><br>
+            <div class="divcoin" id="k5"></div><div id="m5" class="divmoney"></div><br>
+          </div>
             <div id="them">
-              <div id="playername"></div>
-              <input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div>
-              <input id="cl3" type="checkbox" class="loro" value="3"><div id="l3" class="lorodiv" >Baltic Avenue</div>
-              <input id="cl6" type="checkbox" class="loro" value="6"><div id="l6" class="lorodiv" >Oriental Avenue</div>
-              <input id="cl8" type="checkbox" class="loro" value="8"><div id="l8" class="lorodiv" >Vermont Avenue</div>
-              <input id="cl9" type="checkbox" class="loro" value="9"><div id="l9" class="lorodiv" >Connecticut Avenue</div>
-              <input id="cl11" type="checkbox" class="loro" value="11"><div id="l11" class="lorodiv" >St. Charles Place</div>
-              <input id="cl13" type="checkbox" class="loro" value="13"><div id="l13" class="lorodiv" >States Avenue</div>
-              <input id="cl14" type="checkbox" class="loro" value="14"><div id="l14" class="lorodiv" >Viriginia Avenue</div>
-              <input id="cl16" type="checkbox" class="loro" value="16"><div id="l16" class="lorodiv" >St. James Place</div>
-              <input id="cl18" type="checkbox" class="loro" value="18"><div id="l18" class="lorodiv" >Tennessee Avenue</div>
-              <input id="cl19" type="checkbox" class="loro" value="19"><div id="l19" class="lorodiv" >New York Avenue</div>
-              <input id="cl21" type="checkbox" class="loro" value="21"><div id="l21" class="lorodiv" >Kentucky Avenue</div>
-              <input id="cl23" type="checkbox" class="loro" value="23"><div id="l23" class="lorodiv" >Indiana Avenue</div>
-              <input id="cl24" type="checkbox" class="loro" value="24"><div id="l24" class="lorodiv" >Illinois Avenue</div>
-              <input id="cl26" type="checkbox" class="loro" value="26"><div id="l26" class="lorodiv" >Atlantic Avenue</div>
-              <input id="cl27" type="checkbox" class="loro" value="27"><div id="l27" class="lorodiv" >Ventnor Avenue</div>
-              <input id="cl29" type="checkbox" class="loro" value="29"><div id="l29" class="lorodiv" >Marvin Gardens</div>
-              <input id="cl31" type="checkbox" class="loro" value="31"><div id="l31" class="lorodiv" >Pacific Avenue</div>
-              <input id="cl32" type="checkbox" class="loro" value="32"><div id="l32" class="lorodiv" >North Carolina Avenue</div>
-              <input id="cl34" type="checkbox" class="loro" value="34"><div id="l34" class="lorodiv" >Pennsylvania Avenue</div>
-              <input id="cl37" type="checkbox" class="loro" value="37"><div id="l37" class="lorodiv" >Park Place</div>
-              <input id="cl39" type="checkbox" class="loro" value="39"><div id="l39" class="lorodiv" >Boardwalk</div>
-              <input id="cl12" type="checkbox" class="loro" value="12"><div id="l12" class="lorodiv" >Electric Company</div>
-              <input id="cl28" type="checkbox" class="loro" value="28"><div id="l28" class="lorodiv" >Water Works</div>
-              <input id="cl5" type="checkbox" class="loro" value="5"><div id="l5" class="lorodiv" >Reading Railroad</div>
-              <input id="cl15" type="checkbox" class="loro" value="15"><div id="l15" class="lorodiv" >Pennsylvania Railroad</div>
-              <input id="cl25" type="checkbox" class="loro" value="25"><div id="l25" class="lorodiv" >B. & O. Railroad</div>
-              <input id="cl35" type="checkbox" class="loro" value="35"><div id="l35" class="lorodiv" >Short Line</div>
+              <div id="theirproperty" class="divBlock"><div id="divprop1">Properties of </div><div id="playername"></div></div>
+              <div class="divBlock"><input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div></div>
+              <div class="divBlock"><input id="cl3" type="checkbox" class="loro" value="3"><div id="l3" class="lorodiv" >Baltic Avenue</div></div>
+              <div class="divBlock"><input id="cl6" type="checkbox" class="loro" value="6"><div id="l6" class="lorodiv" >Oriental Avenue</div></div>
+              <div class="divBlock"><input id="cl8" type="checkbox" class="loro" value="8"><div id="l8" class="lorodiv" >Vermont Avenue</div></div>
+              <div class="divBlock"><input id="cl9" type="checkbox" class="loro" value="9"><div id="l9" class="lorodiv" >Connecticut Avenue</div></div>
+              <div class="divBlock"><input id="cl11" type="checkbox" class="loro" value="11"><div id="l11" class="lorodiv" >St. Charles Place</div></div>
+              <div class="divBlock"><input id="cl13" type="checkbox" class="loro" value="13"><div id="l13" class="lorodiv" >States Avenue</div></div>
+              <div class="divBlock"><input id="cl14" type="checkbox" class="loro" value="14"><div id="l14" class="lorodiv" >Viriginia Avenue</div></div>
+              <div class="divBlock"><input id="cl16" type="checkbox" class="loro" value="16"><div id="l16" class="lorodiv" >St. James Place</div></div>
+              <div class="divBlock"><input id="cl18" type="checkbox" class="loro" value="18"><div id="l18" class="lorodiv" >Tennessee Avenue</div></div>
+              <div class="divBlock"><input id="cl19" type="checkbox" class="loro" value="19"><div id="l19" class="lorodiv" >New York Avenue</div></div>
+              <div class="divBlock"><input id="cl21" type="checkbox" class="loro" value="21"><div id="l21" class="lorodiv" >Kentucky Avenue</div></div>
+              <div class="divBlock"><input id="cl23" type="checkbox" class="loro" value="23"><div id="l23" class="lorodiv" >Indiana Avenue</div></div>
+              <div class="divBlock"><input id="cl24" type="checkbox" class="loro" value="24"><div id="l24" class="lorodiv" >Illinois Avenue</div></div>
+              <div class="divBlock"><input id="cl26" type="checkbox" class="loro" value="26"><div id="l26" class="lorodiv" >Atlantic Avenue</div></div>
+              <div class="divBlock"><input id="cl27" type="checkbox" class="loro" value="27"><div id="l27" class="lorodiv" >Ventnor Avenue</div></div>
+              <div class="divBlock"><input id="cl29" type="checkbox" class="loro" value="29"><div id="l29" class="lorodiv" >Marvin Gardens</div></div>
+              <div class="divBlock"><input id="cl31" type="checkbox" class="loro" value="31"><div id="l31" class="lorodiv" >Pacific Avenue</div></div>
+              <div class="divBlock"><input id="cl32" type="checkbox" class="loro" value="32"><div id="l32" class="lorodiv" >North Carolina Avenue</div></div>
+              <div class="divBlock"><input id="cl34" type="checkbox" class="loro" value="34"><div id="l34" class="lorodiv" >Pennsylvania Avenue</div></div>
+              <div class="divBlock"><input id="cl37" type="checkbox" class="loro" value="37"><div id="l37" class="lorodiv" >Park Place</div></div>
+              <div class="divBlock"><input id="cl39" type="checkbox" class="loro" value="39"><div id="l39" class="lorodiv" >Boardwalk</div></div>
+              <div class="divBlock"><input id="cl12" type="checkbox" class="loro" value="12"><div id="l12" class="lorodiv" >Electric Company</div></div>
+              <div class="divBlock"><input id="cl28" type="checkbox" class="loro" value="28"><div id="l28" class="lorodiv" >Water Works</div></div>
+              <div class="divBlock"><input id="cl5" type="checkbox" class="loro" value="5"><div id="l5" class="lorodiv" >Reading Railroad</div></div>
+              <div class="divBlock"><input id="cl15" type="checkbox" class="loro" value="15"><div id="l15" class="lorodiv" >Pennsylvania Railroad</div></div>
+              <div class="divBlock"><input id="cl25" type="checkbox" class="loro" value="25"><div id="l25" class="lorodiv" >B. & O. Railroad</div></div>
+              <div class="divBlock"><input id="cl35" type="checkbox" class="loro" value="35"><div id="l35" class="lorodiv" >Short Line</div></div>
             </div>
         </div>
     </div>
 <script>
-	let socket, id, name;
-  let lobbyID;
-  let squares = [];
-  let houses = [];
-  let players = [];
-  let pedinaPos = [];
-  let playersTemp = [];
-  let player;
-  let self;
-  let dpi = window.devicePixelRatio;
-  let img = new Image();
-  let canvas = document.getElementById("board");
-  let ctx = canvas.getContext("2d");
-  let turn;
-  let tradeState = false;
-  let ourProps=[];
-  let theirProps=[];
-  let ourMoney=0;
-  let theirMoney=0;
-  let receiver;
-  let proposer;
-  let payedOff = true;
-  let moneyOwed = 0;
-  let ownerOwed = null;
-  let brown;
-  let lightblue;
-  let pink;
-  let orange;
-  let red;
-  let yellow;
-  let green;
-  let darkblue;
-  let xyz=0;
-  let myName;
-  let o=[];
-  let maxBid=0;
-  o[1]= new Image();
-  o[2]= new Image();
-  o[3]= new Image();
-  o[4]= new Image();
-  o[5]= new Image();
-  socket = io();
-
+let socket, id, name;
+let lobbyID;
+let squares = [];
+let houses = [];
+let players = [];
+let pedinaPos = [];
+let playersTemp = [];
+let player;
+let self;
+let dpi = window.devicePixelRatio;
+let img = new Image();
+let canvas = document.getElementById("board");
+let ctx = canvas.getContext("2d");
+let turn;
+let tradeState = false;
+let ourProps=[];
+let theirProps=[];
+let ourMoney=0;
+let theirMoney=0;
+let receiver;
+let proposer;
+let payedOff = true;
+let moneyOwed = 0;
+let ownerOwed = null;
+let brown;
+let lightblue;
+let pink;
+let orange;
+let red;
+let yellow;
+let green;
+let darkblue;
+let xyz=0;
+let myName;
+let o=[];
+let maxBid=0;
+let boolProp;
+let done = false;
+let timeOutFunc;
+let intervalFunc;
+let justPayed = false;
+o[1]= new Image();
+o[2]= new Image();
+o[3]= new Image();
+o[4]= new Image();
+o[5]= new Image();
+socket = io();
   socket.emit('getMediumLobby');
 
   socket.on('id', function (data) {
@@ -418,6 +249,7 @@
 
   socket.on('startGame', function (data) {
       waitingDiv.style.display = 'none';
+        document.getElementById("div2").style.display="block";
       row.style.display = 'block';
       gestore.style.display = 'block';
       playersTemp = data;
@@ -429,7 +261,6 @@
           let p = "p" + i;
           let m= "m" + i;
           let k= "k" + i;
-          console.log(playersTemp[i].id + " " + playersTemp[i].name);
           if(players[i].id==id){
             self = players[i];
             document.getElementById(p).innerHTML =  "(sei tu) " + players[i].name;
@@ -439,13 +270,365 @@
           }
           document.getElementById(m).innerHTML =  "money: " + players[i].money;
           document.getElementById(k).innerHTML =  "coins: " + players[i].coins;
-          document.getElementById(p).style.background=colors[i];
         }
+      }
+      let array2=document.getElementsByClassName("divblock");
+      for(let k=0;k<array2.length;k++){
+        array2[k].style.display="block";
       }
       createCanvas();
   });
 
+
+  socket.on('newHighestBid', function(data){
+    //aggiorna la div con la puntata più alta
+      maxBid=data;
+      document.getElementById("auctionprice").innerHTML=data;
+  });
+
+  socket.on('startAuction', function(data){
+    //fa apparire al player la pagina dell'asta
+    document.getElementById("auctionprice").innerHTML=maxBid;
+    document.getElementById("auctionproperty").innerHTML=data.name;
+    document.getElementById("auctiondiv").style.display="block";
+  });
+
+  socket.on('turn', function(data) {
+    //fa iniziare il turno a un giocatore
+    turn = data;
+    if (turn == self.id)
+      startTurn();
+  });
+
+  socket.on('getOutOfJailFreeUpdate', function(data) {
+    //aggiorna l'attributo del player relativo alla carta per l'uscita dalla prigione
+    let player = data;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if (player.getOutOfJailFree) {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' now has a GetOutOfJailCard');
+        } else {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' used his GetOutOfJailCard');
+        }
+      }
+    }
+  })
+
+  socket.on('updatePosPlayer', function(data){
+    //aggiorna la posizione di un player
+    let player = data[0];
+    let desc = data[1];
+    let newPos = player.pos;
+    let oldPos;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+        if (players[i].id == player.id) {
+          oldPos = players[i].pos;
+          updatePosPlayer(players[i], oldPos, newPos, desc);
+        }
+    }
+    if (player.id == id && !player.jail)
+      socket.emit('handlePlayer', self);
+  });
+
+  socket.on('genericUpdate', function(data) {
+    //chiama la funzione per mandare una stringa a tutti i player
+    updateScroll(data);
+  });
+
+  socket.on('updateMoneyPlayer', function(data) {
+    //aggiorna i money di un player
+    let p;
+    if(data[0] != 0) {
+      for (let i = 0; i < players.length; i ++)
+      if(players[i]!=null)
+        if (players[i].id == data[1].id) {
+          players[i].updateMoney(data[0]);
+          p = players[i];
+          let str = 'm' + p.id;
+          document.getElementById(str).innerHTML = "money: " + p.money;
+          if(players[i].id == self.id) {
+            if(!payedOff) {
+              if(self.money >= moneyOwed)
+                payedOff = true;
+            }
+          }
+        }
+        if(data[2] != null)
+          updateScroll(data[2]);
+    }
+  });
+
+  socket.on('jailUpdate', function(data) {
+    //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
+    //puo essere cambiato il suo jail count, ovvero quanti turni è in prigione
+    let player = data[0];
+    let double = data[1];
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if (players[i].id == player.id) {
+        players[i].jail = player.jail;
+        if (player.id != self.id) {
+          if (player.jail == false) {
+            str = player.name + ' is out of jail';
+            players[i].jailCount = 0;
+            updateScroll(str);
+          } else {
+            str = player.name + ' is in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          if (player.jail == true) {
+            //socket.emit('endturn');
+          } else {
+            self.jailCount = 0;
+          }
+        }
+      }
+    }
+
+  });
+
+  socket.on('jailCountUpdate', function(data) {
+    //tiene conto di quanti turni è stato in prigione un player e aggiorna in base a quel numero
+    let player = data;
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if (players[i].id == player.id) {
+        if (player.id != self.id) {
+          players[i].jailCount = player.jailCount;
+          if (player.jailCount != 0) {
+            str = player.name + ' is still in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          players[i].jailCount = player.jailCount;
+        }
+      }
+    }
+  });
+
+  socket.on('unownedProperty', function(data) {
+    //data è un oggetto di tipo Property
+    //questo viene ricevuto solo dal client interessato, non da tutti
+    //mostra la descrizione di una proprietà(se non posseduta da nessuno) quando il player ci finisce sopra
+    gestore.style.display="none";
+   buyProperty.style.display="block";
+   let propTemp=data[1];
+   let type = data[2];
+   let frase;
+          if (type == 'HouseProperty') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0= "rendita: " + propTemp.housePrices[0];
+             let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
+             let r2= "rendita con 2 case: " + propTemp.housePrices[2];
+             let r3= "rendita con 3 case: " + propTemp.housePrices[3];
+             let r4= "rendita con 4 case: " + propTemp.housePrices[4];
+             let r5= "rendita con albergo: " + propTemp.housePrices[5];
+             let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
+             frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
+           } else if (type == 'Station') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r1= "rendita con 1 stazione: " + propTemp.rentPrices[0];
+             let r2= "rendita con 2 stazioni: " + propTemp.rentPrices[1];
+             let r3= "rendita con 3 stazioni: " + propTemp.rentPrices[2];
+             let r4= "rendita con 4 stazioni: " + propTemp.rentPrices[3];
+             frase= n + "<br>" + c + "<br>" + r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4;
+           } else if (type == 'Services') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0 = "Se si possiede una proprieta di tipo Services, la rendita è: 4 x il numero dei dadi tirati";
+             let r1 = "Se si possiedono entrambe le proprieta di tipo Services, la rendita è: 10 x il numero dei dadi tirati";
+             frase = n + "<br>" + c + "<br>" + r0 + "<br>"+ r1;
+           }
+           document.getElementById("description").innerHTML=frase;
+           if(propTemp.cost>self.money){
+             boolProp=false;
+           }else{
+             boolProp=true;
+           }
+  });
+
+  socket.on('addProp', function(data) {
+    //aggiorna una proprietà a un player
+    let playerArrived = data[1];
+    let prop = data[0];
+    let player = players[playerArrived.id];
+    let str = data[2];
+    let tipoProp = data[3];
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if (players[i].id != self.id) {
+          players[i].addProp(prop);
+          if(tipoProp == 1) {
+            players[i].stations.push(prop);
+          }
+          else if(tipoProp == 2) {
+            players[i].services.push(prop);
+          }
+        } else {
+          self.addProp(prop);
+          if(tipoProp == 1) {
+            players[i].stations.push(prop);
+          }
+          else if(tipoProp == 2) {
+            players[i].services.push(prop);
+          }
+          updateSelfProps();
+        }
+      }
+    }
+    updateScroll(str);
+  })
+
+  socket.on('endMenu', function(data) {
+    //fa apparire il menu per la trade,buildhouse,ecc dopo aver girato i dadi
+    endMenu(data);
+  });
+
+  socket.on('playerDisconnected', function(data) {
+    let playerDisc = players[data.id];
+    let pId = 'p' + playerDisc.id;
+    let mId = 'm' + playerDisc.id;
+    let kId = 'k' + playerDisc.id;
+    document.getElementById(pId).style.display="none";
+    document.getElementById(mId).style.display="none";
+    document.getElementById(kId).style.display="none";
+    players[data.id] = null;
+    updateScroll(data.name + ' disconnected');
+  });
+
+  socket.on('youHaveWon', function() {
+    //appare quando vinci
+    document.getElementById("haivinto").style.display="block";
+    setTimeout(function() {
+      socket.disconnect();
+      window.open("http://localhost:1337/client/Menu.html", "_self");
+    }, 3000);
+  })
+
+  socket.on('tradeProposal', function(data) {
+    //si attiva quando un player vuole fare una trade con me
+    proposer = data[0];
+    theirProps = data[1];
+    ourProps = data[2];
+    theirMoney = data[3];
+    ourMoney = data[4];
+    let str = "";
+    let str3 = "";
+    document.getElementById("gestore").style.display="none";
+    document.getElementById("offer").style.display="block";
+    for(let i=0;i<ourProps.length;i++){
+      if(ourProps != [])
+        str+= ourProps[i].name + "<br>";
+    }
+    for(let i=0;i<theirProps.length;i++){
+      if (theirProps != [])
+        str3+= theirProps[i].name + "<br>";
+    }
+    document.getElementById("offerreceiver").innerHTML=self.name +"<br>i soldi richiesti: " + ourMoney+ "<br>Le tue proprietà richieste:<br>" + str;
+    document.getElementById("offerproposer").innerHTML=proposer.name +"<br>i soldi offerti: " + theirMoney+ "<br>Le tue proprietà offerte:<br>" + str3;
+  })
+
+  socket.on('removeProp', function(data) {
+    //rimuove una proprietà da un player
+    let prop = data[0];
+    let playerArrived = data[1];
+    let player = players[playerArrived.id];
+    let str = data[2];
+    let tipoProp = data[3];
+    let boo = false;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+          boo = true;
+          for (let j = 0; j < players[i].props.length; j ++) {
+            if(prop.id == players[i].props[j].id) {
+              players[i].removeProp(players[i].props[j]);
+            }
+          }
+          if(tipoProp == 1) {
+            for (let j = 0; j < players[i].stations.length; j ++) {
+              if(prop.id == players[i].stations[j].id) {
+                players[i].stations.splice(j, 1);
+              }
+            }
+          } else if (tipoProp == 2) {
+            for (let j = 0; j < players[i].services.length; j ++) {
+              if(prop.id == players[i].services[j].id) {
+                players[i].services.splice(j, 1);
+              }
+            }
+          }
+        }
+    }
+    updateSelfProps();
+    updateScroll(str);
+  })
+
+  socket.on('updateHouses', function(data) {
+    //aggiorna il numero di case di un player e le stampa nel canvas
+    let player = data[0];
+    let prop = data[1];
+    let numHousesDelta = data[2];
+    let str = player.name + ' added ' + numHousesDelta + ' to ' + prop.name;
+    updateScroll(str);
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if(player.id != self.id) {
+          let pl = players[i];
+          for (let l = 0; l < pl.props.length; l ++) {
+            if (pl.props[l].id == prop.id) {
+              pl.props[l].numHouses += numHousesDelta;
+              pl.props[l].rent = prop.rent;
+            }
+          }
+          paint();
+        } else {
+          paint();
+        }
+      }
+    }
+  });
+
+  socket.on('mortgageUpdate', function(data) {
+    //aggiorna l'attributo mortgage di una proprietà
+    let player = data[0];
+    let prop = data[1];
+    updateScroll(data[2]);
+    for(let i = 0; i < players.length; i ++) {
+      if(players[i] != null) {
+        if(players[i].id == player.id) {
+          for(let j = 0; j < players[i].props.length; j ++) {
+            if(prop.id == players[i].props[j].id) {
+              players[i].props[j].state = prop.state;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  socket.on('endAuction', function() {
+    //termina forzatamente l'asta
+    document.getElementById("auctiondiv").style.display="none";
+    maxBid = 0;
+  });
+
   let createCanvas = function () {
+    //creazione canvas, dimensione gestore
+    document.getElementById("board").style.display="block";
     let H = $(window).height();
     let W = $(window).width();
     let a = (W - H) / 2;
@@ -456,12 +639,16 @@
     $(".column").width(a);
     $(".position").width(boardW-(cas*3));
     $(".position").offset({ top: cas+100,left:(cas*1.5) + $(".column").width() });
+    $("#us").height(H-($("#topleft").height())-10);
+    $("#them").height(H-($("#topright").height())-10);
+    $("#leftdivdice").width((($(".position").width()-300)/2)-5);
+    $("#rightdivdice").width((($(".position").width()-300)/2)-5);
     fix_dpi();
     createSquares();
     img.onload = function () {
       paint();
     }
-    img.src = "http://localhost:1337/client/img/monopoly.png";
+    img.src = "http://localhost:1337/client/img/monopoly.jpg";
     o[1].src = "http://localhost:1337/client/img/1.png";
     o[2].src = "http://localhost:1337/client/img/2.png";
     o[3].src = "http://localhost:1337/client/img/3.png";
@@ -470,6 +657,7 @@
   }
 
   function fix_dpi() {
+    //serve per sistemare l'immagine
     let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
     let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
     canvas.setAttribute('height', style_height * dpi);
@@ -477,7 +665,7 @@
   }
 
   let createSquares = function() {
-    //let boardW=$("#board").width();
+    //determina le coordinate delle caselle e di dove appaiono le case
     let boardW = canvas.width;
     let w=boardW/1500;
     let calcola=function(i){
@@ -594,16 +782,14 @@
 
   }
 
-  socket.on('turn', function(data) {
-    turn = data;
-    if (turn == self.id)
-      startTurn();
-  });
+
 
   let startTurn = function() {
-    if (!self.jail)
+    //nuovo turno per il giocatore
+    if (!self.jail){
       dado.style.visibility = 'visible';
-    else {
+      $('#dado').prop('disabled', false);
+    }else {
       socket.emit('stillInJail', self);
       dado.style.visibility = 'visible';
       document.getElementById("payjail").style.visibility='visible';
@@ -613,50 +799,39 @@
     }
   }
 
-  let odd = 0;
+
   let rolldice = function() {
+    //calcola i dadi e li manda al server
+    $('#dado').prop('disabled', true);
     dado.style.visibility='hidden';
+
     document.getElementById("payjail").style.visibility='hidden';
     document.getElementById("getoutofjailfree").style.visibility='hidden';
     let x = Math.floor(Math.random() * 6) + 1;
     let y = Math.floor(Math.random() * 6) + 1;
-    //let x = 2;
-    //let y = 5;
+    let str13="http://localhost:1337/client/img/dice" +x +".png";
+    let str14="http://localhost:1337/client/img/dice" +y+".png" ;
+    $('#leftdice').attr("src", str13);
+    $('#rightdice').attr("src", str14);
+    document.getElementById("leftdice").style.visibility="visible";
+    document.getElementById("rightdice").style.visibility="visible";
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
     pack.push(y);
     socket.emit('dice', pack);
-    //updatePosition(x+y, str);
-
-
-    //dovremo spostare
-    //socket.emit('endTurn');
   }
 
   let getOutOfJailFree = function() {
-    //getOutOfJailFree.style.visibility = 'hidden';
+    //uscire dalla prigione con la carta
     socket.emit('getOutOfJailFree', self);
     document.getElementById("getoutofjailfree").style.visibility='hidden';
   }
 
-  socket.on('getOutOfJailFreeUpdate', function(data) {
-    let player = data;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-      if(players[i].id == player.id) {
-        if (player.getOutOfJailFree) {
-          players[i].getOutOfJailFree = player.getOutOfJailFree;
-          updateScroll(player.name + ' now has a GetOutOfJailCard');
-        } else {
-          players[i].getOutOfJailFree = player.getOutOfJailFree;
-          updateScroll(player.name + ' used his GetOutOfJailCard');
-        }
-      }
-    }
-  })
+
 
   let payJail = function() {
+    //pagamento per uscire dalla prigione
     if (self.money >= 50) {
       document.getElementById("payjail").style.visibility='hidden';
       socket.emit('payJail', self);
@@ -664,30 +839,11 @@
       updateScroll("You can't leave jail as you need to pay 50 which you don't have");
     }
   }
-  /*let updatePosition = function(diceNumber, str) {
-    oldPos = self.pos;
-    newPos = self.dicePos(diceNumber);
-    updatePosPlayer(self, oldPos, newPos, str);
-    socket.emit("handlePlayer", self);
-  }*/
 
-  socket.on('updatePosPlayer', function(data){
-    let player = data[0];
-    let desc = data[1];
-    let newPos = player.pos;
-    let oldPos;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-        if (players[i].id == player.id) {
-          oldPos = players[i].pos;
-          updatePosPlayer(players[i], oldPos, newPos, desc);
-        }
-    }
-    if (player.id == id && !player.jail)
-      socket.emit('handlePlayer', self);
-  });
+
 
   let updatePosPlayer = function(player, oldPos, newPos, str) {
+    //aggiorna la posizione di un player
     player.setPos(newPos);
     let stringa = player.name + " " + str;
     updateScroll(stringa);
@@ -695,197 +851,25 @@
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }
 
-  socket.on('genericUpdate', function(data) {
-    //data è una stringa, devi solo inserirla nella scroll
-    updateScroll(data);
-  });
-
-  socket.on('updateMoneyPlayer', function(data) {
-    //data è un array [rent, player, description]
-    let p;
-    if(data[0] != 0) {
-      for (let i = 0; i < players.length; i ++)
-      if(players[i]!=null)
-        if (players[i].id == data[1].id) {
-          players[i].updateMoney(data[0]);
-          p = players[i];
-          let str = 'm' + p.id;
-          document.getElementById(str).innerHTML = "money: " + p.money;
-          if(players[i].id == self.id) {
-            if(!payedOff) {
-              if(self.money >= moneyOwed)
-                payedOff = true;
-            }
-          }
-        }
-        if(data[2] != null)
-          updateScroll(data[2]);
-    }
-
-    //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
-    //Crea una funzione che quando i soldi di un player (incluso self) vengono modificati, viene modificata automaticamente la div.
-    //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
-    //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
-    //usare lo stesso array per tutti
-
-
-  });
-
-  socket.on('jailUpdate', function(data) {
-    //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
-    //puo essere cambiato il suo jail count, ovvero quanti turni è in prigione
-    let player = data[0];
-    let double = data[1];
-    let str;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-      if (players[i].id == player.id) {
-        players[i].jail = player.jail;
-        if (player.id != self.id) {
-          if (player.jail == false) {
-            str = player.name + ' is out of jail';
-            players[i].jailCount = 0;
-            updateScroll(str);
-          } else {
-            str = player.name + ' is in jail';
-            updateScroll(str);
-          }
-        } else {
-          //sei tu
-          if (player.jail == true) {
-            //socket.emit('endturn');
-          } else {
-            self.jailCount = 0;
-          }
-        }
-      }
-    }
-
-  });
-
-  socket.on('jailCountUpdate', function(data) {
-    let player = data;
-    let str;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-      if (players[i].id == player.id) {
-        if (player.id != self.id) {
-          players[i].jailCount = player.jailCount;
-          if (player.jailCount != 0) {
-            str = player.name + ' is still in jail';
-            updateScroll(str);
-          }
-        } else {
-          //sei tu
-          players[i].jailCount = player.jailCount;
-          if (player.jailCount != 0)
-            jailOptions();
-        }
-      }
-    }
-  });
-
-  let jailOptions = function() {
-    //mostra opzioni per quando sei in prigione, quindi rolldice, paga oppure usa carta se ce l'hai
-
-  }
-
   let propertyRisp = function (risp){
-    let str;
-    if(risp){
-      str="buy";
-   }else {
-     str="auction";
-     }
-     socket.emit('buyOrAuction', str);
-     buyProperty.style.display="none";
-     gestore.style.display="block";
+    //si attiva quando si preme su buy o auction per una nuova proprietà, manda al server la scelta
+    if(risp && boolProp==false){
+      alert("you don't have enough money");
+    }else{
+      let str;
+      if(risp){
+        str="buy";
+      }else {
+         str="auction";
+         }
+         socket.emit('buyOrAuction', str);
+         buyProperty.style.display="none";
+         gestore.style.display="block";
+   }
   }
-
-  socket.on('unownedProperty', function(data) {
-    //data è un oggetto di tipo Property
-    //questo viene ricevuto solo dal client interessato, non da tutti
-    //qua bisogna mettere sul canvas due tasti, Buy e Auction per dare una scelta al giocatore, e magari mettere una descrizione della
-    //property su cui è capitato (hai tutte le informazioni in Property)
-    //poi ci sara un oncclick metodo che inviera al server la scelta
-    //fai in modo che i due bottoni invochino la stessa funzione, che pero fa una socket.emit diversa nei due casi:
-    //socket.emit('buyOrAuction', str), dove str = 'buy' o str = 'auction'
-    gestore.style.display="none";
-   buyProperty.style.display="block";
-   let propTemp=data[1];
-   let type = data[2];
-   let frase;
-          //sei tu
-          if (type == 'HouseProperty') {
-
-             let n = "Nome proprietà: "+ propTemp.name;
-             let c=  "Costo di acquisto: "+ propTemp.cost;
-             let r0= "rendita: " + propTemp.housePrices[0];
-             let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
-             let r2= "rendita con 2 case: " + propTemp.housePrices[2];
-             let r3= "rendita con 3 case: " + propTemp.housePrices[3];
-             let r4= "rendita con 4 case: " + propTemp.housePrices[4];
-             let r5= "rendita con albergo: " + propTemp.housePrices[5];
-             let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
-             frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
-             //document.getElementById("description").style.border-color=propTemp.colour;
-           } else if (type == 'Station') {
-
-             let n = "Nome proprietà: "+ propTemp.name;
-             let c=  "Costo di acquisto: "+ propTemp.cost;
-             let r1= "rendita con 1 stazione: " + propTemp.rentPrices[0];
-             let r2= "rendita con 2 stazioni: " + propTemp.rentPrices[1];
-             let r3= "rendita con 3 stazioni: " + propTemp.rentPrices[2];
-             let r4= "rendita con 4 stazioni: " + propTemp.rentPrices[3];
-             frase= n + "<br>" + c + "<br>" + r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4;
-           } else if (type == 'Services') {
-             let n = "Nome proprietà: "+ propTemp.name;
-             let c=  "Costo di acquisto: "+ propTemp.cost;
-             let r0 = "Se si possiede una proprieta di tipo Services, la rendita è: 4 x il numero dei dadi tirati";
-             let r1 = "Se si possiedono entrambe le proprieta di tipo Services, la rendita è: 10 x il numero dei dadi tirati";
-             frase = n + "<br>" + c + "<br>" + r0 + "<br>"+ r1;
-           }
-           document.getElementById("description").innerHTML=frase;
-
-  });
-
-socket.on('addProp', function(data) {
-  let playerArrived = data[1];
-  let prop = data[0];
-  let player = players[playerArrived.id];
-  let str = data[2];
-  let tipoProp = data[3];
-  for (let i = 0; i < players.length; i ++) {
-    if(players[i]!=null)
-    if(players[i].id == player.id) {
-      if (players[i].id != self.id) {
-        players[i].addProp(prop);
-        if(tipoProp == 1) {
-          players[i].stations.push(prop);
-        }
-        else if(tipoProp == 2) {
-          players[i].services.push(prop);
-        }
-        console.log(players[i].props[0].name);
-        //aggiorna div
-      } else {
-        //sei tu
-        self.addProp(prop);
-        if(tipoProp == 1) {
-          players[i].stations.push(prop);
-        }
-        else if(tipoProp == 2) {
-          players[i].services.push(prop);
-        }
-        updateSelfProps();
-        //aggiorna div
-      }
-    }
-  }
-  updateScroll(str);
-})
 
   let updateScroll = function(str) {
+    //aggiorna il test della div per gli eventi
     let scrollDiv= document.getElementById("scrollBox");
     let sdiv=scrollDiv.innerHTML;
     scrollDiv.innerHTML = str + "<br>" + sdiv ;
@@ -893,6 +877,7 @@ socket.on('addProp', function(data) {
 
 
   let paint = function() {
+    //disegna il canvas
     ctx.clearRect(0, 0, canvas.width, canvas.width);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
     for (let i = 0; i < players.length; i ++) {
@@ -905,6 +890,7 @@ socket.on('addProp', function(data) {
     }
   }
   let drawHouses = function(properties){
+    //disegna le case sul canvas
     for(let i=0;i<properties.length;i++){
       if(properties[i].numHouses==1){
         ctx.drawImage(o[1], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
@@ -920,7 +906,7 @@ socket.on('addProp', function(data) {
     }
   }
   let drawPedine = function(pedina, x, y) {
-    //alert("hey");
+    //disegna le pedine sul canvas
     ctx.fillStyle = pedina.color;
     ctx.fillRect(x, y, pedina.w, pedina.h);
     ctx.fillStyle = "#000000";
@@ -928,30 +914,22 @@ socket.on('addProp', function(data) {
 
   }
 
-  socket.on('endMenu', function(data) {
-    endMenu(data);
-  });
-
-  let done = false;
-  let timeOutFunc;
-  let intervalFunc;
-
   let setDone = function() {
+    //gestisce il delay
   this.done= true;
   clearTimeout(timeOutFunc);
   }
 
   let setPayedOff = function() {
+    //controlla se hai pagato il debito
     payedOff = true;
     clearInterval(intervalFunc);
     moneyOwed = 0;
     ownerOwed = null;
   }
 
-  let justPayed = false;
-
   let endMenu = function(data) {
-
+    //fa apparire l'end menu
     let boo = data[0];
     let money = data[1];
     let owner = data[2];
@@ -972,11 +950,14 @@ socket.on('addProp', function(data) {
       moneyOwed = money;
       payedOff = false;
 
-      timeOutFunc = setTimeout(function(){ document.getElementById("endmenu").style.visibility="visible"; document.getElementById("end").style.display="none"; setDone();}, 2500);
+      timeOutFunc = setTimeout(function(){
+        document.getElementById("endmenu").style.display="visible";
+        document.getElementById("end").style.display="none";
+        setDone();
+      }, 2500);
       intervalFunc = setInterval(function() {
         if(payedOff) {
-          //document.getElementById("end").style.visibility="visible";
-          let pack = [money, owner]
+          let pack = [money, owner];
           socket.emit('payedDebt', pack);
           document.getElementById("endmenu").style.visibility="hidden";
           justPayed = true;
@@ -984,45 +965,34 @@ socket.on('addProp', function(data) {
         }
       }, 300);
     }
-    //opzione 1: finisci il turno => emitti socket.emit('endTurn');
-    //opzione 2: costruzione case => socket.emit('houseBuild');
-    //opzione 3: trading => socket.emit('trade');
-    //opzione 4: dichiara bancarotta => socket.emit('bankrupt');
   }
 
   let endTurn = function() {
-    socket.emit('endTurn');
+    //quando si preme su end turn, notifica al server la fine del turno
     document.getElementById("endmenu").style.visibility="hidden";
-  }
-
-  let houseBuild = function(property, build) {
-    //build è un boolean, false se togli una casa, true se costruisci
-    //viene invocata sempre questa funzione una casa alla volta
-    //se numCase è uguale a zero, togliere una casa vuol dire ipotecare
-    let prop = self.props[property];
-    let pack = [];
-    pack.push(prop);
-    pack.push(build);
-    socket.emit('houseBuild', pack);
+    document.getElementById("leftdice").style.visibility="hidden";
+    document.getElementById("rightdice").style.visibility="hidden";
+    socket.emit('endTurn');
   }
 
   let trade = function() {
+    //fa apparire la finestra di trade
     document.getElementById("gestore").style.display="none";
     document.getElementById("tradepage").style.display="block";
     tradeState = true;
     updateSelfProps();
-    // settare finestra
-
   }
 
   let declareBankruptcy = function() {
+    //fa apparire la pagina per poter abbandonare il gioco, viene chiamata premendo il tasto quit
     document.getElementById("gestore").style.display="none";
     document.getElementById("abbandonagioco").style.display="block";
   }
 
   let bankrupt = function() {
+    //viene chiamata quando si preme il tasto per uscire dal gioco, rimanda al menu iniziale
     let pack = [payedOff, ownerOwed];
-    socket.disconnect();
+    socket.disconnect(pack);
     document.getElementById("abbandonagioco").style.display="none";
     document.getElementById("haiperso").style.display="block";
     setTimeout(function() {
@@ -1031,50 +1001,37 @@ socket.on('addProp', function(data) {
   }
 
   let noExit = function() {
+    //rifiuta la possibilità di abbandore il gioco
     document.getElementById("abbandonagioco").style.display="none";
     document.getElementById("gestore").style.display="block";
   }
 
-
-  socket.on('playerDisconnected', function(data) {
-    let playerDisc = players[data.id];
-    let pId = 'p' + playerDisc.id;
-    let mId = 'm' + playerDisc.id;
-    let kId = 'k' + playerDisc.id;
-    document.getElementById(pId).style.display="none";
-    document.getElementById(mId).style.display="none";
-    document.getElementById(kId).style.display="none";
-    players[data.id] = null;
-    updateScroll(data.name + ' disconnected');
-  });
-
-  socket.on('youHaveWon', function() {
-    document.getElementById("haivinto").style.display="block";
-    setTimeout(function() {
-      socket.disconnect();
-      window.open("http://localhost:1337/client/Menu.html", "_self");
-    }, 3000);
-  });
-
   p0.onclick= function(){
+    //click sulla div di player 1
     viewProps(0);
   }
   p1.onclick= function(){
+    //click sulla div di player 2
     viewProps(1);
   }
   p2.onclick= function(){
+    //click sulla div di player 3
     viewProps(2);
   }
   p3.onclick= function(){
+    //click sulla div di player 4
     viewProps(3);
   }
   p4.onclick= function(){
+    //click sulla div di player 5
     viewProps(4);
   }
   p5.onclick= function(){
+    //click sulla div di player 6
     viewProps(5);
   }
   $(document).ready(function(){
+    //prende i value delle checkbox delle proprietà quando vengono selezionate in una trade
         $(".infoPlayer").click(function(){
           if (tradeState==true){
               $(".loro").prop("checked", false);
@@ -1088,7 +1045,7 @@ socket.on('addProp', function(data) {
               }
           });
         $('input[class="io"]').click(function(){
-          	let a = $(this).attr("value");
+            let a = $(this).attr("value");
             if($(this).is(":checked")){
                 ourProps.push(a);
             }
@@ -1096,8 +1053,8 @@ socket.on('addProp', function(data) {
                 ourProps.splice( ourProps.indexOf('a'), 1 );
             }
         });
-		$('input[class="loro"]').click(function(){
-      	let a = $(this).attr("value");
+    $('input[class="loro"]').click(function(){
+        let a = $(this).attr("value");
         if($(this).is(":checked")){
                 theirProps.push(a);
         }
@@ -1108,6 +1065,7 @@ socket.on('addProp', function(data) {
 
     });
     let updateSelfProps = function(){
+      //aggiorna la lista delle proprie proprietà nel div a sinistra
       let arr2 = document.getElementsByClassName("iodiv");
       for (let i = 0; i < arr2.length; i ++) {
         arr2[i].style.display="none";
@@ -1119,20 +1077,17 @@ socket.on('addProp', function(data) {
         for (let i = 0; i < self.props.length; i ++) {
           if(self.props[i] != null) {
             let j = 'u' + self.props[i].id;
-            //mostra la div della proprieta
-            document.getElementById(j).style.display='block';
+            document.getElementById(j).style.display='inline';
           } else {
             let j = 'u' + self.props[i].id;
             document.getElementById(j).style.display='none';
           }
         }
        if(tradeState) {
-        //trade, quindi anche checkbox
         for (let i = 0; i < self.props.length; i ++) {
           if(self.props[i] != null) {
             let j = 'cu' + self.props[i].id;
-            //mostra la div della proprieta
-            document.getElementById(j).style.display='block';
+            document.getElementById(j).style.display='inline';
           } else {
             let j = 'cu' + self.props[i].id;
             document.getElementById(j).style.display='none';
@@ -1141,14 +1096,13 @@ socket.on('addProp', function(data) {
       }
     }
     let viewProps = function(idDiv) {
-      document.getElementById("them").style.visibility='visible';
+      //aggiorna la div a destra, con le proprietà del player su cui clicco
       //disattivo le div attive precedenti
-
       //controllo di non avere cliccato su me stesso
-
+      document.getElementById("them").style.visibility='visible';
       if (idDiv != id) {
 
-        document.getElementById("playername").style.display="block";
+        document.getElementById("playername").style.display="inline";
         document.getElementById("playername").innerHTML=players[idDiv].name;
         let arr = document.getElementsByClassName("lorodiv");
         for (let i = 0; i < arr.length; i ++) {
@@ -1163,8 +1117,7 @@ socket.on('addProp', function(data) {
           for (let i = 0; i < player.props.length; i ++) {
             if(player.props[i] != null) {
               let j = 'l' + player.props[i].id;
-              //mostra la div della proprieta
-              document.getElementById(j).style.display='block';
+              document.getElementById(j).style.display='inline';
             } else {
               let j = 'l' + player.props[i].id;
               document.getElementById(j).style.display='none';
@@ -1176,12 +1129,10 @@ socket.on('addProp', function(data) {
            for (let i = 0; i < arr2.length; i ++) {
              arr2[i].style.display="none";
            }
-          //trade, quindi anche checkbox
           for (let i = 0; i < player.props.length; i ++) {
             if(player.props[i] != null) {
               let j = 'cl' + player.props[i].id;
-              //mostra la div della proprieta
-              document.getElementById(j).style.display='block';
+              document.getElementById(j).style.display='inline';
             } else {
               let j = 'cl' + player.props[i].id;
               document.getElementById(j).style.display='none';
@@ -1191,28 +1142,10 @@ socket.on('addProp', function(data) {
       }
     }
 
-    socket.on('tradeProposal', function(data) {
-      proposer = data[0];
-      theirProps = data[1];
-      ourProps = data[2];
-      theirMoney = data[3];
-      ourMoney = data[4];
-      let str = "";
-      let str3 = "";
-      document.getElementById("gestore").style.display="none";
-      document.getElementById("offer").style.display="block";
-      for(let i=0;i<ourProps.length;i++){
-        if(ourProps != [])
-          str+= ourProps[i].name + "<br>";
-      }
-      for(let i=0;i<theirProps.length;i++){
-        if (theirProps != [])
-          str3+= theirProps[i].name + "<br>";
-      }
-      document.getElementById("offerreceiver").innerHTML=self.name +"<br>i soldi richiesti: " + ourMoney+ "<br>Le tue proprietà richieste:<br>" + str;
-      document.getElementById("offerproposer").innerHTML=proposer.name +"<br>i soldi offerti: " + theirMoney+ "<br>Le tue proprietà offerte:<br>" + str3;
-    })
+
+
     let proposeTrade = function(){
+      //propongo un trade a un player, il server manda la richiesta all'altro player
       ourMoney=$("#ourmoney").val();
       theirMoney=$("#theirmoney").val();
       let pack =[receiver,ourProps,theirProps,ourMoney,theirMoney];
@@ -1220,6 +1153,7 @@ socket.on('addProp', function(data) {
       exitTrade();
     }
     let exitTrade= function(){
+      //annullo il trade
       $(".loro").prop("checked", false);
       $(".io").prop("checked", false);
       theirProps=[];
@@ -1256,6 +1190,7 @@ socket.on('addProp', function(data) {
     }
 
     let sendTradeResponse = function(response) {
+      //rispondo al trade che mi è stato proposto
       let pack = [proposer, theirProps, ourProps, theirMoney, ourMoney, response];
       document.getElementById("gestore").style.display="block";
       document.getElementById("offer").style.display="none";
@@ -1267,46 +1202,8 @@ socket.on('addProp', function(data) {
       proposer = null;
     }
 
-    socket.on('removeProp', function(data) {
-      let prop = data[0];
-      let playerArrived = data[1];
-      let player = players[playerArrived.id];
-      let str = data[2];
-      let tipoProp = data[3];
-      let boo = false;
-      for (let i = 0; i < players.length; i ++) {
-        if(players[i]!=null) {
-          if(players[i].id == player.id) {
-            boo = true;
-            for (let j = 0; j < players[i].props.length; j ++) {
-              if(prop.id == players[i].props[j].id) {
-                players[i].removeProp(players[i].props[j]);
-              }
-            }
-            if(tipoProp == 1) {
-              for (let j = 0; j < players[i].stations.length; j ++) {
-                if(prop.id == players[i].stations[j].id) {
-                  players[i].stations.splice(j, 1);
-                }
-              }
-            } else if (tipoProp == 2) {
-              for (let j = 0; j < players[i].services.length; j ++) {
-                if(prop.id == players[i].services[j].id) {
-                  players[i].services.splice(j, 1);
-                }
-              }
-            }
-          }
-        }
-      }
-        for (let i = 0; i < self.props.length; i ++) {
-          console.log(self.props[i].name);
-        }
-        updateSelfProps();
-
-      updateScroll(str);
-    })
     let colorSelf=function(){
+      //determina il numero di proprietà che possiedo per ciascun colore
       brown=0;
       lightblue=0;
       pink=0;
@@ -1347,6 +1244,7 @@ socket.on('addProp', function(data) {
       }
     }
       let showHouseButton=function(){
+        //controlla se possiedo il numero massimo di proprietà per ciascun colore
         document.getElementById("housenumber").style.display="none";
         let bool=false;
         colorSelf();
@@ -1399,13 +1297,14 @@ socket.on('addProp', function(data) {
           }
           if(bool==true){
             let j = 'b' + self.props[i].id;
-            document.getElementById(j).style.display='block';
+            document.getElementById(j).style.display='inline';
             bool=false;
           }
         }
       }
 
       let buyHouses=function(idprop){
+        //fa apparire la pagina per comprare le case delle proprietà
         let str8;
         for(let i=0;i<self.props.length;i++){
           if(self.props[i].id==idprop){
@@ -1553,6 +1452,7 @@ socket.on('addProp', function(data) {
           }
     }
       let annullaBuild=function(){
+        //annulla l'acquisto delle case, torna indietro
         document.getElementById("buyhouse").style.display="none";
         document.getElementById("gestore").style.display="block";
         let arr7 = document.getElementsByClassName("housebutton");
@@ -1562,6 +1462,7 @@ socket.on('addProp', function(data) {
       }
 
       let caseComprate=function(){
+          //manda al server il numero di case comprate/tolte
           let newHouses=($("#optionBox").val()) * 1;
           self.props[xyz].numHouses+=newHouses;
           let pack=[self.props[xyz].id, newHouses];
@@ -1569,31 +1470,10 @@ socket.on('addProp', function(data) {
           showHouseButton();
         }
 
-        socket.on('updateHouses', function(data) {
-          let player = data[0];
-          let prop = data[1];
-          let numHousesDelta = data[2];
-          let str = player.name + ' added ' + numHousesDelta + ' to ' + prop.name;
-          updateScroll(str);
-          for (let i = 0; i < players.length; i ++) {
-            if(players[i]!=null)
-            if(players[i].id == player.id) {
-              if(player.id != self.id) {
-                let pl = players[i];
-                for (let l = 0; l < pl.props.length; l ++) {
-                  if (pl.props[l].id == prop.id) {
-                    pl.props[l].numHouses += numHousesDelta;
-                    pl.props[l].rent = prop.rent;
-                  }
-                }
-                paint();
-              } else {
-                paint();
-              }
-            }
-          }
-        });
+
+
         let getPropertyPosition = function(valore){
+          //restituisce l'indice della proprietà con l'id dato in input
           for(let i=0;i<self.props.length;i++){
             if(self.props[i].id==valore){
               return i;
@@ -1601,6 +1481,7 @@ socket.on('addProp', function(data) {
           }
         }
         let showMortageMenu = function(){
+          //fa apparire la pagina per l'ipoteca
           if(self.props.length==0){
             alert("non hai nessuna proprietà");
           }else{
@@ -1618,226 +1499,199 @@ socket.on('addProp', function(data) {
             colorSelf();
             for (let i = 0; i < self.props.length; i ++) {
               if(self.props[i].state=="active"){
-              switch(self.props[i].colour){
-                case "brown":
-                  if(brown==2){
-                    if(self.props[i].numHouses==0){
-                      bro++;
+                switch(self.props[i].colour){
+                  case "brown":
+                    if(brown==2){
+                      if(self.props[i].numHouses==0){
+                        bro++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
                     }
-                  }else{
-                    appendSelection(self.props[i]);
-                  }
-                  break;
-                case "lightblue":
-                if(lightblue==3){
-                  if(self.props[i].numHouses==0){
-                    lig++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                  break;
-                case "pink":
-                if(pink==3){
-                  if(self.props[i].numHouses==0){
-                    pin++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                  break;
-                case "orange":
-                if(orange==3){
-                  if(self.props[i].numHouses==0){
-                    ora++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                break;
-                case "red":
-                  if(red==3){
-                    if(self.props[i].numHouses==0){
-                      re++;
+                    break;
+                  case "lightblue":
+                    if(lightblue==3){
+                      if(self.props[i].numHouses==0){
+                        lig++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
                     }
-                  }else{
+                    break;
+                  case "pink":
+                    if(pink==3){
+                      if(self.props[i].numHouses==0){
+                        pin++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                    break;
+                  case "orange":
+                    if(orange==3){
+                      if(self.props[i].numHouses==0){
+                        ora++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                    break;
+                  case "red":
+                    if(red==3){
+                      if(self.props[i].numHouses==0){
+                        re++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                    break;
+                  case "yellow":
+                    if(yellow==3){
+                      if(self.props[i].numHouses==0){
+                        yel++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                      break;
+                  case "green":
+                    if(green==3){
+                      if(self.props[i].numHouses==0){
+                        gre++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                      break;
+                  case "darkblue":
+                    if(darkblue==2){
+                      if(self.props[i].numHouses==0){
+                        dar++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                      break;
+                  default:
                     appendSelection(self.props[i]);
-                  }
-                  break;
-                case "yellow":
-                if(yellow==3){
-                  if(self.props[i].numHouses==0){
-                    yel++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
+                    break;
                 }
-                  break;
-                case "green":
-                if(green==3){
-                  if(self.props[i].numHouses==0){
-                    gre++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
+              }else{
+                if(self.money>=self.props[i].unmortgagePrice){
+                  let str10="<option value='" + self.props[i].id + "'>" + self.props[i].name + "</option>";
+                  $('#unmortgageOptionBox').append(str10);
                 }
-                  break;
-                case "darkblue":
-                if(darkblue==2){
-                  if(self.props[i].numHouses==0){
-                    dar++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                  break;
-                default:
-                  appendSelection(self.props[i]);
-                  break;
-              }
-            }else{
-              if(self.money>=self.props[i].unmortgagePrice){
-                let str10="<option value='" + self.props[i].id + "'>" + self.props[i].name + "</option>";
-                $('#unmortgageOptionBox').append(str10);
               }
             }
-          }
             if(bro==2){
-              let idSelectProp = getPropertyPosition(1);
-              let idSelectProp2 = getPropertyPosition(3);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
+                let idSelectProp = getPropertyPosition(1);
+                let idSelectProp2 = getPropertyPosition(3);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
             }
             if(lig==3){
-              let idSelectProp = getPropertyPosition(6);
-              let idSelectProp2 = getPropertyPosition(8);
-              let idSelectProp3 = getPropertyPosition(9);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(6);
+                let idSelectProp2 = getPropertyPosition(8);
+                let idSelectProp3 = getPropertyPosition(9);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(pin==3){
-              let idSelectProp = getPropertyPosition(11);
-              let idSelectProp2 = getPropertyPosition(13);
-              let idSelectProp3 = getPropertyPosition(14);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(11);
+                let idSelectProp2 = getPropertyPosition(13);
+                let idSelectProp3 = getPropertyPosition(14);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(ora==3){
-              let idSelectProp = getPropertyPosition(16);
-              let idSelectProp2 = getPropertyPosition(18);
-              let idSelectProp3 = getPropertyPosition(19);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(16);
+                let idSelectProp2 = getPropertyPosition(18);
+                let idSelectProp3 = getPropertyPosition(19);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(re==3){
-              let idSelectProp = getPropertyPosition(21);
-              let idSelectProp2 = getPropertyPosition(23);
-              let idSelectProp3 = getPropertyPosition(24);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(21);
+                let idSelectProp2 = getPropertyPosition(23);
+                let idSelectProp3 = getPropertyPosition(24);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(yel==3){
-              let idSelectProp = getPropertyPosition(26);
-              let idSelectProp2 = getPropertyPosition(27);
-              let idSelectProp3 = getPropertyPosition(29);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(26);
+                let idSelectProp2 = getPropertyPosition(27);
+                let idSelectProp3 = getPropertyPosition(29);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(gre==3){
-              let idSelectProp = getPropertyPosition(31);
-              let idSelectProp2 = getPropertyPosition(32);
-              let idSelectProp3 = getPropertyPosition(34);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(31);
+                let idSelectProp2 = getPropertyPosition(32);
+                let idSelectProp3 = getPropertyPosition(34);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(dar==2){
-              let idSelectProp = getPropertyPosition(37);
-              let idSelectProp2 = getPropertyPosition(39);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
+                let idSelectProp = getPropertyPosition(37);
+                let idSelectProp2 = getPropertyPosition(39);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
             }
             document.getElementById("mortgage").style.display="block";
             document.getElementById("gestore").style.display="none";
           }
-
         }
 
         let appendSelection = function(myProp){
+          //aggiunge un elemento alla optionbox
           let str4="<option value='" + myProp.id + "'>" + myProp.name + "</option>";
           $('#mortgageOptionBox').append(str4);
         }
 
         let sendMortgageProperty=function(){
+          //manda al server l'id della proprietà che voglio ipotecare
           let mortgageProperty=($("#mortgageOptionBox").val()) * 1;
           socket.emit('sendMortage',mortgageProperty);
           cancelMortgage();
         }
         let sendUnmortgageProperty=function(){
+          //manda al server l'id della proprietà che voglio disepotecare
           let mortgageProperty=($("#unmortgageOptionBox").val()) * 1;
           socket.emit('sendMortage',mortgageProperty);
           cancelMortgage();
         }
         let cancelMortgage=function(){
+          //annulla l'ipoteca, torna alla pagina precedente
           document.getElementById("mortgage").style.display="none";
           document.getElementById("gestore").style.display="block";
         }
 
-        socket.on('mortgageUpdate', function(data) {
-          let player = data[0];
-          let prop = data[1];
-          updateScroll(data[2]);
-          for(let i = 0; i < players.length; i ++) {
-            if(players[i] != null) {
-              if(players[i].id == player.id) {
-                for(let j = 0; j < players[i].props.length; j ++) {
-                  if(prop.id == players[i].props[j].id) {
-                    players[i].props[j].state = prop.state;
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        socket.on('newHighestBid', function(data){
-          //aggiorna la div con la puntata più alta
-          console.log(data);
-            maxBid=data;
-            document.getElementById("auctionprice").innerHTML=data;
-        });
-
-        socket.on('startAuction', function(data){
-          document.getElementById("auctionprice").innerHTML=maxBid;
-          document.getElementById("auctionproperty").innerHTML=data.name;
-          document.getElementById("auctiondiv").style.display="block";
-        });
-
         let newBid = function(){
           //invia al server la nuova bid più alta
           let bid = ($("#textboxauction").val()) * 1;
-          if(bid>maxBid){
-            socket.emit('bid', bid);
+          if(self.money>=bid){
+            if(bid>maxBid){
+              socket.emit('bid', bid);
+            }else{
+              alert("devi fare una puntata superiore a quella massima");
+            }
           }else{
-            alert("devi fare una puntata superiore a quella massima");
+            alert("non puoi puntare più soldi di quanti ne possiedi");
           }
         }
 
         let exitBid = function(){
+          //esci dall'asta
           document.getElementById("auctiondiv").style.display="none";
           maxBid=0;
           socket.emit('closeBid');
         }
-
-        socket.on('endAuction', function() {
-          document.getElementById("auctiondiv").style.display="none";
-          maxBid = 0;
-        });
 
         socket.on('modifiedConfig', function(data) {
           let newSquares = data;

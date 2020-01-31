@@ -1,0 +1,374 @@
+.column, #centro {
+    float: left;
+    margin-top: -6;
+}
+
+#div1 {
+    margin-left: -6;
+}
+
+#div2 {
+    margin-right: -100;
+    text-align:center;
+    display:none;
+}
+
+#row {
+    display: none;
+    margin-top: 0;
+    padding: 0;
+    text-align: center;
+    z-index: 0;
+}
+
+#board {
+    border-style: solid;
+    display: none;
+}
+#buyProperty{
+  display: none;
+  text-align: center;
+  position:absolute;
+  z-index: 2;
+}
+#gestore{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 1;
+}
+#buyhouse{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 5;
+}
+#housenumber{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 6;
+}
+#tradepage{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 3;
+}
+#abbandonagioco{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 7;
+}
+#haiperso{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 8;
+}
+#mortgage{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 9;
+}
+#offer{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 4;
+}
+#dado{
+  visibility:hidden;
+  font-size: 30px;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.2), 0 3px 20px 0 rgba(0, 0, 0, 0.19);
+}
+#dado:hover{
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+.endbutton{
+  border-radius: 0;
+  float:left;
+  border-top-style:none;
+  border-left-style:none;
+}
+#ipotecaproprietà{
+  border-bottom-left-radius: 8px;
+  border-left-style:solid;
+}
+#bankrupt{
+  border-bottom-right-radius: 8px;
+  border-right-style:solid;
+}
+button{
+  border-width:2px;
+  font-size: 15px;
+  border-radius: 8px;
+  border-color:black;
+  border-style:solid;
+  transition-duration: 0.3s;
+  font-family: verdana, sans-serif;
+  color:black;
+  background-color: white;
+
+}
+button:hover{
+  color:white;
+  background-color: black;
+
+}
+.infoPlayer{
+  cursor: pointer;
+  font-size: 23px;
+  font-family:verdana, sans-serif;
+  border-top-style: solid;
+  border-top-width:1px;
+  border-left-style: solid;
+  border-right-style: solid;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.housebutton{
+  display:none;
+  float:right;
+  border-style: none;
+}
+#scrollBox{
+  display:inline-block;
+  margin:auto;
+  overflow:auto;
+  height:100px;
+  width:300px;
+  border-style: solid;
+  border-radius: 5px;
+}
+.position{
+  background-color:white;
+  border-radius: 10px;
+  border-style:solid;
+}
+#description{
+  border-style: solid;
+  width:300px;
+  margin:auto;
+  font-size: 20px;
+}
+#endmenu{
+  visibility:hidden;
+  display:inline-block;
+}
+#u1,#u3,#l1,#l3{
+  color:brown;
+}
+#u6,#u8,#u9,#l6,#l8,#l9{
+  color:lightblue;
+}
+#u11,#u13,#u14,#l11,#l13,#l14{
+  color:pink;
+}
+#u16,#u18,#u19,#l16,#l18,#l19{
+  color:orange;
+}
+#u21,#u23,#u24,#l21,#l23,#l24{
+  color:red;
+}
+#u26,#u27,#u29,#l26,#l27,#l29{
+  color:yellow;
+}
+#u31,#u32,#u34,#l31,#l32,#l34{
+  color:green;
+}
+#u37,#u39,#l37,#l39{
+  color:darkblue;
+}
+#u12,#u28,#l12,#l28{
+  color:gray;
+}
+#u5,#u15,#u25,#u35,#l5,#l15,#l25,#l35{
+  color:black;
+}
+.io,.loro{
+  display:none;
+}
+.iodiv,.lorodiv{
+  display:none;
+  font-size: 20px;
+  font-family:verdana,sans-serif;
+}
+#playername{
+  display:none;
+  font-size:25px;
+  font-family:verdana, sans-serif;
+}
+#them{
+  visibility:visible;
+}
+#payjail,#getoutofjailfree{
+  visibility:hidden;
+}
+#haivinto{
+  height:50%;
+  z-index: 15;
+  display:none;
+  text-align: center;
+  position:absolute;
+  font-size: 40px;
+}
+#auctiondiv{
+   display: none;
+   text-align: center;
+   position:absolute;
+   z-index: 10;
+   width:60%;
+}
+.divblock{
+  display:none;
+}
+#myproperty{
+  font-size:25px;
+  font-family:verdana, sans-serif;
+  border-bottom-style: solid;
+  border-bottom-width:1px;
+  background-color: #07dfd0;
+  border-top-right-radius:10px;
+  border-top-left-radius:10px;
+}
+#theirproperty{
+  border-bottom-style: solid;
+  border-bottom-width:1px;
+  background-color: #07dfd0;
+  border-top-right-radius:10px;
+  border-top-left-radius:10px;
+}
+#divprop1{
+  display:inline;
+  font-size:25px;
+  font-family:verdana, sans-serif;
+}
+.divmoney{
+  background-color: #07dfd0;
+  font-size: 20px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-right-style: solid;
+  font-family: verdana, sans-serif;
+  border-bottom-width:1px;
+}
+.divcoin{
+  border-left-style: solid;
+  border-right-style: solid;
+  border-top-style: solid;
+  border-top-width:1px;
+  background-color: #07dfd0;
+  font-size: 20px;
+  font-family: verdana, sans-serif;
+}
+#us,#them{
+  border-style:solid;
+  border-radius: 10px;
+}
+#p0:hover{
+  background-color:#cc0000;
+}
+#p1:hover{
+  background-color:#1a1aff;
+}
+#p2:hover{
+  background-color:#e6e600;
+}
+#p3:hover{
+  background-color:#ffb3ff;
+}
+#p4:hover{
+  background-color:#ff8c1a;
+}
+#p5:hover{
+  background-color:#b84dff;
+}
+#m2,#m5{
+    border-bottom-width:2px;
+}
+#p0{
+  border-top-width:2px;
+  background-color:#FF0000;
+  transition-duration: 0.3;
+}
+#p1{
+  background-color:#0000E6;
+  transition-duration: 0.3;
+}
+#p2{
+  background-color:#FFFF00;
+  transition-duration: 0.3;
+}
+#p3{
+    border-top-width:2px;
+  background-color:#FF80FF;
+  transition-duration: 0.3;
+}
+#p4{
+  background-color:#FFA64D;
+  transition-duration: 0.3;
+}
+#p5{
+  background-color:#A31AFF;
+  transition-duration: 0.3;
+}
+#dadodiv{
+  display:block;
+}
+#leftdivdice{
+  display:inline-block;
+  float:left;
+}
+#rightdivdice{
+  display:inline-block;
+  float:right;
+}
+#leftdice,#rightdice{
+  max-width: 100%;
+  visibility: hidden;
+}
+#waitingDiv{
+  text-align: center;
+  font-size:65px;
+  font-family:verdana,sans-serif;
+}
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  margin: 8px;
+  border: 8px solid #fff;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #fff transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

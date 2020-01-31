@@ -1,2 +1,0 @@
-C:\Users\yazzy_000.LAPTOPHOME\Unistuff\progetto\Monopoly\obj\Debug\NewMonopoly.njsprojAssemblyReference.cache
-C:\Users\yazzy_000.LAPTOPHOME\Unistuff\progetto\Monopoly\bin\Microsoft.NodejsTools.WebRole.dll
