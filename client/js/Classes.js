@@ -10,6 +10,7 @@ class Player {
         this.pedina = pedina;
         this.getOutOfJailFree = false;
         this.numHouses = 0;
+        this.coins = 0;
     }
 
     dicePos(diceNumber) {
@@ -56,6 +57,22 @@ class Player {
             }
         }
     }
+
+    updateCoins(delta){
+      let delta1 = delta*1;
+      if (delta1 > 0) {
+        this.coins += delta1;
+        return true;
+      } else {
+      let u = this.coins + delta1;
+      if (u < 0)
+        return false;
+      else {
+        this.coins += delta1;
+        return true;
+      }
+    }
+  }
 
 }
 
@@ -118,6 +135,8 @@ class HouseProperty extends Property {
         this.houses = 0;
         this.housePrices = housePrices;
         this.colour = colour;
+        this.numHouses = 0;
+        this.houseBuildWithCoins = this.houseBuildPrice/5;
     }
 }
 

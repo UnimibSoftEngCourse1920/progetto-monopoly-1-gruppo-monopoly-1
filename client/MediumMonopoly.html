@@ -222,7 +222,7 @@
       <option id="opt5" value="1">Albergo</option>
     </select><br><br>
     <button onclick="caseComprate()">buy with money</button>
-    <button onclick="buyWithCoin()">buy with second coin</button>
+    <button onclick="buyWithCoin()">buy with coins</button>
     <button onclick="showHouseButton()">torna alla pagina precedente</button>
   </div>
   <div id="mortgage" class="position">
@@ -428,6 +428,7 @@
           players[i] = new Player(playersTemp[i].id, playersTemp[i].name, pedina);
           let p = "p" + i;
           let m= "m" + i;
+          let k= "k" + i;
           console.log(playersTemp[i].id + " " + playersTemp[i].name);
           if(players[i].id==id){
             self = players[i];
@@ -437,6 +438,7 @@
             document.getElementById(p).innerHTML = players[i].name;
           }
           document.getElementById(m).innerHTML =  "money: " + players[i].money;
+          document.getElementById(k).innerHTML =  "coins: " + players[i].coins;
           document.getElementById(p).style.background=colors[i];
         }
       }
@@ -1038,8 +1040,10 @@ socket.on('addProp', function(data) {
     let playerDisc = players[data.id];
     let pId = 'p' + playerDisc.id;
     let mId = 'm' + playerDisc.id;
+    let kId = 'k' + playerDisc.id;
     document.getElementById(pId).style.display="none";
     document.getElementById(mId).style.display="none";
+    document.getElementById(kId).style.display="none";
     players[data.id] = null;
     updateScroll(data.name + ' disconnected');
   });
@@ -1847,14 +1851,36 @@ socket.on('addProp', function(data) {
             }
           }
         });
+
         let buyWithCoin=function(){
           let newHouses=($("#optionBox").val()) * 1;
           self.props[xyz].numHouses+=newHouses;
           let pack=[self.props[xyz].id, newHouses];
-          socket.emit('nuoveCase',pack);
-          showHouseButton();
-          
+          if(self.coins >= (self.props[xyz].houseBuildWithCoins*newHouses)) {
+            socket.emit('houseBuildWithCoins',pack);
+            showHouseButton();
+          } else {
+             alert("you don't have enough coins");
+           }
         }
+        socket.on('updateCoinsPlayer', function(data) {
+          let cashBackCoins = data[0];
+          let player = data[1];
+          let desc = data[2];
+          let p;
+          if(cashBackCoins != 0) {
+            for (let i = 0; i < players.length; i ++)
+            if(players[i]!=null)
+              if (players[i].id == player.id) {
+                players[i].updateCoins(cashBackCoins);
+                p = players[i];
+                let str = 'k' + p.id;
+                document.getElementById(str).innerHTML = "coins: " + p.coins;
+              }
+              if(desc != null)
+                updateScroll(data[2]);
+          }
+        });
 </script>
 </body>
 </html>

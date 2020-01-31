@@ -14,7 +14,7 @@ class StationHandler extends PlayerHandler {
             mult = this.checkStations(owner);
             //console.log("this property is owned by " + owner.getName());
             if(this.square.state == 'active')
-                return this.square.rentPrices[mult];
+                return this.square.rentPrices[mult-1];
             else{
                 //console.log("you're lucky, this property is mortgaged");
                 return 0;

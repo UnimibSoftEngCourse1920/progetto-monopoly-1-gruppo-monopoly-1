@@ -16,6 +16,7 @@ class Game {
     this.bid = 0;
     this.ended = false;
     this.started = false;
+    this.esitoCoin = true;
   }
 }
 

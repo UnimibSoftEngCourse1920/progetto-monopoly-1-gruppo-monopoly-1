@@ -17,6 +17,7 @@ class Player {
         this.jailCount = 0;
         this.getOutOfJailFree = false;
         this.bidding = false;
+        this.coins = 0;
     }
 
     updateJailCount(){
@@ -58,6 +59,22 @@ class Player {
         }
     }
 
+
+      updateCoins(delta){
+        let delta1 = delta*1;
+        if (delta1 > 0) {
+          this.coins += delta1;
+          return true;
+        } else {
+        let u = this.coins + delta1;
+        if (u < 0)
+          return false;
+        else {
+          this.coins += delta1;
+          return true;
+        }
+      }
+    }
     getServices() {
       return this.services;
     }

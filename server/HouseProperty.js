@@ -1,13 +1,14 @@
 let Property = require('./Property');
 //let Player = require('./Player');
 class HouseProperty extends Property {
-    constructor(id, name, cost, housePrices, houseBuildPrice, colour) {
-        super(id, name, cost, housePrices[0]);
+    constructor(id, name, cost, housePrices, houseBuildPrice, colour, cashBackCoins) {
+        super(id, name, cost, housePrices[0], cashBackCoins);
         this.houseBuildPrice = houseBuildPrice;
         this.houses = 0;
         this.housePrices = housePrices;
         this.colour = colour;
         this.numHouses = 0;
+        this.houseBuildWithCoins = this.houseBuildPrice/5;
     }
 
     addHouse() {

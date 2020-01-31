@@ -280,11 +280,11 @@
     <div id="row">
         <div class="column" id="div1">
             <div id="p0" class="infoPlayer"></div>
-            <div id="m0"></div><br>
+            <div id="m0"></div><div id="k0"></div><br>
             <div id="p1" class="infoPlayer"></div>
-            <div id="m1"></div><br>
+            <div id="m1"></div><div id="k1"></div><br>
             <div id="p2" class="infoPlayer"></div>
-            <div id="m2"></div><br><br>
+            <div id="m2"></div><div id="k2"></div><br><br>
             <div id="us">
               <div>Le tue proprietà</div>
               <input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button>
@@ -322,11 +322,11 @@
         </div>
         <div class="column" id="div2">
             <div id="p3" class="infoPlayer"></div>
-            <div id="m3"></div><br>
+            <div id="m3"></div><div id="k3"></div><br>
             <div id="p4" class="infoPlayer"></div>
-            <div id="m4"></div><br>
+            <div id="m4"></div><div id="k4"></div><br>
             <div id="p5" class="infoPlayer"></div>
-            <div id="m5"></div><br><br>
+            <div id="m5"></div><div id="k5"></div><br><br>
             <div id="them">
               <div id="playername"></div>
               <input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div>
@@ -425,8 +425,15 @@
          if(playersTemp[i]!=null) {
           let pedina = new Pedina(colors[i]);
           players[i] = new Player(playersTemp[i].id, playersTemp[i].name, pedina);
+          players[i].pos = playersTemp[i].pos;
+          players[i].money = playersTemp[i].money;
+          players[i].props = playersTemp[i].props;
+          players[i].services = playersTemp[i].services;
+          players[i].stations = playersTemp[i].stations;
+          players[i].getOutOfJailFree = playersTemp[i].getOutOfJailFree;
           let p = "p" + i;
           let m= "m" + i;
+          let k= "k" + i;
           console.log(playersTemp[i].id + " " + playersTemp[i].name);
           if(players[i].id==id){
             self = players[i];
@@ -436,7 +443,16 @@
             document.getElementById(p).innerHTML = players[i].name;
           }
           document.getElementById(m).innerHTML =  "money: " + players[i].money;
+          document.getElementById(k).innerHTML =  "coins: " + players[i].coins;
           document.getElementById(p).style.background=colors[i];
+        } else {
+          players[i] = null;
+          let p = "p" + i;
+          let m= "m" + i;
+          let k= "k" + i;
+          document.getElementById(p).style.display = "none";
+          document.getElementById(m).style.display = "none";
+          document.getElementById(k).style.display = "none";
         }
       }
       createCanvas();
@@ -1037,8 +1053,10 @@ socket.on('addProp', function(data) {
     let playerDisc = players[data.id];
     let pId = 'p' + playerDisc.id;
     let mId = 'm' + playerDisc.id;
+    let kId = 'k' + playerDisc.id;
     document.getElementById(pId).style.display="none";
     document.getElementById(mId).style.display="none";
+    document.getElementById(kId).style.display="none";
     players[data.id] = null;
     updateScroll(data.name + ' disconnected');
   });
@@ -1857,15 +1875,55 @@ socket.on('addProp', function(data) {
                 players[i] = new Player(newplayer.id, newplayer.name, pedina);
                 let p = "p" + i;
                 let m= "m" + i;
+                let k= "k" + i;
                 document.getElementById(p).innerHTML = players[i].name;
                 document.getElementById(m).innerHTML =  "money: " + players[i].money;
                 document.getElementById(p).style.background=colors[i];
                 document.getElementById(p).style.display = "block";
                 document.getElementById(m).style.display = "block";
+                document.getElementById(k).innerHTML =  "coins: " + players[i].coins;
+                document.getElementById(k).style.display = "block";
+                let boardW = canvas.width;
+                let w=boardW/1500;
+                let calcola=function(i){
+                  return (i*w);
+                }
+                let width = calcola(35);
+                players[i].pedina.setDimensions(width, width);
               }
             }
           }
           paint();
+        });
+
+        let buyWithCoin=function(){
+          let newHouses=($("#optionBox").val()) * 1;
+          self.props[xyz].numHouses+=newHouses;
+          let pack=[self.props[xyz].id, newHouses];
+          if(self.coins >= (self.props[xyz].houseBuildWithCoins*newHouses)) {
+            socket.emit('houseBuildWithCoins',pack);
+            showHouseButton();
+          } else {
+             alert("you don't have enough coins");
+           }
+        }
+        socket.on('updateCoinsPlayer', function(data) {
+          let cashBackCoins = data[0];
+          let player = data[1];
+          let desc = data[2];
+          let p;
+          if(cashBackCoins != 0) {
+            for (let i = 0; i < players.length; i ++)
+            if(players[i]!=null)
+              if (players[i].id == player.id) {
+                players[i].updateCoins(cashBackCoins);
+                p = players[i];
+                let str = 'k' + p.id;
+                document.getElementById(str).innerHTML = "coins: " + p.coins;
+              }
+              if(desc != null)
+                updateScroll(data[2]);
+          }
         });
 </script>
 </body>

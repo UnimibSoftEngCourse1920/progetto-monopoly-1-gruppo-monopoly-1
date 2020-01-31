@@ -75,17 +75,16 @@ let actualGame = null;
 let level = -1;
 let lobbyFinished = false;
 
+//funzione principale che si occupa dell'ascolto delle richieste da parte dei client
 io.sockets.on('connection', function (socket) {
     socket.id = contTot;
     contTot++;
-    console.log('socket connection ' + socket.id);
+    console.log('socket connection. ID = ' + socket.id);
     socketList[socket.id] = socket;
 
-    socket.on('getId', function (data) {
-        console.log("sending id to client");
-        socket.emit('id', { id: socket.id });
-    });
-
+//quando un giocatore ha cliccato su "classic monopoly" questa funzione si occupa di metterlo in una lobby.
+//Verrà creata una nuova lobby se l'ultima lobby creata è gia piena e la partita eè iniziata, altrimenti
+//verrà inserito in quella lobby.
     socket.on('getLobby', function() {
       if(numPlayerC == 0) {
         classicLobbies[classicLobbyPointer] = [];
@@ -99,7 +98,6 @@ io.sockets.on('connection', function (socket) {
       playerList.push(player);
       numPlayerC++;
       persone++;
-      //console.log(playerList[numPlayerC-1].name);
       if (playerList.length == 6) {
         let game = new Game(0);
         actualGame = game;
@@ -110,6 +108,7 @@ io.sockets.on('connection', function (socket) {
         actualLobby[3] = [];
         actualLobby[4] = [];
         actualLobby[5] = game;
+        actualLobby[6] = true;
         for(let i = 0; i < playerList.length; i++) {
           playerList[i].id = i;
           playerList[i].name = 'Player ' + (i +1)*1;
@@ -122,6 +121,7 @@ io.sockets.on('connection', function (socket) {
       }
     })
 
+//stesso funzionamento della funzione "getLobby", ma questa si occupa delle lobby di tipo "new monopoly" modalità easy
     socket.on('getEasyLobby', function () {
       if(numPlayerE == 0) {
         easyLobbies[easyLobbyPointer] = [];
@@ -135,7 +135,6 @@ io.sockets.on('connection', function (socket) {
       playerList.push(player);
       numPlayerE++;
       persone++;
-      console.log(playerList[numPlayerE-1].name);
       if (playerList.length == 6) {
         let game = new Game(1);
         actualGame = game;
@@ -146,6 +145,7 @@ io.sockets.on('connection', function (socket) {
         actualLobby[3] = [];
         actualLobby[4] = [];
         actualLobby[5] = game;
+        actualLobby[6] = true;
         for(let i = 0; i < playerList.length; i++) {
           playerList[i].id = i;
           playerList[i].name = 'Player ' + (i +1)*1;
@@ -158,6 +158,7 @@ io.sockets.on('connection', function (socket) {
       }
     });
 
+//stesso funzionamento della funzione "getLobby", ma questa si occupa delle lobby di tipo "new monopoly" modalità medium
     socket.on('getMediumLobby', function() {
       if(numPlayerM == 0) {
         mediumLobbies[mediumLobbyPointer] = [];
@@ -171,7 +172,6 @@ io.sockets.on('connection', function (socket) {
       playerList.push(player);
       numPlayerM++;
       persone++;
-      //console.log(playerList[numPlayerM-1].name);
       if (playerList.length == 6) {
         let game = new Game(2);
         actualGame = game;
@@ -182,6 +182,7 @@ io.sockets.on('connection', function (socket) {
         actualLobby[3] = [];
         actualLobby[4] = [];
         actualLobby[5] = game;
+        actualLobby[6] = true;
         for(let i = 0; i < playerList.length; i++) {
           playerList[i].id = i;
           playerList[i].name = 'Player ' + (i +1)*1;
@@ -194,6 +195,9 @@ io.sockets.on('connection', function (socket) {
       }
     })
 
+//stesso funzionamento della funzione "getLobby", ma questa si occupa delle lobby di tipo "new monopoly" modalità hard.
+//inoltre trattandosi di modalità hard se una lobby non è piena e la partita non è ancora terminata, il giocatore Verrà
+//inserito in questa lobby.
     socket.on('getHardLobby', function() {
       let bool = loopThroughHardLobbies(socket.id);
       if (!bool) {
@@ -209,7 +213,6 @@ io.sockets.on('connection', function (socket) {
         playerList.push(player);
         numPlayerH++;
         persone++;
-        //console.log(playerList[numPlayerH-1].name);
         if (playerList.length == 6) {
           let game = new Game(3);
           actualGame = game;
@@ -220,6 +223,7 @@ io.sockets.on('connection', function (socket) {
           actualLobby[3] = [];
           actualLobby[4] = [];
           actualLobby[5] = game;
+          actualLobby[6] = true;
           for(let i = 0; i < playerList.length; i++) {
             playerList[i].id = i;
             playerList[i].name = 'Player ' + (i +1)*1;
@@ -233,7 +237,9 @@ io.sockets.on('connection', function (socket) {
       }
     })
 
-    //turn started, dice received
+    //ricezione dei dadi tirati dal giocatore, se non è in prigione verrà solamente aggiornata la sua posizione,
+    //altrimenti se è in prigione e non è il suo ultimo turno in prigione rimarrà in prigione,
+    //altrimenti se è in prigione ed è il suo ultimo turno in prigione il giocatore è costretto ad uscire e pagare 50.
     socket.on('dice', function(data) {
       getLobby(socket.id);
       let player = playerTotList[socket.id];
@@ -247,7 +253,6 @@ io.sockets.on('connection', function (socket) {
         actualGame.doubleDice = 0;
       }
       let str = 'rolled the dice: ' + actualGame.dice1 + ' ' + actualGame.dice2;
-      //checkDoubles(player, doubles);
       if (actualGame.doubleDice == 3) {
         sendToJail(player);
       } else if (!player.jail) {
@@ -267,7 +272,7 @@ io.sockets.on('connection', function (socket) {
         if(!actualGame.outcome) {
           sendEndTurn(player, false, 50, null);
         } else {
-          let str2 = player.name + ' pays 50';
+          let str2 = player.name + ' pays 50 to get out of jail';
           player.jail = false;
           player.jailCount = 0;
           sendJailUpdate(player, false);
@@ -278,13 +283,15 @@ io.sockets.on('connection', function (socket) {
       }
     });
 
-    //landed on square, handle it
+    //appena un giocatore capita su una casella deve essere gestito in base alla specifica funzionalità di quella casella.
     socket.on('handlePlayer', function(data){
       getLobby(socket.id);
         let player = data;
         handlePlayer(player);
     });
 
+    //aggiornamento che viene mandato da un client nel caso costui fosse in prigione e non fosse ancora uscito in questo turno.
+    //I client aggiorneranno dunque il numero di turni in cui è rimasto in prigione quel giocatore.
     socket.on('stillInJail', function(data) {
       getLobby(socket.id);
       let player = playerList[data.id];
@@ -295,6 +302,7 @@ io.sockets.on('connection', function (socket) {
       }
     });
 
+//aggiornamento che viene invocato se un client utilizza la sua carta "getOutOfJailFree" per uscire dalla prigione
     socket.on('getOutOfJailFree', function(data) {
       getLobby(socket.id);
       let player = playerList[data.id];
@@ -309,7 +317,7 @@ io.sockets.on('connection', function (socket) {
       sendTurn();
     });
 
-
+//aggiornamento che viene invocato se un client decide di uscire volontariamente dalla prigione pagando 50
     socket.on('payJail', function(data) {
       getLobby(socket.id);
       let player = playerList[data.id];
@@ -326,6 +334,7 @@ io.sockets.on('connection', function (socket) {
       }
     });
 
+//aggiornamento che viene invocato quando un client capita su una proprieta e decide se comprarla o metterla all'asta
   socket.on('buyOrAuction', function(data){
     getLobby(socket.id);
     let str = data;
@@ -337,12 +346,15 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+//aggiornamento che viene invocato se un client è in debito
   socket.on('debt', function(data) {
     getLobby(socket.id);
     let str = playerTotList[socket.id] + ' is in debt of ' + data;
     sendGenericUpdate(str);
-  })
-  //turn ended, tell next player to start
+  });
+
+  //aggiornamento che viene invocato se un client ha finito il proprio turno, il server dunque aggiornera il turno
+  //ovvero passerà il turno al giocatore successivo oppure allo stesso giocatore se ha tirato dadi doppi
   socket.on('endTurn', function() {
     getLobby(socket.id);
     actualGame.diceTotal = 0;
@@ -356,11 +368,8 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
-  socket.on('houseBuild', function(data) {
-    getLobby(socket.id);
-    //gestisci build
-  });
-
+//aggiornamento che viene invocato se un client decide di disconnettere, o cliccando sul tasto "quit" oppure chiudendo la scheda.
+//viene gestita la sua disconnessione
   socket.on('disconnect', function(data) {
     let bool = checkForLobby(socket.id);
     if(bool == 2) {
@@ -370,7 +379,7 @@ io.sockets.on('connection', function (socket) {
       actualGame.playerDisconnected = playerTotList[socket.id];
       playersDisconnected.push(actualGame.playerDisconnected.id);
       handleBankruptcy(payedOff, ownerOwed);
-      handleDisconnect(actualGame.playerDisconnected);
+      handleDisconnect();
     } else {
       if(bool == 1) {
         for (let i = 0; i < actualLobby[0].length; i ++) {
@@ -383,14 +392,17 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+//aggiornamento che viene invocato se un client è riuscito a riscuotere il debito che aveva o con la banca o con un altro giocatore.
   socket.on('payedDebt', function(data) {
     getLobby(socket.id);
     let moneyOwed = data[0];
     let ownerOwed = data[1];
     let playerInDebt = playerTotList[socket.id];
     handlePlayerDebt(playerInDebt, moneyOwed, ownerOwed);
-    console.log("payed debt");
-  })
+  });
+
+//aggiornamento che viene invocato se un client decide di proporre uno scambio con un altro giocatore.
+//il server dunque si occupa di inoltrare la richiesta al client specifico interessato
   socket.on('proposeTrade', function(data) {
     getLobby(socket.id);
     let proposer = playerTotList[socket.id];
@@ -413,14 +425,25 @@ io.sockets.on('connection', function (socket) {
     socketList[receiver.socketId].emit('tradeProposal', pack);
   });
 
+//aggiornamento che viene invocato se un client decide di costruire o togliere case da una sua proprieta usando moneta normale.
   socket.on('nuoveCase', function(data) {
     getLobby(socket.id);
     let player = playerTotList[socket.id];
     let prop = squares[data[0]];
     let numHouses = data[1];
-    updateHouses(player, prop, numHouses);
+    updateHouses(player, prop, numHouses, false);
   });
 
+//aggiornamento che viene invocato se un client decide di costruire o togliere case da una sua proprieta usando coins.
+  socket.on('houseBuildWithCoins', function(data) {
+    getLobby(socket.id);
+    let prop = squares[data[0]];
+    let numHousesDelta = data[1];
+    let player = playerTotList[socket.id];
+    updateHouses(player, prop, numHousesDelta, true);
+  });
+
+//aggiornamento che viene invocato quando un client risponde a una richiesta di scambio con esito positivo o negativo
   socket.on('tradeAnswer', function(data) {
     getLobby(socket.id);
     let proposer = data[0];
@@ -440,6 +463,7 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+//aggiornamento che viene invocato se un client decide di ipotecare o disipotecare una sua proprieta.
   socket.on('sendMortage', function(data) {
     getLobby(socket.id);
     let player = playerTotList[socket.id];
@@ -448,9 +472,10 @@ io.sockets.on('connection', function (socket) {
     handleMortgage(player, prop);
   });
 
+//aggiornamento che viene invocato quando un client propone una cifra più alta della cifra attualmente più alta dell'asta.
+//la sua cifra offerta diventera dunque la nuova cifra piu alta
   socket.on('bid', function(data) {
     getLobby(socket.id);
-    console.log(data);
     if(data > actualGame.bid) {
       actualGame.bid = data;
       actualGame.bidder = playerTotList[socket.id];
@@ -458,6 +483,7 @@ io.sockets.on('connection', function (socket) {
     }
   });
 
+//aggiornamento che viene invocato se un client decide di uscire dall'asta
   socket.on('closeBid', function(){
     let player = playerTotList[socket.id];
     player.bidding = false;
@@ -482,12 +508,15 @@ io.sockets.on('connection', function (socket) {
   })
 });
 
+//funzione che viene invocata quando un client decide di giocare una partita a "new monopoly" di tipo hard.
+//il server dunque cercherà la prima lobby libera in cui inserire il client, anche se la partita corrispondente non è terminata.
 let loopThroughHardLobbies = function(socketId) {
   if (hardLobbyPointer == 0)
     return false;
   let bool = false;
   for (let i = 0; !bool, i < hardLobbyPointer; i ++) {
-    if (hardLobbies[i] != null) {
+    if (hardLobbies[i] != null && hardLobbies[i][6] != null && hardLobbies[i][6] != false) {
+      if(hardLobbies[i][0] != null)
       for(let j = 0; !bool, j < hardLobbies[i][0].length; j ++) {
         let players = hardLobbies[i][0];
         if (players[j] == null) {
@@ -501,7 +530,7 @@ let loopThroughHardLobbies = function(socketId) {
           socketList[socketId].emit('id', pack);
           sendPlayersToPlayer(socketId);
           updateOtherPlayers(player);
-          bool = true;
+          return true;
         }
       }
     }
@@ -509,6 +538,7 @@ let loopThroughHardLobbies = function(socketId) {
   return bool;
 }
 
+//funzione che avvisa gli altri giocatori della "hard" lobby se è arrivato un nuovo giocatore
 let updateOtherPlayers = function(player) {
   for (let i = 0; i < playerList.length; i ++) {
     if(playerList[i] != null) {
@@ -516,23 +546,21 @@ let updateOtherPlayers = function(player) {
     }
   }
 }
+
+//funzione che si occupa di inviare i players attualmente nella "hard" lobby al nuovo giocatore arrivato, e iniziare dunque
+//la sua partita.
 let sendPlayersToPlayer = function(socketId) {
   let pack = [];
+  let num = 0;
   for (let i = 0; i < playerList.length; i++) {
-    if(playerList[i]!=null) {
-      pack.push(playerList[i]);
-    }
+      pack[i] = playerList[i];
+      if(playerList[i] == null)
+        num++;
   }
-  for (let i = 0; i < playerList.length; i++) {
-    if(playerList[i].socketId == socketId) {
-      let player = playerList[i];
-      if (player != null) {
-        socketList[player.socketId].emit('startGame', pack);
-      }
-    }
-  }
+  socketList[socketId].emit('startGame', pack);
 }
 
+//funzione che si occupa di mandare al giocatore che ha vinto l'asta la proprietà che ha vinto
 let sendToWinner = function() {
   let esci = false;
   if (actualGame.bidder == null) {
@@ -547,10 +575,10 @@ let sendToWinner = function() {
   let winPrice = actualGame.bid;
   actualGame.outcome = winner.updateMoney(-winPrice);
   let str = winner.name + ' wins auction for ' + actualGame.propAuction.name;
-  sendMoneyUpdate(-winPrice, winner, str);
+  sendMoneyUpdate(-winPrice, winner, null);
   winner.addProp(actualGame.propAuction);
   let str2 = winner.name + ' buys ' + actualGame.propAuction.name;
-  sendPropUpdate(actualGame.propAuction, winner, 0, str2);
+  sendPropUpdate(actualGame.propAuction, winner, 0, str);
   for (let i = 0; i < playerList.length; i++) {
     if(playerList[i] != null) {
       socketList[playerList[i].socketId].emit('endAuction');
@@ -559,6 +587,7 @@ let sendToWinner = function() {
   sendEndTurn(playerList[actualGame.turn], true, 0, null);
 }
 
+//funzione che aggiorna la cifra attualmente più alta dell'asta
 let updateBid = function() {
   for (let i = 0; i < playerList.length; i++) {
     if(playerList[i] != null) {
@@ -567,6 +596,7 @@ let updateBid = function() {
   }
 }
 
+//funzione che gestisce l'ipoteca o disipoteca di una proprieta
 let handleMortgage  = function(player, prop) {
   let state = prop.state;
   let mon;
@@ -586,6 +616,7 @@ let handleMortgage  = function(player, prop) {
   }
 }
 
+//funzione che inizializza l'asta a tutti i client della lobby se un client decide di farlo
 let handleAuction = function(player) {
   let prop = squares[player.pos];
   actualGame.propAuction = prop;
@@ -597,6 +628,7 @@ let handleAuction = function(player) {
   }
 }
 
+//funzione che manda un aggiornamento di ipoteca/disipoteca di una proprieta a tutti i player
 let sendMortgageUpdate=function(prop, player, str) {
   let pack = [player, prop, str];
   for(let i = 0; i < playerList.length; i ++) {
@@ -606,6 +638,7 @@ let sendMortgageUpdate=function(prop, player, str) {
   }
 }
 
+//funzioni che si occupano di andare a prendere la lobby corrispondente del giocatore che ha invocato una "socket.on"
 let getLobby = function(id) {
   let bool = false;
   bool = getLobbyLoop(id, classicLobbies);
@@ -633,7 +666,7 @@ let checkForLobby = function(id) {
 
 let checkForLobbyLoop = function(id, lobbies) {
   for (let i = 0; i < lobbies.length; i ++) {
-    if(lobbies[i] != null)
+    if(lobbies[i] != null && lobbies[i][0] != null)
     for(let j = 0; j < lobbies[i][0].length; j ++) {
       if(lobbies[i][0][j] != null)
       if (lobbies[i][0][j].socketId == id) {
@@ -659,6 +692,8 @@ let getLobbyLoop = function(id, lobbies) {
         bool = true;
         actualLobby = lobbies[i];
         actualGame = actualLobby[5];
+        if(actualGame == null || actualGame == undefined)
+        return false;
         level = actualGame.level;
         playerList = actualLobby[0];
         squares = actualLobby[1];
@@ -679,12 +714,26 @@ let getLobbyLoop = function(id, lobbies) {
   return bool;
 }
 
-let updateHouses = function(player, prop, numHousesDelta) {
+//funzione che si occupa di aggiornare il numero di case comprate/vendute da un player
+let updateHouses = function(player, prop, numHousesDelta, bool) {
   prop.numHouses += numHousesDelta;
   prop.rent = prop.housePrices[prop.numHouses];
-  actualLobby.outcome = player.updateMoney(-prop.houseBuildPrice*numHousesDelta);
-  let str = player.name + ' pays ' + (-prop.houseBuildPrice*numHousesDelta);
-  sendMoneyUpdate(-prop.houseBuildPrice*numHousesDelta, player, str);
+  let str;
+  let str2;
+  if(numHousesDelta >= 0) {
+    str = player.name + ' pays ' + (-prop.houseBuildPrice*numHousesDelta);
+    str2 = player.name + ' pays ' + (-prop.houseBuildWithCoins*numHousesDelta) + ' in coins';
+  } else {
+    str = player.name + ' earns ' + (prop.houseBuildPrice*numHousesDelta);
+    str2 = player.name + ' earns ' + (prop.houseBuildWithCoins*numHousesDelta) + ' in coins';
+  }
+  if(!bool) {
+    actualLobby.outcome = player.updateMoney(-prop.houseBuildPrice*numHousesDelta);
+    sendMoneyUpdate(-prop.houseBuildPrice*numHousesDelta, player, str);
+  } else {
+    actualLobby.esitoCoin = player.updateCoins(-prop.houseBuildWithCoins*numHousesDelta);
+    sendCoinsUpdate(-prop.houseBuildWithCoins*numHousesDelta, player, str2);
+  }
   let pack = [player, prop, numHousesDelta];
   for (let i = 0; i < playerList.length; i ++) {
     if(playerList[i]!=null)
@@ -692,8 +741,10 @@ let updateHouses = function(player, prop, numHousesDelta) {
   }
 }
 
+//funzione che gestisce la disconnessione di un player dal punto di vista della partita, ovvero:
+//se il player si è disconnesso perchè era in debito con qualcuno i suoi soldi e proprieta andranno al player
+//con cui era in debito, altrimenti le sue proprieta tornare a non avere un owner.
 let handleBankruptcy = function(payedOff, ownerOwed) {
-  playerList[actualGame.playerDisconnected.id] = null;
   if (!payedOff) {
     if(ownerOwed == null) {
       for(let i = 0; i < actualGame.playerDisconnected.props.length; i++) {
@@ -732,7 +783,10 @@ let handleBankruptcy = function(payedOff, ownerOwed) {
   }
 }
 
+//funzione che si occupa della disconnessione di un player dal punto di vista delle lobby.
+//se è rimasto un solo giocatore nella lobby questo sarà il vincitore
 let handleDisconnect = function() {
+  playerList[actualGame.playerDisconnected.id] = null;
   for (let i = 0; i < playerList.length; i ++) {
     if(playerList[i]!=null){
       let player2 = playerList[i];
@@ -741,12 +795,13 @@ let handleDisconnect = function() {
   }
   checkWon();
   if(actualGame.ended == true) {
-    actualLobby = null;
+    actualLobby[6] = false;
   } else if(actualGame.playerDisconnected.id == actualGame.turn) {
     updateTurn();
   }
 }
 
+//controlla se è rimasto un solo giocatore nella lobby
 let checkWon = function() {
   let num = 0;
   let player = null;
@@ -764,6 +819,7 @@ let checkWon = function() {
   }
 }
 
+//funzione che viene invocata se un player era in debito ma ora non lo è più, manda tutti gli aggiornamenti dei soldi.
 let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
   if (playerInDebt.jail) {
     let str = 'rolled the dice: ' + dice1 + ' ' + dice2;
@@ -786,18 +842,17 @@ let handlePlayerDebt = function(playerInDebt, moneyOwed, ownerOwed) {
   }
 }
 
+//funzione che si occupa di trasferire le proprieta e i soldi da un player a un altro se fanno uno scambio.
 let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, proposerMon, receiverMon) {
   actualGame.outcome = playerList[receiver.id].updateMoney(proposerMon);
   actualGame.outcome = playerList[proposer.id].updateMoney(receiverMon);
   actualGame.outcome = playerList[receiver.id].updateMoney(-receiverMon);
   actualGame.outcome = playerList[proposer.id].updateMoney(-proposerMon);
   let str = proposer.name + ' and ' + receiver.name + ' exchange money';
-  if(proposerMon != 0 && receiverMon != 0) {
-    sendMoneyUpdate(proposerMon, receiver, str);
-    sendMoneyUpdate(receiverMon, proposer, null);
-    sendMoneyUpdate(-receiverMon, receiver, null);
-    sendMoneyUpdate(-proposerMon, proposer, null);
-  }
+  sendMoneyUpdate(proposerMon, receiver, str);
+  sendMoneyUpdate(receiverMon, proposer, null);
+  sendMoneyUpdate(-receiverMon, receiver, null);
+  sendMoneyUpdate(-proposerMon, proposer, null);
 
   let player1 = playerList[proposer.id];
   let player2 = playerList[receiver.id];
@@ -810,7 +865,6 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
         if(player1.props[j].id == proposerPropsId)
           currentProp = player1.props[j];
       }
-      //if else instance of station, services... per aggiornare tutte le liste
       player1.props.splice( player1.props.indexOf(currentProp), 1 );
       if(currentProp instanceof Station) {
         player1.stations.splice( player1.stations.indexOf(currentProp), 1 );
@@ -830,7 +884,6 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
         if(player2.props[j].id == receiverPropsId)
           currentProp = player2.props[j];
       }
-      //if else instance of station, services... per aggiornare tutte le liste
       player2.props.splice( player2.props.indexOf(currentProp), 1 );
       if(currentProp instanceof Station) {
         player2.stations.splice( player2.stations.indexOf(currentProp), 1 );
@@ -873,9 +926,9 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
   }
 }
 
+//funzione che viene invocata quando un player decide di comprare una proprietà su cui è capitato che non è ancora posseduta da nessuno.
 let handleBuy = function(player) {
   let prop = squares[player.pos];
-  console.log("prop: " + prop.id);
   let str = player.name + ' spends ' + prop.cost;
   let str2 = player.name + ' buys ' + prop.name;
   actualGame.outcome = player.updateMoney(-prop.cost);
@@ -891,6 +944,8 @@ let handleBuy = function(player) {
   sendEndTurn(player, true, 0, null);
 }
 
+//funzione che manda un aggiornamento di proprieta a tutti i player della lobby, ovvero "addProp" quando un player
+//ora possiede una nuova proprieta, "removeProp" se gli è stata tolta una proprieta.
 let sendPropUpdate = function(prop, player, action, str) {
   let pack = [];
   pack.push(prop);
@@ -917,6 +972,7 @@ let sendPropUpdate = function(prop, player, action, str) {
   }
 }
 
+//funzione che manda in prigione un player e passa il turno al giocatore successivo
 let sendToJail = function(player) {
   let str = player.name + ' sent to jail';
   player.jail = true;
@@ -926,6 +982,7 @@ let sendToJail = function(player) {
   sendEndTurn(player, true, 0, null);
 }
 
+//funzione che manda l'aggiornamento del numero di turni che ha passato in prigione un player
 let sendJailCountUpdate = function(player) {
   for (let i = 0; i < playerList.length; i++) {
     if(playerList[i]!=null)
@@ -933,6 +990,7 @@ let sendJailCountUpdate = function(player) {
   }
 }
 
+//funzione che passa il turno al giocatore successivo della lobby, se qualche player si è disconnesso questa funzione li salta.
 let updateTurn = function() {
   actualGame.totalTurns++;
   actualGame.doubleDice = 0;
@@ -950,6 +1008,7 @@ let updateTurn = function() {
   sendTurn();
 }
 
+//funzione che cambia i parametri delle carte e proprieta ogni 24 turni nella "new monopoly".
 let disorder = function(){
     let percentageChange = Math.random()*0.36;
     let change = Math.floor(percentageChange*100);
@@ -1046,6 +1105,8 @@ let disorder = function(){
     }
 }
 
+//funzione che viene invocata appena una lobby diventa piena e si può incominciare la partita, imposta le basi del gioco
+//come le carte e le proprieta.
 let startGame = function () {
     let chanceLoc;
     let communityChestLoc;
@@ -1053,55 +1114,56 @@ let startGame = function () {
     communityChestLoc = new Deck(false);
     let squaresLoc = [];
     squaresLoc[0] = new Square(0); //go
-    squaresLoc[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown");
+    squaresLoc[1] = new HouseProperty(1, "Mediterranean Avenue", 60, [2, 10, 30, 90, 160, 250], 50, "brown", 2);
     squaresLoc[2] = new CommunityChest(2);
-    squaresLoc[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown");
+    squaresLoc[3] = new HouseProperty(3, "Baltic Avenue", 60, [4, 20, 60, 180, 320, 450], 50, "brown", 2);
     squaresLoc[4] = new IncomeTax(4, 200);
     squaresLoc[5] = new Station(5, "Reading Railroad", 200, [25, 50, 100, 200]);
-    squaresLoc[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue");
+    squaresLoc[6] = new HouseProperty(6, "Oriental Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue", 2);
     squaresLoc[7] = new Chance(7);
-    squaresLoc[8] = new HouseProperty(8, "Vermont Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue");
-    squaresLoc[9] = new HouseProperty(9, "Connecticut Avenue", 120, [8, 40, 100, 300, 450, 600], 50, "lightblue");
+    squaresLoc[8] = new HouseProperty(8, "Vermont Avenue", 100, [6, 30, 90, 270, 400, 550], 50, "lightblue", 2);
+    squaresLoc[9] = new HouseProperty(9, "Connecticut Avenue", 120, [8, 40, 100, 300, 450, 600], 50, "lightblue", 2);
     squaresLoc[10] = new Square(10); //jail
-    squaresLoc[11] = new HouseProperty(11, "St. Charles Place", 140, [10, 50, 150, 450, 625, 750], 100, "pink");
+    squaresLoc[11] = new HouseProperty(11, "St. Charles Place", 140, [10, 50, 150, 450, 625, 750], 100, "pink", 4);
     squaresLoc[12] = new Services(12, "Electric Company", 150);
-    squaresLoc[13] = new HouseProperty(13, "States Avenue", 140, [10, 50, 150, 450, 625, 750], 100, "pink");
-    squaresLoc[14] = new HouseProperty(14, "Viriginia Avenue", 160, [12, 60, 180, 500, 700, 900], 100, "pink");
+    squaresLoc[13] = new HouseProperty(13, "States Avenue", 140, [10, 50, 150, 450, 625, 750], 100, "pink", 4);
+    squaresLoc[14] = new HouseProperty(14, "Viriginia Avenue", 160, [12, 60, 180, 500, 700, 900], 100, "pink", 4);
     squaresLoc[15] = new Station(15, "Pennsylvania Railroad", 200, [25, 50, 100, 200]);
-    squaresLoc[16] = new HouseProperty(16, "St. James Place", 180, [14, 70, 200, 550, 750, 950], 100, "orange");
+    squaresLoc[16] = new HouseProperty(16, "St. James Place", 180, [14, 70, 200, 550, 750, 950], 100, "orange", 4);
     squaresLoc[17] = new CommunityChest(17);
-    squaresLoc[18] = new HouseProperty(18, "Tennessee Avenue", 180, [14, 70, 200, 550, 750, 950], 100, "orange");
-    squaresLoc[19] = new HouseProperty(19, "New York Avenue", 200, [16, 80, 220, 600, 800, 1000], 100, "orange");
+    squaresLoc[18] = new HouseProperty(18, "Tennessee Avenue", 180, [14, 70, 200, 550, 750, 950], 100, "orange", 4);
+    squaresLoc[19] = new HouseProperty(19, "New York Avenue", 200, [16, 80, 220, 600, 800, 1000], 100, "orange", 4);
     squaresLoc[20] = new Square(20); //free parking
-    squaresLoc[21] = new HouseProperty(21, "Kentucky Avenue", 220, [18, 90, 250, 700, 875, 1050], 150, "red");
+    squaresLoc[21] = new HouseProperty(21, "Kentucky Avenue", 220, [18, 90, 250, 700, 875, 1050], 150, "red", 6);
     squaresLoc[22] = new Chance(22);
-    squaresLoc[23] = new HouseProperty(23, "Indiana Avenue", 220, [18, 90, 250, 700, 875, 1050], 150, "red");
-    squaresLoc[24] = new HouseProperty(24, "Illinois Avenue", 240, [20, 100, 300, 750, 925, 1100], 150, "red");
+    squaresLoc[23] = new HouseProperty(23, "Indiana Avenue", 220, [18, 90, 250, 700, 875, 1050], 150, "red", 6);
+    squaresLoc[24] = new HouseProperty(24, "Illinois Avenue", 240, [20, 100, 300, 750, 925, 1100], 150, "red", 6);
     squaresLoc[25] = new Station(25, "B. & O. Railroad", 200, [25, 50, 100, 200]);
-    squaresLoc[26] = new HouseProperty(26, "Atlantic Avenue", 260, [22, 110, 330, 800, 975, 1150], 150, "yellow");
-    squaresLoc[27] = new HouseProperty(27, "Ventnor Avenue", 260, [22, 110, 330, 800, 975, 1150], 150, "yellow");
+    squaresLoc[26] = new HouseProperty(26, "Atlantic Avenue", 260, [22, 110, 330, 800, 975, 1150], 150, "yellow", 6);
+    squaresLoc[27] = new HouseProperty(27, "Ventnor Avenue", 260, [22, 110, 330, 800, 975, 1150], 150, "yellow", 6);
     squaresLoc[28] = new Services(28, "Water Works", 150);
-    squaresLoc[29] = new HouseProperty(29, "Marvin Gardens", 280, [24, 120, 360, 850, 1025, 1200], 150, "yellow");
+    squaresLoc[29] = new HouseProperty(29, "Marvin Gardens", 280, [24, 120, 360, 850, 1025, 1200], 150, "yellow", 6);
     squaresLoc[30] = new Square(30); //go to jail
-    squaresLoc[31] = new HouseProperty(31, "Pacific Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green");
-    squaresLoc[32] = new HouseProperty(32, "North Carolina Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green");
+    squaresLoc[31] = new HouseProperty(31, "Pacific Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green", 8);
+    squaresLoc[32] = new HouseProperty(32, "North Carolina Avenue", 300, [26, 130, 390, 900, 1100, 1275], 200, "green", 8);
     squaresLoc[33] = new CommunityChest(33);
-    squaresLoc[34] = new HouseProperty(34, "Pennsylvania Avenue", 320, [28, 150, 450, 1000, 1200, 1400], 200, "green");
+    squaresLoc[34] = new HouseProperty(34, "Pennsylvania Avenue", 320, [28, 150, 450, 1000, 1200, 1400], 200, "green", 8);
     squaresLoc[35] = new Station(35, "Short Line", 200, [25, 50, 100, 200]);
     squaresLoc[36] = new Chance(36);
-    squaresLoc[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "darkblue");
+    squaresLoc[37] = new HouseProperty(37, "Park Place", 350, [35, 175, 500, 1100, 1300, 1500], 200, "darkblue", 8);
     squaresLoc[38] = new IncomeTax(38, 100);
-    squaresLoc[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "darkblue");
+    squaresLoc[39] = new HouseProperty(39, "Boardwalk", 400, [50, 200, 600, 1400, 1700, 2000], 200, "darkblue", 8);
     actualLobby[1] = squaresLoc;
     actualLobby[2] = chanceLoc;
     actualLobby[3] = communityChestLoc;
 }
 
+//funzione che viene invocata appena una lobby diventa piena prima di incominciare la partita, manda a tutti i players la lista
+//di tutti i players nella lobby.
 let sendPlayers = function () {
     let pack = [];
     for (let i = 0; i < playerList.length; i++) {
       if(playerList[i]!=null) {
-      console.log(playerList[i].name);
         pack.push(playerList[i]);
       }
     }
@@ -1111,12 +1173,14 @@ let sendPlayers = function () {
     }
 }
 
+//funzione che genera il giocatore che deve iniziare la partita
 let generateTurn = function() {
   turn = Math.floor(Math.random()*6);
   actualGame.turn = turn;
   sendTurn();
 }
 
+//funzione che manda il turno attuale della partita a tutti i giocatori, se il turno corrisponde all'id di un giocatore lui inizierà il turno.
 let sendTurn = function() {
   for (let i = 0; i < playerList.length; i++) {
     if(playerList[i]!=null)
@@ -1124,6 +1188,7 @@ let sendTurn = function() {
   }
 }
 
+//funzione che manda un aggiornamento di posizione di un giocatore a tutti gli altri players nella lobby
 let sendPosUpdate = function(player, description) {
   let pack = [];
   pack.push(player);
@@ -1135,6 +1200,7 @@ let sendPosUpdate = function(player, description) {
   }
 }
 
+//funzione che manda un aggiornamento di denaro di un certo player a tutti gli altri players
 let sendMoneyUpdate = function(rent, player, description) {
   let pack = [];
   pack.push(rent);
@@ -1147,6 +1213,7 @@ let sendMoneyUpdate = function(rent, player, description) {
   }
 }
 
+//funzione che manda un aggiornamento di JailState di un player a tutti gli altri players, ovvero comunica se un player è entrato o uscito da prigione.
 let sendJailUpdate = function(player, doubles) {
   let pack = [];
   pack.push(player);
@@ -1157,6 +1224,7 @@ let sendJailUpdate = function(player, doubles) {
   }
 }
 
+//funzione che manda una banale stringa a tutti i client, che fanno comparire poi a schermo
 let sendGenericUpdate = function(desc) {
   for (let i = 0; i < playerList.length; i++) {
     if(playerList[i]!=null)
@@ -1164,6 +1232,7 @@ let sendGenericUpdate = function(desc) {
   }
 }
 
+//funzione che aggiorna la posizione di un giocatore dopo che ha tirato i dadi
 let updatePositionDice = function(player, diceNumber) {
   let mon = player.dicePos(diceNumber);
   if (mon == 200) {
@@ -1173,16 +1242,20 @@ let updatePositionDice = function(player, diceNumber) {
   return player;
 }
 
+//funzione che aggiorna la posizione di un player
 let updatePosition = function(player, pos) {
   player.setPos(pos);
 }
 
+//funzione che comunica a tutti i player se un player si è impossessato di una carta getOutOfJailFree oppure se l'ha usata per uscire di prigione
 let getOutOfJailFreeUpdate = function(player) {
   for (let i = 0; i < playerList.length;  i ++){
     if(playerList[i]!=null)
     socketList[playerList[i].socketId].emit('getOutOfJailFreeUpdate', player);
   }
 }
+
+//funzione principale che gestisce il turno di un giocatore dopo aver fatto una mossa, in base alla casella in cui è capitato
 let handlePlayer = function(pl){
     let player;
     let handler;
@@ -1195,23 +1268,24 @@ let handlePlayer = function(pl){
     let res;
   player = playerList[pl.id];
    pos = player.getPos();
-   console.log('pos ' + pos);
-   let cont2 = 0;
-   for(let i = 0; i < squares.length; i++) {
-     cont2++;
-   }
-   console.log(cont2);
    square = squares[pos];
   if (square instanceof Property) {
     if(square.owner != -1)
       owner = playerList[square.getOwner()].id;
   }
+  //se capita in una casella di tipo HouseProperty, ovvero una proprieta con possibilita di costruire case:
+  //se è posseduta da qualcuno dovrà pagare quel player, se è ipotecata o sua non dovrà fare niente, se non è
+  //posseduta da nessuno può decidere se comprarla o metterla all'asta e passera il turno
   if(square instanceof HouseProperty){
     handler = new HSHandler(player, square);
      res = handler.handle(player);
     switch(res) {
       case 'active':
-        payRent(square.getRent(), player, square.getOwner());
+      if(actualGame.level <=1){
+      payRent(square.getRent(), player, square.getOwner(), 0);
+    }else{
+      payRent(square.getRent(), player, square.getOwner(), square.cashBackCoins);
+    }
         break;
       case 'mortgaged':
         sendGenericUpdate(player.name + ' landed on a mortgaged property');
@@ -1223,12 +1297,15 @@ let handlePlayer = function(pl){
         break;
       case 'unownedProperty':
         unownedProperty(player, square);
-        //while(unownedProp){}
         break;
       default:
         break;
     }
-  } else if (square instanceof Station){
+  }
+  //se capita in una proprieta di tipo stazione:
+  //se è posseduta da qualcuno dovrà pagare quel player, se è ipotecata o sua non dovrà fare niente, se non è
+  //posseduta da nessuno può decidere se comprarla o metterla all'asta e passera il turno
+  else if (square instanceof Station){
     handler = new StationHandler(player, square);
     if(owner == -1)
     res = handler.handle(null);
@@ -1247,10 +1324,18 @@ let handlePlayer = function(pl){
       sendEndTurn(player, true, 0, null);
       break;
       default:
-      payRent(res, player, square.getOwner());
+      if(actualGame.level <=1){
+        payRent(square.getRent(), player, square.getOwner(), 0);
+      }else{
+        payRent(square.getRent(), player, square.getOwner(), square.cashBackCoins);
+      }
       break;
     }
-  } else if (square instanceof Services){
+  }
+  //se capita in una proprieta di tipo services (ovvero WaterWorks o Electric Compoany):
+  //se è posseduta da qualcuno dovrà pagare quel player, se è ipotecata o sua non dovrà fare niente, se non è
+  //posseduta da nessuno può decidere se comprarla o metterla all'asta, infine passera il turno
+  else if (square instanceof Services){
     handler = new ServicesHandler(player, diceTotal, square);
     if(owner == -1)
     res = handler.handle(null);
@@ -1269,31 +1354,33 @@ let handlePlayer = function(pl){
       sendEndTurn(player, true, 0, null);
       break;
       default:
-      payRent(res, player, square.getOwner());
+      if(actualGame.level <=1){
+        payRent(square.getRent(), player, square.getOwner(), 0);
+      }else{
+        payRent(square.getRent(), player, square.getOwner(), square.cashBackCoins);
+      }
       break;
     }
   }
+  //se capita in una casella di tipo income tax dovra pagare le tasse alla banca e passare il turno
   else if(square instanceof IncomeTax){
     let tax = square.getTax();
-    console.log('prima ' +player.money);
     actualGame.outcome = player.updateMoney(-tax);
-    console.log('dopo ' +player.money);
     if(!actualGame.outcome) {
       sendEndTurn(player, false, tax, null);
-      console.log(actualGame.outcome);
     } else {
       let str = player.name + ' pays ' + tax + ' in taxes';
       sendMoneyUpdate(-tax, player, str);
       sendEndTurn(player, true, 0, null);
-      console.log(actualGame.outcome);
     }
   }
+  //se capita in una casella di tipo chance o communityChest peschera una carta evento
   else if(square instanceof Chance || square instanceof CommunityChest){
     if(square instanceof Chance)
       card = chance.getCard();
     else
       card = communityChest.getCard();
-    console.log(card.printDescription());
+      //se la carta pescata è una paycard pagherà la cifra indicata alla banca e passera il turno
     if(card instanceof PayCard){
       let res = card.execute();
       actualGame.outcome = player.updateMoney(res);
@@ -1304,6 +1391,7 @@ let handlePlayer = function(pl){
         sendEndTurn(player, true, 0, null);
       }
     }
+    //se la carta pescata è una GoToCard andrà alla casella corrispondente e verrà gestita di nuovo la handle per quella casella
     else if(card instanceof GoToCard){
       let pack = card.execute(player);
       let dsc = card.printDescription();
@@ -1317,9 +1405,11 @@ let handlePlayer = function(pl){
       sendPosUpdate(player, dsc);
       sendEndTurn(player, true, 0, null);
     }
+    //se la carta pescata è una GoToJailCard il player andra in prigione e passera il turno
     else if(card instanceof GoToJailCard) {
       sendToJail(player);
     }
+    //se la carta pescata è una CloseServicesCard o CloseStationCard andra alla casella station o services più vicina e passera il turno
     else if(card instanceof CloseServicesCard || card instanceof CloseStationCard){
       let pack = card.execute(player);
       let dsc = card.printDescription();
@@ -1332,17 +1422,20 @@ let handlePlayer = function(pl){
       }
       sendEndTurn(player, true, 0, null);
     }
+    //se la carta pescata è una GetOutOfJailCard il player si impossessa di una carta getOutOfJailFree e passa il turno
     else if (card instanceof GetOutOfJailCard) {
       player.getOutOfJailFree = true;
       getOutOfJailFreeUpdate(player);
       sendEndTurn(player, true, 0, null);
     }
+    //se la carta pescata è una movebackcard il giocatore indietrereggerà alla casella corrsipondente e verrà fatta una nuova handle per quella casella
     else if (card instanceof MoveBackCard) {
       let res = card.execute(player);
       let desc = card.printDescription();
       sendPosUpdate(player, desc);
       sendEndTurn(player, true, 0, null);
     }
+    //se la carta pescata è una PayPlayerCard il giocatore ricevera da tutti gli altri/paghera a tutti gli altri players la cifra di quella carta e passerà il turno
     else if (card instanceof PayPlayerCard) {
       let amount = card.execute;
       let str;
@@ -1379,32 +1472,39 @@ let handlePlayer = function(pl){
         sendEndTurn(player, true, 0, null);
       }
     }
-  } else if (card instanceof PayPerBuildingCard) {
+    //se la carta pescata è una PayPerBuildingCard il giocatore paghera una cifra alla banca proporzionata al numero di case/hotel possedute e passera il turno
+  else if (card instanceof PayPerBuildingCard) {
       let res = card.execute(player);
       if(res != 0) {
         actualGame.outcome = player.updateMoney(res);
-      if(!actualGame.outcome) {
-        sendEndTurn(player, false, res, null);
+        if(!actualGame.outcome) {
+          sendEndTurn(player, false, res, null);
+        } else {
+          sendMoneyUpdate(res, player, card.description);
+          sendEndTurn(player, true, 0, null);
+        }
       } else {
-        sendMoneyUpdate(res, player, card.description);
+        sendGenericUpdate(card.description);
         sendEndTurn(player, true, 0, null);
-      }
-    } else {
-      sendGenericUpdate(card.description);
     }
   }
+}
+//se la casella è la casella Go passerà il turno
   else if(square.id == 0){
     sendEndTurn(player, true, 0, null);
   }
+  //se la casella è la casella Go to jail andra in prigione e passera il turno
   else if(square.id == 30){
     sendToJail(player);
   }
+  //se la casella è la casella jail passerà il turno
   else if(square.id == 10){
     if (!player.jail) {
       let str = player.name + ' is visiting jail';
       sendGenericUpdate(str);
       sendEndTurn(player, true, 0, null);
     }
+    //se la casella è la casella freeparking passerà il turno
   } else if(square.id == 20) {
     let str = player.name + ' landed on free parking';
     sendGenericUpdate(str);
@@ -1414,7 +1514,8 @@ let handlePlayer = function(pl){
   }
 }
 
-let payRent = function(rent, player, owner){
+//funzione che si occupa di far pagare il rent al giocatore che è capitato in una proprieta al player che possiede quella proprieta
+let payRent = function(rent, player, owner, cashBackCoins){
   actualGame.outcome = player.updateMoney(-rent);
   if(!actualGame.outcome) {
     sendEndTurn(player, false, rent, owner);
@@ -1423,11 +1524,16 @@ let payRent = function(rent, player, owner){
       let str = player.name + ' pays ' + rent + ' to ' + playerList[owner].name;
       sendMoneyUpdate(-rent, player, str);
       sendMoneyUpdate(rent, playerList[owner], null);
+      if(cashBackCoins != 0) {
+        actualGame.esitoCoin = player.updateCoins(cashBackCoins);
+        let str3 = playerList[owner].name + ' gives him cashback of ' + cashBackCoins;
+        sendCoinsUpdate(cashBackCoins, player, str3);
+      }
       sendEndTurn(player, true, 0, null);
     }
 }
 
-
+//funzione che viene invocata se un player capita su una proprieta non ancora posseduta, gli viene ccomunicato e sara lui a decidere se comprarla o no
 let unownedProperty = function(player, square) {
   let pack = [];
   pack.push(player);
@@ -1447,6 +1553,8 @@ let unownedProperty = function(player, square) {
   }
 }
 
+//funzione che si occupa di mandare il menu di fine turno al player corrispondente non appena viene finita la sua handler
+//Il player poi deciderà se fare una operazione di trade, ipoteca, costruzione/rimozione case, abbandonare la partita oppure passare il turno
 let sendEndTurn = function(player, boo, money, owner) {
   let pack = [];
   pack.push(boo);
@@ -1454,3 +1562,14 @@ let sendEndTurn = function(player, boo, money, owner) {
   pack.push(owner);
   socketList[player.socketId].emit('endMenu', pack);
 }
+
+//funzione che si occupa di mandare un coin update di un player a tutti i player.
+let sendCoinsUpdate = function(cashBackCoins, player, description){
+   let pack = [];
+   pack.push(cashBackCoins);
+   pack.push(player);
+   pack.push(description);
+   for(let i=0; i < playerList.length; i++) {
+     socketList[playerList[i].socketId].emit('updateCoinsPlayer', pack);
+   }
+ }

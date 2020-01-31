@@ -1,7 +1,7 @@
 let Square = require('./Square');
 let Player = require('./Player');
 class Property extends Square {
-    constructor(id, name, cost, rent) {
+    constructor(id, name, cost, rent, cashBackCoins) {
         super(id);
         this.name = name;
         this.cost = cost;
@@ -11,6 +11,7 @@ class Property extends Square {
         this.rent = rent;
         this.state = 'active';
         this.owner = -1;
+        this.cashBackCoins = cashBackCoins;
     }
 
     setOwner(owner) {
