@@ -865,14 +865,16 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
         if(player1.props[j].id == proposerPropsId)
           currentProp = player1.props[j];
       }
-      player1.props.splice( player1.props.indexOf(currentProp), 1 );
-      if(currentProp instanceof Station) {
-        player1.stations.splice( player1.stations.indexOf(currentProp), 1 );
-      } else if(currentProp instanceof Services) {
-        player1.services.splice( player1.services.indexOf(currentProp), 1 );
+      if(currentProp != null) {
+        player1.props.splice( player1.props.indexOf(currentProp), 1 );
+        if(currentProp instanceof Station) {
+          player1.stations.splice( player1.stations.indexOf(currentProp), 1 );
+        } else if(currentProp instanceof Services) {
+          player1.services.splice( player1.services.indexOf(currentProp), 1 );
+        }
+        let str = player1.name + ' sells ' + currentProp.name + ' to ' + player2.name;
+        sendPropUpdate(currentProp, player1, 1, str);
       }
-      let str = player1.name + ' sells ' + currentProp.name + ' to ' + player2.name;
-      sendPropUpdate(currentProp, player1, 1, str);
     }
   }
 
@@ -884,44 +886,50 @@ let sortOutProps = function(proposer, receiver, proposerProps, receiverProps, pr
         if(player2.props[j].id == receiverPropsId)
           currentProp = player2.props[j];
       }
-      player2.props.splice( player2.props.indexOf(currentProp), 1 );
-      if(currentProp instanceof Station) {
-        player2.stations.splice( player2.stations.indexOf(currentProp), 1 );
-      } else if(currentProp instanceof Services) {
-        player2.services.splice( player2.services.indexOf(currentProp), 1 );
+      if(currentProp != null) {
+        player2.props.splice( player2.props.indexOf(currentProp), 1 );
+        if(currentProp instanceof Station) {
+          player2.stations.splice( player2.stations.indexOf(currentProp), 1 );
+        } else if(currentProp instanceof Services) {
+          player2.services.splice( player2.services.indexOf(currentProp), 1 );
+        }
+        let str = player2.name + ' sells ' + currentProp.name + ' to ' + player1.name;
+        sendPropUpdate(currentProp, player2, 1, str);
       }
-      let str = player2.name + ' sells ' + currentProp.name + ' to ' + player1.name;
-      sendPropUpdate(currentProp, player2, 1, str);
     }
   }
 
   if(receiverProps != [] && receiverProps != null) {
-    for (let i = 0; i < proposerProps.length; i++) {
-      let p = squares[proposerProps[i].id];
-      p.setOwner(player2.id);
-      player2.props.push(p);
-      if(p instanceof Station) {
-        player2.stations.push(p);
-      } else if(p instanceof Station) {
-        player2.services.push(p);
+    if(proposerProps != [] && proposerProps != null) {
+      for (let i = 0; i < proposerProps.length; i++) {
+        let p = squares[proposerProps[i].id];
+        p.setOwner(player2.id);
+        player2.props.push(p);
+        if(p instanceof Station) {
+          player2.stations.push(p);
+        } else if(p instanceof Services) {
+          player2.services.push(p);
+        }
+        let str = player2.name + ' buys ' + p.name + ' from ' + player1.name;
+        sendPropUpdate(p, player2, 0, str);
       }
-      let str = player2.name + ' buys ' + p.name + ' from ' + player1.name;
-      sendPropUpdate(p, player2, 0, str);
     }
   }
 
   if(proposerProps != [] && proposerProps != null) {
-    for (let i = 0; i < receiverProps.length; i++) {
-      let p = squares[receiverProps[i].id];
-      p.setOwner(player1.id);
-      player1.props.push(p);
-      if(p instanceof Station) {
-        player1.stations.push(p);
-      } else if(p instanceof Station) {
-        player1.services.push(p);
+    if(receiverProps != [] && receiverProps != null) {
+      for (let i = 0; i < receiverProps.length; i++) {
+        let p = squares[receiverProps[i].id];
+        p.setOwner(player1.id);
+        player1.props.push(p);
+        if(p instanceof Station) {
+          player1.stations.push(p);
+        } else if(p instanceof Services) {
+          player1.services.push(p);
+        }
+        let str = player1.name + ' buys ' + p.name + ' from ' + player2.name;
+        sendPropUpdate(p, player1, 0, str);
       }
-      let str = player1.name + ' buys ' + p.name + ' from ' + player2.name;
-      sendPropUpdate(p, player1, 0, str);
     }
   }
 }
