@@ -1,5 +1,5 @@
 
-<html lang="en">
+<!DOCTYPE html lang="en">
 <head>
   <title>
     Game
@@ -202,12 +202,12 @@
         .iodiv,.lorodiv{
           display:none;
           font-size: 20px;
-          font-family:verdana;
+          font-family:verdana,sans-serif;
         }
         #playername{
           display:none;
           font-size:25px;
-          font-family:verdana;
+          font-family:verdana, sans-serif;
         }
         #them{
           visibility:visible;
@@ -235,7 +235,7 @@
         }
         #myproperty{
           font-size:25px;
-          font-family:verdana;
+          font-family:verdana, sans-serif;
           border-bottom-style: solid;
           border-bottom-width:1px;
           background-color: #07dfd0;
@@ -252,7 +252,7 @@
         #divprop1{
           display:inline;
           font-size:25px;
-          font-family:verdana;
+          font-family:verdana, sans-serif;
         }
         .divmoney{
           background-color: #07dfd0;
@@ -264,7 +264,7 @@
           border-right-style: solid;
           border-top-style: solid;
           border-top-width:1px;
-          font-family: verdana;
+          font-family: verdana, sans-serif;
         }
         #us,#them{
           border-style:solid;
@@ -325,11 +325,12 @@
         }
         #leftdice,#rightdice{
           max-width: 100%;
+          visibility: hidden;
         }
         #waitingDiv{
           text-align: center;
           font-size:65px;
-          font-family:verdana;
+          font-family:verdana,sans-serif;
         }
         .lds-ring {
           display: inline-block;
@@ -449,9 +450,9 @@
     </div><br>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
     <div id="dadodiv">
-      <div id="leftdivdice"><img id="leftdice"></div>
+      <div id="leftdivdice"><img id="leftdice" alt="."></div>
       <div id="scrollBox">Game started!!</div>
-      <div id="rightdivdice"><img id="rightdice"></div>
+      <div id="rightdivdice"><img id="rightdice" alt="."></div>
    </div>
     <button id="payjail" onclick="payJail()">Pay Jail</button>
     <button id="getoutofjailfree" onclick="getOutOfJailFree()">Use "Get out of jail free" card</button>
