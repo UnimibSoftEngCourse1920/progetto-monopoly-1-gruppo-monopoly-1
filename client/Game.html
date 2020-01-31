@@ -44,7 +44,6 @@
 	         text-align: center;
 	         position:absolute;
 	         z-index: 1;
-           background-color:white;
         }
         #buyhouse{
            display: none;
@@ -140,8 +139,11 @@
         }
         .housebutton{
           display:none;
+          float:right;
+          border-style: none;
         }
         #scrollBox{
+          display:inline-block;
           margin:auto;
           overflow:auto;
           height:100px;
@@ -194,8 +196,13 @@
         #u5,#u15,#u25,#u35,#l5,#l15,#l25,#l35{
           color:black;
         }
-        .io,.loro,.iodiv,.lorodiv{
+        .io,.loro{
           display:none;
+        }
+        .iodiv,.lorodiv{
+          display:none;
+          font-size: 20px;
+          font-family:verdana;
         }
         #playername{
           display:none;
@@ -263,14 +270,111 @@
           border-style:solid;
           border-radius: 10px;
         }
+        #p0:hover{
+          background-color:#cc0000;
+        }
+        #p1:hover{
+          background-color:#1a1aff;
+        }
+        #p2:hover{
+          background-color:#e6e600;
+        }
+        #p3:hover{
+          background-color:#ffb3ff;
+        }
+        #p4:hover{
+          background-color:#ff8c1a;
+        }
+        #p5:hover{
+          background-color:#b84dff;
+        }
+        #p0{
+          background-color:#FF0000;
+          transition-duration: 0.3;
+        }
+        #p1{
+          background-color:#0000E6;
+          transition-duration: 0.3;
+        }
+        #p2{
+          background-color:#FFFF00;
+          transition-duration: 0.3;
+        }
+        #p3{
+          background-color:#FF80FF;
+          transition-duration: 0.3;
+        }
+        #p4{
+          background-color:#FFA64D;
+          transition-duration: 0.3;
+        }
+        #p5{
+          background-color:#A31AFF;
+          transition-duration: 0.3;
+        }
+        #dadodiv{
+          display:block;
+        }
+        #leftdivdice{
+          display:inline-block;
+          float:left;
+        }
+        #rightdivdice{
+          display:inline-block;
+          float:right;
+        }
+        #leftdice,#rightdice{
+          max-width: 100%;
+        }
+        #waitingDiv{
+          text-align: center;
+          font-size:65px;
+          font-family:verdana;
+        }
+        .lds-ring {
+          display: inline-block;
+          position: relative;
+          width: 80px;
+          height: 80px;
+        }
+        .lds-ring div {
+          box-sizing: border-box;
+          display: block;
+          position: absolute;
+          width: 64px;
+          height: 64px;
+          margin: 8px;
+          border: 8px solid #fff;
+          border-radius: 50%;
+          animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+          border-color: #fff transparent transparent transparent;
+        }
+        .lds-ring div:nth-child(1) {
+          animation-delay: -0.45s;
+        }
+        .lds-ring div:nth-child(2) {
+          animation-delay: -0.3s;
+        }
+        .lds-ring div:nth-child(3) {
+          animation-delay: -0.15s;
+        }
+        @keyframes lds-ring {
+          0% {
+            transform: rotate(0deg);
+          }
+          100% {
+            transform: rotate(360deg);
+          }
+        }
     </style>
     <script src="http://localhost:1337/client/js/socket.io-1.4.5.js"></script>
     <script src="http://localhost:1337/client/js/Classes.js"></script>
     <script src="http://localhost:1337/client/js/jquery-3.4.1.min.js"></script>
 </head>
 <body style="background-color:#06C3B6;">
-	<div id="waitingDiv">
-		waiting...
+  <div id="waitingDiv">
+    <br><br>Waiting for other players<br><br>
+  <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
 	</div>
   <div id="offer" class="position">
     <div id="offerreceiver"></div>
@@ -344,7 +448,11 @@
       <button class="endbutton" id="bankrupt" onclick="declareBankruptcy()">quit</button>
     </div><br>
     <button id="dado" onclick="rolldice()">Roll dice</button><br>
-    <div id="scrollBox"></div>
+    <div id="dadodiv">
+      <div id="leftdivdice"><img id="leftdice"></div>
+      <div id="scrollBox">Game started!!</div>
+      <div id="rightdivdice"><img id="rightdice"></div>
+   </div>
     <button id="payjail" onclick="payJail()">Pay Jail</button>
     <button id="getoutofjailfree" onclick="getOutOfJailFree()">Use "Get out of jail free" card</button>
     <br>
@@ -367,7 +475,7 @@
             <div id="m2" class="divmoney"></div><br>
           </div>
             <div id="us">
-              <div id="myproperty">Your properties</div><br>
+              <div id="myproperty">Your properties</div>
               <div class="divBlock"><input id="cu1" type="checkbox" class="io" value="1"><div id="u1" class = "iodiv">Mediterranean Avenue</div><button id="b1" class="housebutton" onclick="buyHouses(1)">seleziona</button></div>
               <div class="divBlock"><input id="cu3" type="checkbox" class="io" value="3"><div id="u3" class = "iodiv">Baltic Avenue</div><button id="b3" class="housebutton" onclick="buyHouses(3)">seleziona</button></div>
               <div class="divBlock"><input id="cu6" type="checkbox" class="io" value="6"><div id="u6" class = "iodiv">Oriental Avenue</div><button id="b6" class="housebutton" onclick="buyHouses(6)">seleziona</button></div>
@@ -411,7 +519,7 @@
             <div id="m5" class="divmoney"></div><br>
           </div>
             <div id="them">
-              <div id="theirproperty" class="divBlock"><div id="divprop1">Properties of </div><div id="playername"></div></div><br>
+              <div id="theirproperty" class="divBlock"><div id="divprop1">Properties of </div><div id="playername"></div></div>
               <div class="divBlock"><input id="cl1" type="checkbox" class="loro" value="1"><div id="l1" class="lorodiv" >Mediterranean Avenue</div></div>
               <div class="divBlock"><input id="cl3" type="checkbox" class="loro" value="3"><div id="l3" class="lorodiv" >Baltic Avenue</div></div>
               <div class="divBlock"><input id="cl6" type="checkbox" class="loro" value="6"><div id="l6" class="lorodiv" >Oriental Avenue</div></div>
@@ -480,6 +588,11 @@
   let myName;
   let o=[];
   let maxBid=0;
+  let boolProp;
+  let done = false;
+  let timeOutFunc;
+  let intervalFunc;
+  let justPayed = false;
   o[1]= new Image();
   o[2]= new Image();
   o[3]= new Image();
@@ -499,6 +612,7 @@
   });
 
   socket.on('startGame', function (data) {
+    //start game
       waitingDiv.style.display = 'none';
       row.style.display = 'block';
       document.getElementById("div2").style.display="block";
@@ -511,16 +625,15 @@
           players[i] = new Player(playersTemp[i].id, playersTemp[i].name, pedina);
           let p = "p" + i;
           let m= "m" + i;
-          console.log(playersTemp[i].id + " " + playersTemp[i].name);
           if(players[i].id==id){
             self = players[i];
-            document.getElementById(p).innerHTML =  "(sei tu) " + players[i].name;
+            document.getElementById(p).innerHTML =  "(you) " + players[i].name;
 
           }else{
             document.getElementById(p).innerHTML = players[i].name;
           }
           document.getElementById(m).innerHTML =  "money: " + players[i].money;
-          document.getElementById(p).style.background=colors[i];
+          //document.getElementById(p).style.background=colors[i];
         }
       }
       let array2=document.getElementsByClassName("divblock");
@@ -531,7 +644,353 @@
       createCanvas();
   });
 
+  socket.on('newHighestBid', function(data){
+    //aggiorna la div con la puntata più alta
+      maxBid=data;
+      document.getElementById("auctionprice").innerHTML=data;
+  });
+
+  socket.on('startAuction', function(data){
+    //fa apparire al player la pagina dell'asta
+    document.getElementById("auctionprice").innerHTML=maxBid;
+    document.getElementById("auctionproperty").innerHTML=data.name;
+    document.getElementById("auctiondiv").style.display="block";
+  });
+
+  socket.on('turn', function(data) {
+    //fa iniziare il turno a un giocatore
+    turn = data;
+    if (turn == self.id)
+      startTurn();
+  });
+
+  socket.on('getOutOfJailFreeUpdate', function(data) {
+    //aggiorna l'attributo del player relativo alla carta per l'uscita dalla prigione
+    let player = data;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if (player.getOutOfJailFree) {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' now has a GetOutOfJailCard');
+        } else {
+          players[i].getOutOfJailFree = player.getOutOfJailFree;
+          updateScroll(player.name + ' used his GetOutOfJailCard');
+        }
+      }
+    }
+  })
+
+  socket.on('updatePosPlayer', function(data){
+    //aggiorna la posizione di un player
+    let player = data[0];
+    let desc = data[1];
+    let newPos = player.pos;
+    let oldPos;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+        if (players[i].id == player.id) {
+          oldPos = players[i].pos;
+          updatePosPlayer(players[i], oldPos, newPos, desc);
+        }
+    }
+    if (player.id == id && !player.jail)
+      socket.emit('handlePlayer', self);
+  });
+
+  socket.on('genericUpdate', function(data) {
+    //chiama la funzione per mandare una stringa a tutti i player
+    updateScroll(data);
+  });
+
+  socket.on('updateMoneyPlayer', function(data) {
+    //aggiorna i money di un player
+    let p;
+    if(data[0] != 0) {
+      for (let i = 0; i < players.length; i ++)
+      if(players[i]!=null)
+        if (players[i].id == data[1].id) {
+          players[i].updateMoney(data[0]);
+          p = players[i];
+          let str = 'm' + p.id;
+          document.getElementById(str).innerHTML = "money: " + p.money;
+          if(players[i].id == self.id) {
+            if(!payedOff) {
+              if(self.money >= moneyOwed)
+                payedOff = true;
+            }
+          }
+        }
+        if(data[2] != null)
+          updateScroll(data[2]);
+    }
+  });
+
+  socket.on('jailUpdate', function(data) {
+    //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
+    //puo essere cambiato il suo jail count, ovvero quanti turni è in prigione
+    let player = data[0];
+    let double = data[1];
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if (players[i].id == player.id) {
+        players[i].jail = player.jail;
+        if (player.id != self.id) {
+          if (player.jail == false) {
+            str = player.name + ' is out of jail';
+            players[i].jailCount = 0;
+            updateScroll(str);
+          } else {
+            str = player.name + ' is in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          if (player.jail == true) {
+            //socket.emit('endturn');
+          } else {
+            self.jailCount = 0;
+          }
+        }
+      }
+    }
+
+  });
+
+  socket.on('jailCountUpdate', function(data) {
+    //tiene conto di quanti turni è stato in prigione un player e aggiorna in base a quel numero
+    let player = data;
+    let str;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if (players[i].id == player.id) {
+        if (player.id != self.id) {
+          players[i].jailCount = player.jailCount;
+          if (player.jailCount != 0) {
+            str = player.name + ' is still in jail';
+            updateScroll(str);
+          }
+        } else {
+          //sei tu
+          players[i].jailCount = player.jailCount;
+        }
+      }
+    }
+  });
+
+  socket.on('unownedProperty', function(data) {
+    //data è un oggetto di tipo Property
+    //questo viene ricevuto solo dal client interessato, non da tutti
+    //mostra la descrizione di una proprietà(se non posseduta da nessuno) quando il player ci finisce sopra
+    gestore.style.display="none";
+   buyProperty.style.display="block";
+   let propTemp=data[1];
+   let type = data[2];
+   let frase;
+          if (type == 'HouseProperty') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0= "rendita: " + propTemp.housePrices[0];
+             let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
+             let r2= "rendita con 2 case: " + propTemp.housePrices[2];
+             let r3= "rendita con 3 case: " + propTemp.housePrices[3];
+             let r4= "rendita con 4 case: " + propTemp.housePrices[4];
+             let r5= "rendita con albergo: " + propTemp.housePrices[5];
+             let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
+             frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
+           } else if (type == 'Station') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r1= "rendita con 1 stazione: " + propTemp.rentPrices[0];
+             let r2= "rendita con 2 stazioni: " + propTemp.rentPrices[1];
+             let r3= "rendita con 3 stazioni: " + propTemp.rentPrices[2];
+             let r4= "rendita con 4 stazioni: " + propTemp.rentPrices[3];
+             frase= n + "<br>" + c + "<br>" + r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4;
+           } else if (type == 'Services') {
+             let n = "Nome proprietà: "+ propTemp.name;
+             let c=  "Costo di acquisto: "+ propTemp.cost;
+             let r0 = "Se si possiede una proprieta di tipo Services, la rendita è: 4 x il numero dei dadi tirati";
+             let r1 = "Se si possiedono entrambe le proprieta di tipo Services, la rendita è: 10 x il numero dei dadi tirati";
+             frase = n + "<br>" + c + "<br>" + r0 + "<br>"+ r1;
+           }
+           document.getElementById("description").innerHTML=frase;
+           if(propTemp.cost>self.money){
+             boolProp=false;
+           }else{
+             boolProp=true;
+           }
+  });
+
+  socket.on('addProp', function(data) {
+    //aggiorna una proprietà a un player
+    let playerArrived = data[1];
+    let prop = data[0];
+    let player = players[playerArrived.id];
+    let str = data[2];
+    let tipoProp = data[3];
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if (players[i].id != self.id) {
+          players[i].addProp(prop);
+          if(tipoProp == 1) {
+            players[i].stations.push(prop);
+          }
+          else if(tipoProp == 2) {
+            players[i].services.push(prop);
+          }
+        } else {
+          self.addProp(prop);
+          if(tipoProp == 1) {
+            players[i].stations.push(prop);
+          }
+          else if(tipoProp == 2) {
+            players[i].services.push(prop);
+          }
+          updateSelfProps();
+        }
+      }
+    }
+    updateScroll(str);
+  })
+
+  socket.on('endMenu', function(data) {
+    //fa apparire il menu per la trade,buildhouse,ecc dopo aver girato i dadi
+    endMenu(data);
+  });
+
+  socket.on('playerDisconnected', function(data) {
+    //fa sparire la div del player disconnesso e lo notifica al player
+    let playerDisc = players[data.id];
+    let pId = 'p' + playerDisc.id;
+    let mId = 'm' + playerDisc.id;
+    document.getElementById(pId).style.display="none";
+    document.getElementById(mId).style.display="none";
+    players[data.id] = null;
+    updateScroll(data.name + ' disconnected');
+  });
+
+  socket.on('youHaveWon', function() {
+    //appare quando vinci
+    document.getElementById("haivinto").style.display="block";
+    setTimeout(function() {
+      socket.disconnect();
+      window.open("http://localhost:1337/client/Menu.html", "_self");
+    }, 3000);
+  })
+
+  socket.on('tradeProposal', function(data) {
+    //si attiva quando un player vuole fare una trade con me
+    proposer = data[0];
+    theirProps = data[1];
+    ourProps = data[2];
+    theirMoney = data[3];
+    ourMoney = data[4];
+    let str = "";
+    let str3 = "";
+    document.getElementById("gestore").style.display="none";
+    document.getElementById("offer").style.display="block";
+    for(let i=0;i<ourProps.length;i++){
+      if(ourProps != [])
+        str+= ourProps[i].name + "<br>";
+    }
+    for(let i=0;i<theirProps.length;i++){
+      if (theirProps != [])
+        str3+= theirProps[i].name + "<br>";
+    }
+    document.getElementById("offerreceiver").innerHTML=self.name +"<br>i soldi richiesti: " + ourMoney+ "<br>Le tue proprietà richieste:<br>" + str;
+    document.getElementById("offerproposer").innerHTML=proposer.name +"<br>i soldi offerti: " + theirMoney+ "<br>Le tue proprietà offerte:<br>" + str3;
+  })
+
+  socket.on('removeProp', function(data) {
+    //rimuove una proprietà da un player
+    let prop = data[0];
+    let playerArrived = data[1];
+    let player = players[playerArrived.id];
+    let str = data[2];
+    let tipoProp = data[3];
+    let boo = false;
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+          boo = true;
+          for (let j = 0; j < players[i].props.length; j ++) {
+            if(prop.id == players[i].props[j].id) {
+              players[i].removeProp(players[i].props[j]);
+            }
+          }
+          if(tipoProp == 1) {
+            for (let j = 0; j < players[i].stations.length; j ++) {
+              if(prop.id == players[i].stations[j].id) {
+                players[i].stations.splice(j, 1);
+              }
+            }
+          } else if (tipoProp == 2) {
+            for (let j = 0; j < players[i].services.length; j ++) {
+              if(prop.id == players[i].services[j].id) {
+                players[i].services.splice(j, 1);
+              }
+            }
+          }
+        }
+    }
+    updateSelfProps();
+    updateScroll(str);
+  })
+
+  socket.on('updateHouses', function(data) {
+    //aggiorna il numero di case di un player e le stampa nel canvas
+    let player = data[0];
+    let prop = data[1];
+    let numHousesDelta = data[2];
+    let str = player.name + ' added ' + numHousesDelta + ' to ' + prop.name;
+    updateScroll(str);
+    for (let i = 0; i < players.length; i ++) {
+      if(players[i]!=null)
+      if(players[i].id == player.id) {
+        if(player.id != self.id) {
+          let pl = players[i];
+          for (let l = 0; l < pl.props.length; l ++) {
+            if (pl.props[l].id == prop.id) {
+              pl.props[l].numHouses += numHousesDelta;
+              pl.props[l].rent = prop.rent;
+            }
+          }
+          paint();
+        } else {
+          paint();
+        }
+      }
+    }
+  });
+
+  socket.on('mortgageUpdate', function(data) {
+    //aggiorna l'attributo mortgage di una proprietà
+    let player = data[0];
+    let prop = data[1];
+    updateScroll(data[2]);
+    for(let i = 0; i < players.length; i ++) {
+      if(players[i] != null) {
+        if(players[i].id == player.id) {
+          for(let j = 0; j < players[i].props.length; j ++) {
+            if(prop.id == players[i].props[j].id) {
+              players[i].props[j].state = prop.state;
+            }
+          }
+        }
+      }
+    }
+  });
+
+  socket.on('endAuction', function() {
+    //termina forzatamente l'asta
+    document.getElementById("auctiondiv").style.display="none";
+    maxBid = 0;
+  });
+
   let createCanvas = function () {
+    //creazione canvas, dimensione gestore
     document.getElementById("board").style.display="block";
     let H = $(window).height();
     let W = $(window).width();
@@ -545,12 +1004,14 @@
     $(".position").offset({ top: cas+100,left:(cas*1.5) + $(".column").width() });
     $("#us").height(H-($("#topleft").height())-10);
     $("#them").height(H-($("#topright").height())-10);
+    $("#leftdivdice").width((($(".position").width()-300)/2)-5);
+    $("#rightdivdice").width((($(".position").width()-300)/2)-5);
     fix_dpi();
     createSquares();
     img.onload = function () {
       paint();
     }
-    img.src = "http://localhost:1337/client/img/monopoly.png";
+    img.src = "http://localhost:1337/client/img/monopoly.jpg";
     o[1].src = "http://localhost:1337/client/img/1.png";
     o[2].src = "http://localhost:1337/client/img/2.png";
     o[3].src = "http://localhost:1337/client/img/3.png";
@@ -559,6 +1020,7 @@
   }
 
   function fix_dpi() {
+    //serve per sistemare l'immagine
     let style_height = +getComputedStyle(canvas).getPropertyValue("height").slice(0, -2);
     let style_width = +getComputedStyle(canvas).getPropertyValue("width").slice(0, -2);
     canvas.setAttribute('height', style_height * dpi);
@@ -566,7 +1028,7 @@
   }
 
   let createSquares = function() {
-    //let boardW=$("#board").width();
+    //determina le coordinate delle caselle e di dove appaiono le case
     let boardW = canvas.width;
     let w=boardW/1500;
     let calcola=function(i){
@@ -683,13 +1145,10 @@
 
   }
 
-  socket.on('turn', function(data) {
-    turn = data;
-    if (turn == self.id)
-      startTurn();
-  });
+
 
   let startTurn = function() {
+    //nuovo turno per il giocatore
     if (!self.jail){
       dado.style.visibility = 'visible';
       $('#dado').prop('disabled', false);
@@ -703,51 +1162,39 @@
     }
   }
 
-  let odd = 0;
+
   let rolldice = function() {
+    //calcola i dadi e li manda al server
     $('#dado').prop('disabled', true);
     dado.style.visibility='hidden';
+
     document.getElementById("payjail").style.visibility='hidden';
     document.getElementById("getoutofjailfree").style.visibility='hidden';
     let x = Math.floor(Math.random() * 6) + 1;
     let y = Math.floor(Math.random() * 6) + 1;
-    //let x = 5;
-    //let y = 2;
+    let str13="http://localhost:1337/client/img/dice" +x +".png";
+    let str14="http://localhost:1337/client/img/dice" +y+".png" ;
+    $('#leftdice').attr("src", str13);
+    $('#rightdice').attr("src", str14);
+    document.getElementById("leftdice").style.visibility="visible";
+    document.getElementById("rightdice").style.visibility="visible";
     let str = 'you rolled the dice: ' + x + ' ' + y;
     let pack = [];
     pack.push(x);
     pack.push(y);
     socket.emit('dice', pack);
-    //updatePosition(x+y, str);
-
-
-    //dovremo spostare
-    //socket.emit('endTurn');
   }
 
   let getOutOfJailFree = function() {
-    //getOutOfJailFree.style.visibility = 'hidden';
+    //uscire dalla prigione con la carta
     socket.emit('getOutOfJailFree', self);
     document.getElementById("getoutofjailfree").style.visibility='hidden';
   }
 
-  socket.on('getOutOfJailFreeUpdate', function(data) {
-    let player = data;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-      if(players[i].id == player.id) {
-        if (player.getOutOfJailFree) {
-          players[i].getOutOfJailFree = player.getOutOfJailFree;
-          updateScroll(player.name + ' now has a GetOutOfJailCard');
-        } else {
-          players[i].getOutOfJailFree = player.getOutOfJailFree;
-          updateScroll(player.name + ' used his GetOutOfJailCard');
-        }
-      }
-    }
-  })
+
 
   let payJail = function() {
+    //pagamento per uscire dalla prigione
     if (self.money >= 50) {
       document.getElementById("payjail").style.visibility='hidden';
       socket.emit('payJail', self);
@@ -755,30 +1202,11 @@
       updateScroll("You can't leave jail as you need to pay 50 which you don't have");
     }
   }
-  /*let updatePosition = function(diceNumber, str) {
-    oldPos = self.pos;
-    newPos = self.dicePos(diceNumber);
-    updatePosPlayer(self, oldPos, newPos, str);
-    socket.emit("handlePlayer", self);
-  }*/
 
-  socket.on('updatePosPlayer', function(data){
-    let player = data[0];
-    let desc = data[1];
-    let newPos = player.pos;
-    let oldPos;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-        if (players[i].id == player.id) {
-          oldPos = players[i].pos;
-          updatePosPlayer(players[i], oldPos, newPos, desc);
-        }
-    }
-    if (player.id == id && !player.jail)
-      socket.emit('handlePlayer', self);
-  });
+
 
   let updatePosPlayer = function(player, oldPos, newPos, str) {
+    //aggiorna la posizione di un player
     player.setPos(newPos);
     let stringa = player.name + " " + str;
     updateScroll(stringa);
@@ -786,197 +1214,25 @@
     //qui dobbiamo aggiornare la pos del player sullo schermo
   }
 
-  socket.on('genericUpdate', function(data) {
-    //data è una stringa, devi solo inserirla nella scroll
-    updateScroll(data);
-  });
-
-  socket.on('updateMoneyPlayer', function(data) {
-    //data è un array [rent, player, description]
-    let p;
-    if(data[0] != 0) {
-      for (let i = 0; i < players.length; i ++)
-      if(players[i]!=null)
-        if (players[i].id == data[1].id) {
-          players[i].updateMoney(data[0]);
-          p = players[i];
-          let str = 'm' + p.id;
-          document.getElementById(str).innerHTML = "money: " + p.money;
-          if(players[i].id == self.id) {
-            if(!payedOff) {
-              if(self.money >= moneyOwed)
-                payedOff = true;
-            }
-          }
-        }
-        if(data[2] != null)
-          updateScroll(data[2]);
-    }
-
-    //teo non so se lo fa automaticamente ma se no in questo momento deve essere aggiornata la div.
-    //Crea una funzione che quando i soldi di un player (incluso self) vengono modificati, viene modificata automaticamente la div.
-    //Poi altra cosa mi sa che self e player[id] puntono alla stessa are di memoria, dunque cambiare uno o l'altro dovrebbe essere la stessa cosa,
-    //percui faccio un for senza fare il controllo su self, ma fai delle prove e eventualmente possiamo togliere self del tutto e
-    //usare lo stesso array per tutti
-
-
-  });
-
-  socket.on('jailUpdate', function(data) {
-    //data è un player, il suo stato jail è cambiato (o è uscito o è entrato, jail = true se dentro false se fuori)
-    //puo essere cambiato il suo jail count, ovvero quanti turni è in prigione
-    let player = data[0];
-    let double = data[1];
-    let str;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-      if (players[i].id == player.id) {
-        players[i].jail = player.jail;
-        if (player.id != self.id) {
-          if (player.jail == false) {
-            str = player.name + ' is out of jail';
-            players[i].jailCount = 0;
-            updateScroll(str);
-          } else {
-            str = player.name + ' is in jail';
-            updateScroll(str);
-          }
-        } else {
-          //sei tu
-          if (player.jail == true) {
-            //socket.emit('endturn');
-          } else {
-            self.jailCount = 0;
-          }
-        }
-      }
-    }
-
-  });
-
-  socket.on('jailCountUpdate', function(data) {
-    let player = data;
-    let str;
-    for (let i = 0; i < players.length; i ++) {
-      if(players[i]!=null)
-      if (players[i].id == player.id) {
-        if (player.id != self.id) {
-          players[i].jailCount = player.jailCount;
-          if (player.jailCount != 0) {
-            str = player.name + ' is still in jail';
-            updateScroll(str);
-          }
-        } else {
-          //sei tu
-          players[i].jailCount = player.jailCount;
-          if (player.jailCount != 0)
-            jailOptions();
-        }
-      }
-    }
-  });
-
-  let jailOptions = function() {
-    //mostra opzioni per quando sei in prigione, quindi rolldice, paga oppure usa carta se ce l'hai
-
-  }
-
   let propertyRisp = function (risp){
-    let str;
-    if(risp){
-      str="buy";
-   }else {
-     str="auction";
-     }
-     socket.emit('buyOrAuction', str);
-     buyProperty.style.display="none";
-     gestore.style.display="block";
+    //si attiva quando si preme su buy o auction per una nuova proprietà, manda al server la scelta
+    if(risp && boolProp==false){
+      alert("you don't have enough money");
+    }else{
+      let str;
+      if(risp){
+        str="buy";
+      }else {
+         str="auction";
+         }
+         socket.emit('buyOrAuction', str);
+         buyProperty.style.display="none";
+         gestore.style.display="block";
+   }
   }
-
-  socket.on('unownedProperty', function(data) {
-    //data è un oggetto di tipo Property
-    //questo viene ricevuto solo dal client interessato, non da tutti
-    //qua bisogna mettere sul canvas due tasti, Buy e Auction per dare una scelta al giocatore, e magari mettere una descrizione della
-    //property su cui è capitato (hai tutte le informazioni in Property)
-    //poi ci sara un oncclick metodo che inviera al server la scelta
-    //fai in modo che i due bottoni invochino la stessa funzione, che pero fa una socket.emit diversa nei due casi:
-    //socket.emit('buyOrAuction', str), dove str = 'buy' o str = 'auction'
-    gestore.style.display="none";
-   buyProperty.style.display="block";
-   let propTemp=data[1];
-   let type = data[2];
-   let frase;
-          //sei tu
-          if (type == 'HouseProperty') {
-
-             let n = "Nome proprietà: "+ propTemp.name;
-             let c=  "Costo di acquisto: "+ propTemp.cost;
-             let r0= "rendita: " + propTemp.housePrices[0];
-             let r1= "rendita con 1 casa: " + propTemp.housePrices[1];
-             let r2= "rendita con 2 case: " + propTemp.housePrices[2];
-             let r3= "rendita con 3 case: " + propTemp.housePrices[3];
-             let r4= "rendita con 4 case: " + propTemp.housePrices[4];
-             let r5= "rendita con albergo: " + propTemp.housePrices[5];
-             let h= "costo di una casa o albergo: " + propTemp.houseBuildPrice;
-             frase= n + "<br>" + c + "<br>" + r0 + "<br>"+ r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4 + "<br>"+ r5 + "<br>"+ h;
-             //document.getElementById("description").style.border-color=propTemp.colour;
-           } else if (type == 'Station') {
-
-             let n = "Nome proprietà: "+ propTemp.name;
-             let c=  "Costo di acquisto: "+ propTemp.cost;
-             let r1= "rendita con 1 stazione: " + propTemp.rentPrices[0];
-             let r2= "rendita con 2 stazioni: " + propTemp.rentPrices[1];
-             let r3= "rendita con 3 stazioni: " + propTemp.rentPrices[2];
-             let r4= "rendita con 4 stazioni: " + propTemp.rentPrices[3];
-             frase= n + "<br>" + c + "<br>" + r1 + "<br>"+ r2 + "<br>"+ r3 + "<br>"+ r4;
-           } else if (type == 'Services') {
-             let n = "Nome proprietà: "+ propTemp.name;
-             let c=  "Costo di acquisto: "+ propTemp.cost;
-             let r0 = "Se si possiede una proprieta di tipo Services, la rendita è: 4 x il numero dei dadi tirati";
-             let r1 = "Se si possiedono entrambe le proprieta di tipo Services, la rendita è: 10 x il numero dei dadi tirati";
-             frase = n + "<br>" + c + "<br>" + r0 + "<br>"+ r1;
-           }
-           document.getElementById("description").innerHTML=frase;
-
-  });
-
-socket.on('addProp', function(data) {
-  let playerArrived = data[1];
-  let prop = data[0];
-  let player = players[playerArrived.id];
-  let str = data[2];
-  let tipoProp = data[3];
-  for (let i = 0; i < players.length; i ++) {
-    if(players[i]!=null)
-    if(players[i].id == player.id) {
-      if (players[i].id != self.id) {
-        players[i].addProp(prop);
-        if(tipoProp == 1) {
-          players[i].stations.push(prop);
-        }
-        else if(tipoProp == 2) {
-          players[i].services.push(prop);
-        }
-        console.log(players[i].props[0].name);
-        //aggiorna div
-      } else {
-        //sei tu
-        self.addProp(prop);
-        if(tipoProp == 1) {
-          players[i].stations.push(prop);
-        }
-        else if(tipoProp == 2) {
-          players[i].services.push(prop);
-        }
-        updateSelfProps();
-        //aggiorna div
-      }
-    }
-  }
-  updateScroll(str);
-})
 
   let updateScroll = function(str) {
+    //aggiorna il test della div per gli eventi
     let scrollDiv= document.getElementById("scrollBox");
     let sdiv=scrollDiv.innerHTML;
     scrollDiv.innerHTML = str + "<br>" + sdiv ;
@@ -984,6 +1240,7 @@ socket.on('addProp', function(data) {
 
 
   let paint = function() {
+    //disegna il canvas
     ctx.clearRect(0, 0, canvas.width, canvas.width);
     ctx.drawImage(img, 0, 0, canvas.width, canvas.width);
     for (let i = 0; i < players.length; i ++) {
@@ -996,6 +1253,7 @@ socket.on('addProp', function(data) {
     }
   }
   let drawHouses = function(properties){
+    //disegna le case sul canvas
     for(let i=0;i<properties.length;i++){
       if(properties[i].numHouses==1){
         ctx.drawImage(o[1], houses[properties[i].id].x, houses[properties[i].id].y, houses[properties[i].id].w, houses[properties[i].id].h);
@@ -1011,7 +1269,7 @@ socket.on('addProp', function(data) {
     }
   }
   let drawPedine = function(pedina, x, y) {
-    //alert("hey");
+    //disegna le pedine sul canvas
     ctx.fillStyle = pedina.color;
     ctx.fillRect(x, y, pedina.w, pedina.h);
     ctx.fillStyle = "#000000";
@@ -1019,28 +1277,22 @@ socket.on('addProp', function(data) {
 
   }
 
-  socket.on('endMenu', function(data) {
-    endMenu(data);
-  });
-
-  let done = false;
-  let timeOutFunc;
-  let intervalFunc;
-
   let setDone = function() {
+    //gestisce il delay
   this.done= true;
   clearTimeout(timeOutFunc);
   }
 
   let setPayedOff = function() {
+    //controlla se hai pagato il debito
     payedOff = true;
     clearInterval(intervalFunc);
     moneyOwed = 0;
     ownerOwed = null;
   }
-  let justPayed = false;
-  let endMenu = function(data) {
 
+  let endMenu = function(data) {
+    //fa apparire l'end menu
     let boo = data[0];
     let money = data[1];
     let owner = data[2];
@@ -1061,11 +1313,14 @@ socket.on('addProp', function(data) {
       moneyOwed = money;
       payedOff = false;
 
-      timeOutFunc = setTimeout(function(){ document.getElementById("endmenu").style.display="visible"; document.getElementById("end").style.display="none"; setDone();}, 2500);
+      timeOutFunc = setTimeout(function(){
+        document.getElementById("endmenu").style.display="visible";
+        document.getElementById("end").style.display="none";
+        setDone();
+      }, 2500);
       intervalFunc = setInterval(function() {
         if(payedOff) {
-          //document.getElementById("end").style.visibility="visible";
-          let pack = [money, owner]
+          let pack = [money, owner];
           socket.emit('payedDebt', pack);
           document.getElementById("endmenu").style.visibility="hidden";
           justPayed = true;
@@ -1073,45 +1328,33 @@ socket.on('addProp', function(data) {
         }
       }, 300);
     }
-    //opzione 1: finisci il turno => emitti socket.emit('endTurn');
-    //opzione 2: costruzione case => socket.emit('houseBuild');
-    //opzione 3: trading => socket.emit('trade');
-    //opzione 4: dichiara bancarotta => socket.emit('bankrupt');
   }
 
   let endTurn = function() {
-    socket.emit('endTurn');
+    //quando si preme su end turn, notifica al server la fine del turno
     document.getElementById("endmenu").style.visibility="hidden";
-  }
-
-  let houseBuild = function(property, build) {
-    //build è un boolean, false se togli una casa, true se costruisci
-    //viene invocata sempre questa funzione una casa alla volta
-    //se numCase è uguale a zero, togliere una casa vuol dire ipotecare
-    let prop = self.props[property];
-    let pack = [];
-    pack.push(prop);
-    pack.push(build);
-    socket.emit('houseBuild', pack);
+    document.getElementById("leftdice").style.visibility="hidden";
+    document.getElementById("rightdice").style.visibility="hidden";
+    socket.emit('endTurn');
   }
 
   let trade = function() {
+    //fa apparire la finestra di trade
     document.getElementById("gestore").style.display="none";
     document.getElementById("tradepage").style.display="block";
     tradeState = true;
     updateSelfProps();
-    // settare finestra
-
   }
 
   let declareBankruptcy = function() {
+    //fa apparire la pagina per poter abbandonare il gioco, viene chiamata premendo il tasto quit
     document.getElementById("gestore").style.display="none";
     document.getElementById("abbandonagioco").style.display="block";
   }
 
   let bankrupt = function() {
+    //viene chiamata quando si preme il tasto per uscire dal gioco, rimanda al menu iniziale
     let pack = [payedOff, ownerOwed];
-    //socket.emit('bankrupt', pack);
     socket.disconnect(pack);
     document.getElementById("abbandonagioco").style.display="none";
     document.getElementById("haiperso").style.display="block";
@@ -1121,47 +1364,37 @@ socket.on('addProp', function(data) {
   }
 
   let noExit = function() {
+    //rifiuta la possibilità di abbandore il gioco
     document.getElementById("abbandonagioco").style.display="none";
     document.getElementById("gestore").style.display="block";
   }
 
-
-  socket.on('playerDisconnected', function(data) {
-    let playerDisc = players[data.id];
-    let pId = 'p' + playerDisc.id;
-    let mId = 'm' + playerDisc.id;
-    document.getElementById(pId).style.display="none";
-    document.getElementById(mId).style.display="none";
-    players[data.id] = null;
-    updateScroll(data.name + ' disconnected');
-  });
-
-  socket.on('youHaveWon', function() {
-    document.getElementById("haivinto").style.display="block";
-    setTimeout(function() {
-      socket.disconnect();
-      window.open("http://localhost:1337/client/Menu.html", "_self");
-    }, 3000);
-  })
   p0.onclick= function(){
+    //click sulla div di player 1
     viewProps(0);
   }
   p1.onclick= function(){
+    //click sulla div di player 2
     viewProps(1);
   }
   p2.onclick= function(){
+    //click sulla div di player 3
     viewProps(2);
   }
   p3.onclick= function(){
+    //click sulla div di player 4
     viewProps(3);
   }
   p4.onclick= function(){
+    //click sulla div di player 5
     viewProps(4);
   }
   p5.onclick= function(){
+    //click sulla div di player 6
     viewProps(5);
   }
   $(document).ready(function(){
+    //prende i value delle checkbox delle proprietà quando vengono selezionate in una trade
         $(".infoPlayer").click(function(){
           if (tradeState==true){
               $(".loro").prop("checked", false);
@@ -1195,6 +1428,7 @@ socket.on('addProp', function(data) {
 
     });
     let updateSelfProps = function(){
+      //aggiorna la lista delle proprie proprietà nel div a sinistra
       let arr2 = document.getElementsByClassName("iodiv");
       for (let i = 0; i < arr2.length; i ++) {
         arr2[i].style.display="none";
@@ -1206,7 +1440,6 @@ socket.on('addProp', function(data) {
         for (let i = 0; i < self.props.length; i ++) {
           if(self.props[i] != null) {
             let j = 'u' + self.props[i].id;
-            //mostra la div della proprieta
             document.getElementById(j).style.display='inline';
           } else {
             let j = 'u' + self.props[i].id;
@@ -1214,11 +1447,9 @@ socket.on('addProp', function(data) {
           }
         }
        if(tradeState) {
-        //trade, quindi anche checkbox
         for (let i = 0; i < self.props.length; i ++) {
           if(self.props[i] != null) {
             let j = 'cu' + self.props[i].id;
-            //mostra la div della proprieta
             document.getElementById(j).style.display='inline';
           } else {
             let j = 'cu' + self.props[i].id;
@@ -1228,11 +1459,10 @@ socket.on('addProp', function(data) {
       }
     }
     let viewProps = function(idDiv) {
-      document.getElementById("them").style.visibility='visible';
+      //aggiorna la div a destra, con le proprietà del player su cui clicco
       //disattivo le div attive precedenti
-
       //controllo di non avere cliccato su me stesso
-
+      document.getElementById("them").style.visibility='visible';
       if (idDiv != id) {
 
         document.getElementById("playername").style.display="inline";
@@ -1250,7 +1480,6 @@ socket.on('addProp', function(data) {
           for (let i = 0; i < player.props.length; i ++) {
             if(player.props[i] != null) {
               let j = 'l' + player.props[i].id;
-              //mostra la div della proprieta
               document.getElementById(j).style.display='inline';
             } else {
               let j = 'l' + player.props[i].id;
@@ -1263,11 +1492,9 @@ socket.on('addProp', function(data) {
            for (let i = 0; i < arr2.length; i ++) {
              arr2[i].style.display="none";
            }
-          //trade, quindi anche checkbox
           for (let i = 0; i < player.props.length; i ++) {
             if(player.props[i] != null) {
               let j = 'cl' + player.props[i].id;
-              //mostra la div della proprieta
               document.getElementById(j).style.display='inline';
             } else {
               let j = 'cl' + player.props[i].id;
@@ -1278,28 +1505,10 @@ socket.on('addProp', function(data) {
       }
     }
 
-    socket.on('tradeProposal', function(data) {
-      proposer = data[0];
-      theirProps = data[1];
-      ourProps = data[2];
-      theirMoney = data[3];
-      ourMoney = data[4];
-      let str = "";
-      let str3 = "";
-      document.getElementById("gestore").style.display="none";
-      document.getElementById("offer").style.display="block";
-      for(let i=0;i<ourProps.length;i++){
-        if(ourProps != [])
-          str+= ourProps[i].name + "<br>";
-      }
-      for(let i=0;i<theirProps.length;i++){
-        if (theirProps != [])
-          str3+= theirProps[i].name + "<br>";
-      }
-      document.getElementById("offerreceiver").innerHTML=self.name +"<br>i soldi richiesti: " + ourMoney+ "<br>Le tue proprietà richieste:<br>" + str;
-      document.getElementById("offerproposer").innerHTML=proposer.name +"<br>i soldi offerti: " + theirMoney+ "<br>Le tue proprietà offerte:<br>" + str3;
-    })
+
+
     let proposeTrade = function(){
+      //propongo un trade a un player, il server manda la richiesta all'altro player
       ourMoney=$("#ourmoney").val();
       theirMoney=$("#theirmoney").val();
       let pack =[receiver,ourProps,theirProps,ourMoney,theirMoney];
@@ -1307,6 +1516,7 @@ socket.on('addProp', function(data) {
       exitTrade();
     }
     let exitTrade= function(){
+      //annullo il trade
       $(".loro").prop("checked", false);
       $(".io").prop("checked", false);
       theirProps=[];
@@ -1343,6 +1553,7 @@ socket.on('addProp', function(data) {
     }
 
     let sendTradeResponse = function(response) {
+      //rispondo al trade che mi è stato proposto
       let pack = [proposer, theirProps, ourProps, theirMoney, ourMoney, response];
       document.getElementById("gestore").style.display="block";
       document.getElementById("offer").style.display="none";
@@ -1354,63 +1565,8 @@ socket.on('addProp', function(data) {
       proposer = null;
     }
 
-    socket.on('removeProp', function(data) {
-      let prop = data[0];
-      let playerArrived = data[1];
-      let player = players[playerArrived.id];
-      let str = data[2];
-      let tipoProp = data[3];
-      let boo = false;
-      for (let i = 0; i < players.length; i ++) {
-        if(players[i]!=null)
-        if(players[i].id == player.id) {
-            boo = true;
-            for (let j = 0; j < players[i].props.length; j ++) {
-              if(prop.id == players[i].props[j].id) {
-                players[i].removeProp(players[i].props[j]);
-              }
-            }
-            if(tipoProp == 1) {
-              for (let j = 0; j < players[i].stations.length; j ++) {
-                if(prop.id == players[i].stations[j].id) {
-                  players[i].stations.splice(j, 1);
-                }
-              }
-            } else if (tipoProp == 2) {
-              for (let j = 0; j < players[i].services.length; j ++) {
-                if(prop.id == players[i].services[j].id) {
-                  players[i].services.splice(j, 1);
-                }
-              }
-            }
-          }
-      }
-      /*if(!boo) {
-        for (let j = 0; j < self.props.length; j ++) {
-          if(prop.id == self.props[j].id) {
-            self.removeProp(self.props[j]);
-          }
-        } if(tipoProp == 1) {
-          for (let j = 0; j < self.stations.length; j ++) {
-            if(prop.id == self.stations[j].id) {
-              self.stations.splice(j, 1);
-            }
-          }
-        } else if (tipoProp == 2) {
-          for (let j = 0; j < self.services.length; j ++) {
-            if(prop.id == self.services[j].id) {
-              self.services.splice(j, 1);
-            }
-          }
-        }*/
-        for (let i = 0; i < self.props.length; i ++) {
-          console.log(self.props[i].name);
-        }
-        updateSelfProps();
-
-      updateScroll(str);
-    })
     let colorSelf=function(){
+      //determina il numero di proprietà che possiedo per ciascun colore
       brown=0;
       lightblue=0;
       pink=0;
@@ -1451,6 +1607,7 @@ socket.on('addProp', function(data) {
       }
     }
       let showHouseButton=function(){
+        //controlla se possiedo il numero massimo di proprietà per ciascun colore
         document.getElementById("housenumber").style.display="none";
         let bool=false;
         colorSelf();
@@ -1510,6 +1667,7 @@ socket.on('addProp', function(data) {
       }
 
       let buyHouses=function(idprop){
+        //fa apparire la pagina per comprare le case delle proprietà
         let str8;
         for(let i=0;i<self.props.length;i++){
           if(self.props[i].id==idprop){
@@ -1657,6 +1815,7 @@ socket.on('addProp', function(data) {
           }
     }
       let annullaBuild=function(){
+        //annulla l'acquisto delle case, torna indietro
         document.getElementById("buyhouse").style.display="none";
         document.getElementById("gestore").style.display="block";
         let arr7 = document.getElementsByClassName("housebutton");
@@ -1666,6 +1825,7 @@ socket.on('addProp', function(data) {
       }
 
       let caseComprate=function(){
+          //manda al server il numero di case comprate/tolte
           let newHouses=($("#optionBox").val()) * 1;
           self.props[xyz].numHouses+=newHouses;
           let pack=[self.props[xyz].id, newHouses];
@@ -1673,31 +1833,10 @@ socket.on('addProp', function(data) {
           showHouseButton();
         }
 
-        socket.on('updateHouses', function(data) {
-          let player = data[0];
-          let prop = data[1];
-          let numHousesDelta = data[2];
-          let str = player.name + ' added ' + numHousesDelta + ' to ' + prop.name;
-          updateScroll(str);
-          for (let i = 0; i < players.length; i ++) {
-            if(players[i]!=null)
-            if(players[i].id == player.id) {
-              if(player.id != self.id) {
-                let pl = players[i];
-                for (let l = 0; l < pl.props.length; l ++) {
-                  if (pl.props[l].id == prop.id) {
-                    pl.props[l].numHouses += numHousesDelta;
-                    pl.props[l].rent = prop.rent;
-                  }
-                }
-                paint();
-              } else {
-                paint();
-              }
-            }
-          }
-        });
+
+
         let getPropertyPosition = function(valore){
+          //restituisce l'indice della proprietà con l'id dato in input
           for(let i=0;i<self.props.length;i++){
             if(self.props[i].id==valore){
               return i;
@@ -1705,6 +1844,7 @@ socket.on('addProp', function(data) {
           }
         }
         let showMortageMenu = function(){
+          //fa apparire la pagina per l'ipoteca
           if(self.props.length==0){
             alert("non hai nessuna proprietà");
           }else{
@@ -1722,205 +1862,178 @@ socket.on('addProp', function(data) {
             colorSelf();
             for (let i = 0; i < self.props.length; i ++) {
               if(self.props[i].state=="active"){
-              switch(self.props[i].colour){
-                case "brown":
-                  if(brown==2){
-                    if(self.props[i].numHouses==0){
-                      bro++;
+                switch(self.props[i].colour){
+                  case "brown":
+                    if(brown==2){
+                      if(self.props[i].numHouses==0){
+                        bro++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
                     }
-                  }else{
-                    appendSelection(self.props[i]);
-                  }
-                  break;
-                case "lightblue":
-                if(lightblue==3){
-                  if(self.props[i].numHouses==0){
-                    lig++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                  break;
-                case "pink":
-                if(pink==3){
-                  if(self.props[i].numHouses==0){
-                    pin++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                  break;
-                case "orange":
-                if(orange==3){
-                  if(self.props[i].numHouses==0){
-                    ora++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                break;
-                case "red":
-                  if(red==3){
-                    if(self.props[i].numHouses==0){
-                      re++;
+                    break;
+                  case "lightblue":
+                    if(lightblue==3){
+                      if(self.props[i].numHouses==0){
+                        lig++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
                     }
-                  }else{
+                    break;
+                  case "pink":
+                    if(pink==3){
+                      if(self.props[i].numHouses==0){
+                        pin++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                    break;
+                  case "orange":
+                    if(orange==3){
+                      if(self.props[i].numHouses==0){
+                        ora++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                    break;
+                  case "red":
+                    if(red==3){
+                      if(self.props[i].numHouses==0){
+                        re++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                    break;
+                  case "yellow":
+                    if(yellow==3){
+                      if(self.props[i].numHouses==0){
+                        yel++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                      break;
+                  case "green":
+                    if(green==3){
+                      if(self.props[i].numHouses==0){
+                        gre++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                      break;
+                  case "darkblue":
+                    if(darkblue==2){
+                      if(self.props[i].numHouses==0){
+                        dar++;
+                      }
+                    }else{
+                      appendSelection(self.props[i]);
+                    }
+                      break;
+                  default:
                     appendSelection(self.props[i]);
-                  }
-                  break;
-                case "yellow":
-                if(yellow==3){
-                  if(self.props[i].numHouses==0){
-                    yel++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
+                    break;
                 }
-                  break;
-                case "green":
-                if(green==3){
-                  if(self.props[i].numHouses==0){
-                    gre++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
+              }else{
+                if(self.money>=self.props[i].unmortgagePrice){
+                  let str10="<option value='" + self.props[i].id + "'>" + self.props[i].name + "</option>";
+                  $('#unmortgageOptionBox').append(str10);
                 }
-                  break;
-                case "darkblue":
-                if(darkblue==2){
-                  if(self.props[i].numHouses==0){
-                    dar++;
-                  }
-                }else{
-                  appendSelection(self.props[i]);
-                }
-                  break;
-                default:
-                  appendSelection(self.props[i]);
-                  break;
-              }
-            }else{
-              if(self.money>=self.props[i].unmortgagePrice){
-                let str10="<option value='" + self.props[i].id + "'>" + self.props[i].name + "</option>";
-                $('#unmortgageOptionBox').append(str10);
               }
             }
-          }
             if(bro==2){
-              let idSelectProp = getPropertyPosition(1);
-              let idSelectProp2 = getPropertyPosition(3);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
+                let idSelectProp = getPropertyPosition(1);
+                let idSelectProp2 = getPropertyPosition(3);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
             }
             if(lig==3){
-              let idSelectProp = getPropertyPosition(6);
-              let idSelectProp2 = getPropertyPosition(8);
-              let idSelectProp3 = getPropertyPosition(9);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(6);
+                let idSelectProp2 = getPropertyPosition(8);
+                let idSelectProp3 = getPropertyPosition(9);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(pin==3){
-              let idSelectProp = getPropertyPosition(11);
-              let idSelectProp2 = getPropertyPosition(13);
-              let idSelectProp3 = getPropertyPosition(14);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(11);
+                let idSelectProp2 = getPropertyPosition(13);
+                let idSelectProp3 = getPropertyPosition(14);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(ora==3){
-              let idSelectProp = getPropertyPosition(16);
-              let idSelectProp2 = getPropertyPosition(18);
-              let idSelectProp3 = getPropertyPosition(19);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(16);
+                let idSelectProp2 = getPropertyPosition(18);
+                let idSelectProp3 = getPropertyPosition(19);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(re==3){
-              let idSelectProp = getPropertyPosition(21);
-              let idSelectProp2 = getPropertyPosition(23);
-              let idSelectProp3 = getPropertyPosition(24);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(21);
+                let idSelectProp2 = getPropertyPosition(23);
+                let idSelectProp3 = getPropertyPosition(24);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(yel==3){
-              let idSelectProp = getPropertyPosition(26);
-              let idSelectProp2 = getPropertyPosition(27);
-              let idSelectProp3 = getPropertyPosition(29);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(26);
+                let idSelectProp2 = getPropertyPosition(27);
+                let idSelectProp3 = getPropertyPosition(29);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(gre==3){
-              let idSelectProp = getPropertyPosition(31);
-              let idSelectProp2 = getPropertyPosition(32);
-              let idSelectProp3 = getPropertyPosition(34);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
-              appendSelection(self.props[idSelectProp3]);
+                let idSelectProp = getPropertyPosition(31);
+                let idSelectProp2 = getPropertyPosition(32);
+                let idSelectProp3 = getPropertyPosition(34);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
+                appendSelection(self.props[idSelectProp3]);
             }
             if(dar==2){
-              let idSelectProp = getPropertyPosition(37);
-              let idSelectProp2 = getPropertyPosition(39);
-              appendSelection(self.props[idSelectProp]);
-              appendSelection(self.props[idSelectProp2]);
+                let idSelectProp = getPropertyPosition(37);
+                let idSelectProp2 = getPropertyPosition(39);
+                appendSelection(self.props[idSelectProp]);
+                appendSelection(self.props[idSelectProp2]);
             }
             document.getElementById("mortgage").style.display="block";
             document.getElementById("gestore").style.display="none";
           }
-
         }
 
         let appendSelection = function(myProp){
+          //aggiunge un elemento alla optionbox
           let str4="<option value='" + myProp.id + "'>" + myProp.name + "</option>";
           $('#mortgageOptionBox').append(str4);
         }
 
         let sendMortgageProperty=function(){
+          //manda al server l'id della proprietà che voglio ipotecare
           let mortgageProperty=($("#mortgageOptionBox").val()) * 1;
           socket.emit('sendMortage',mortgageProperty);
           cancelMortgage();
         }
         let sendUnmortgageProperty=function(){
+          //manda al server l'id della proprietà che voglio disepotecare
           let mortgageProperty=($("#unmortgageOptionBox").val()) * 1;
           socket.emit('sendMortage',mortgageProperty);
           cancelMortgage();
         }
         let cancelMortgage=function(){
+          //annulla l'ipoteca, torna alla pagina precedente
           document.getElementById("mortgage").style.display="none";
           document.getElementById("gestore").style.display="block";
         }
-
-        socket.on('mortgageUpdate', function(data) {
-          let player = data[0];
-          let prop = data[1];
-          updateScroll(data[2]);
-          for(let i = 0; i < players.length; i ++) {
-            if(players[i] != null) {
-              if(players[i].id == player.id) {
-                for(let j = 0; j < players[i].props.length; j ++) {
-                  if(prop.id == players[i].props[j].id) {
-                    players[i].props[j].state = prop.state;
-                  }
-                }
-              }
-            }
-          }
-        });
-
-        socket.on('newHighestBid', function(data){
-          //aggiorna la div con la puntata più alta
-          console.log(data);
-            maxBid=data;
-            document.getElementById("auctionprice").innerHTML=data;
-        });
-
-        socket.on('startAuction', function(data){
-          document.getElementById("auctionprice").innerHTML=maxBid;
-          document.getElementById("auctionproperty").innerHTML=data.name;
-          document.getElementById("auctiondiv").style.display="block";
-        });
 
         let newBid = function(){
           //invia al server la nuova bid più alta
@@ -1937,15 +2050,13 @@ socket.on('addProp', function(data) {
         }
 
         let exitBid = function(){
+          //esci dall'asta
           document.getElementById("auctiondiv").style.display="none";
           maxBid=0;
           socket.emit('closeBid');
         }
 
-        socket.on('endAuction', function() {
-          document.getElementById("auctiondiv").style.display="none";
-          maxBid = 0;
-        });
+
 </script>
 </body>
 </html>
