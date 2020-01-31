@@ -518,6 +518,18 @@ o[5]= new Image();
     endMenu(data);
   });
 
+  socket.on('playerDisconnected', function(data) {
+    let playerDisc = players[data.id];
+    let pId = 'p' + playerDisc.id;
+    let mId = 'm' + playerDisc.id;
+    let kId = 'k' + playerDisc.id;
+    document.getElementById(pId).style.display="none";
+    document.getElementById(mId).style.display="none";
+    document.getElementById(kId).style.display="none";
+    players[data.id] = null;
+    updateScroll(data.name + ' disconnected');
+  });
+
   socket.on('tradeProposal', function(data) {
     //si attiva quando un player vuole fare una trade con me
     proposer = data[0];
@@ -1005,17 +1017,6 @@ o[5]= new Image();
   }
 
 
-  socket.on('playerDisconnected', function(data) {
-    let playerDisc = players[data.id];
-    let pId = 'p' + playerDisc.id;
-    let mId = 'm' + playerDisc.id;
-    let kId = 'k' + playerDisc.id;
-    document.getElementById(pId).style.display="none";
-    document.getElementById(mId).style.display="none";
-    document.getElementById(kId).style.display="none";
-    players[data.id] = null;
-    updateScroll(data.name + ' disconnected');
-  });
 
   p0.onclick= function(){
     //click sulla div di player 1
